@@ -15,7 +15,10 @@
     "Other",
     "Visualization"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onLanguage:typescript",
+    "onLanguage:javascript"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
@@ -23,7 +26,15 @@
         "command": "region-helper.helloWorld",
         "title": "Hello World"
       }
-    ]
+    ],
+    "views": {
+      "explorer": [
+        {
+          "id": "region-helper-regions",
+          "name": "Regions"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile && npm run lint",
