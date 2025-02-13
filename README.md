@@ -2,9 +2,10 @@
 
 A VSCode extension for navigating and visualizing code regions in your files.
 
-## Features
+## Features (planned)
 
-Nothing yet!
+- 📂 **Region Tree View**: See all regions in a tree-viewer in the sidebar, with the cursor's active region automatically highlighted.
+- ⏩ **Jump to Matching Region Boundary**: Quickly jump between region boundaries (like how Vim's `%` motion jumps between matching parentheses).
 
 ## Extension Settings
 
