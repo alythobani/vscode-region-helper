@@ -12,7 +12,8 @@
     "vscode": "^1.97.0"
   },
   "categories": [
-    "Other"
+    "Other",
+    "Visualization"
   ],
   "activationEvents": [],
   "main": "./dist/extension.js",
@@ -25,6 +26,7 @@
     ]
   },
   "scripts": {
+    "vscode:prepublish": "npm run compile && npm run lint",
     "compile": "webpack",
     "watch": "webpack --watch",
     "package": "vsce package",
