@@ -3,9 +3,13 @@ import {
   goToMatchingRegionBoundary,
   goToMatchingRegionBoundaryCommandId,
 } from "./commands/goToMatchingRegionBoundary";
+import {
+  goToRegionFromQuickPick,
+  goToRegionFromQuickPickCommandId,
+} from "./commands/goToRegionFromQuickPick";
 import { RegionStore } from "./state/RegionStore";
 import { RegionTreeViewProvider } from "./treeView/RegionTreeViewProvider";
-import { goToRegion, goToRegionCommandId } from "./treeView/goToRegion";
+import { goToRegionTreeItem, goToRegionTreeItemCommandId } from "./treeView/goToRegionTreeItem";
 
 export function activate(context: vscode.ExtensionContext): void {
   console.log("Activating extension 'Region Helper'");
@@ -18,13 +22,19 @@ export function activate(context: vscode.ExtensionContext): void {
   });
   regionTreeViewProvider.setTreeView(treeView);
 
-  const goToRegionCommand = vscode.commands.registerCommand(goToRegionCommandId, goToRegion);
-  const goToMatchingRegionBoundaryCommand = vscode.commands.registerCommand(
-    goToMatchingRegionBoundaryCommandId,
-    () => goToMatchingRegionBoundary(regionStore)
+  registerCommand(goToRegionTreeItemCommandId, goToRegionTreeItem);
+  registerCommand(goToMatchingRegionBoundaryCommandId, () =>
+    goToMatchingRegionBoundary(regionStore)
   );
+  registerCommand(goToRegionFromQuickPickCommandId, () => goToRegionFromQuickPick(regionStore));
 
-  context.subscriptions.push(goToRegionCommand, goToMatchingRegionBoundaryCommand);
+  function registerCommand(
+    commandId: string,
+    callback: Parameters<typeof vscode.commands.registerCommand>[1]
+  ): void {
+    const command = vscode.commands.registerCommand(commandId, callback);
+    context.subscriptions.push(command);
+  }
 }
 
 export function deactivate(): void {

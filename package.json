@@ -25,6 +25,10 @@
       {
         "command": "region-helper.goToMatchingRegionBoundary",
         "title": "Go to Matching Region Boundary"
+      },
+      {
+        "command": "region-helper.goToRegionFromQuickPick",
+        "title": "Go to Region"
       }
     ],
     "views": {

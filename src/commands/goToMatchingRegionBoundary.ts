@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { getCursorActiveRegion } from "../lib/getCursorActiveRegion";
+import { moveCursorToFirstNonWhitespaceCharOfLine } from "../lib/moveCursorToFirstNonWhitespaceOfLine";
 import { type RegionStore } from "../state/RegionStore";
 
 export const goToMatchingRegionBoundaryCommandId = "region-helper.goToMatchingRegionBoundary";
@@ -26,14 +27,5 @@ export function goToMatchingRegionBoundary(regionStore: RegionStore): void {
     targetLine = mostNestedRegion.endLineIdx; // Inside the region, jump to its end
   }
 
-  moveCursorToLine(editor, targetLine);
-}
-
-function moveCursorToLine(editor: vscode.TextEditor, lineIdx: number): void {
-  const position = new vscode.Position(lineIdx, 0);
-  editor.selection = new vscode.Selection(position, position);
-  editor.revealRange(
-    new vscode.Range(position, position),
-    vscode.TextEditorRevealType.InCenterIfOutsideViewport
-  );
+  moveCursorToFirstNonWhitespaceCharOfLine(editor, targetLine);
 }

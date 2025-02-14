@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { type Region } from "../models/Region";
-import { goToRegionCommandId } from "./goToRegion";
+import { goToRegionTreeItemCommandId } from "./goToRegionTreeItem";
 
 export class RegionTreeItem extends vscode.TreeItem {
   constructor(public readonly region: Region) {
@@ -12,7 +12,7 @@ export class RegionTreeItem extends vscode.TreeItem {
     );
     this.tooltip = `Region from line ${region.startLineIdx} to line ${region.endLineIdx}`;
     this.command = {
-      command: goToRegionCommandId,
+      command: goToRegionTreeItemCommandId,
       title: "Go to Region",
       arguments: [region.startLineIdx],
     };
