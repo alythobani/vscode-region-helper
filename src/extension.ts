@@ -3,13 +3,16 @@ import {
   goToMatchingRegionBoundary,
   goToMatchingRegionBoundaryCommandId,
 } from "./commands/goToMatchingRegionBoundary";
+import { RegionStore } from "./state/RegionStore";
 import { RegionTreeViewProvider } from "./treeView/RegionTreeViewProvider";
 import { goToRegion, goToRegionCommandId } from "./treeView/goToRegion";
 
 export function activate(context: vscode.ExtensionContext): void {
   console.log("Activating extension 'Region Helper'");
 
-  const regionTreeViewProvider = new RegionTreeViewProvider();
+  const regionStore = new RegionStore();
+
+  const regionTreeViewProvider = new RegionTreeViewProvider(regionStore);
   const treeView = vscode.window.createTreeView("regionHelperTreeView", {
     treeDataProvider: regionTreeViewProvider,
   });
@@ -18,7 +21,7 @@ export function activate(context: vscode.ExtensionContext): void {
   const goToRegionCommand = vscode.commands.registerCommand(goToRegionCommandId, goToRegion);
   const goToMatchingRegionBoundaryCommand = vscode.commands.registerCommand(
     goToMatchingRegionBoundaryCommandId,
-    goToMatchingRegionBoundary
+    () => goToMatchingRegionBoundary(regionStore)
   );
 
   context.subscriptions.push(goToRegionCommand, goToMatchingRegionBoundaryCommand);

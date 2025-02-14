@@ -1,21 +1,18 @@
 import * as vscode from "vscode";
 import { getCursorActiveRegion } from "../lib/getCursorActiveRegion";
-import { parseAllRegions } from "../lib/parseAllRegions";
+import { type RegionStore } from "../state/RegionStore";
 
 export const goToMatchingRegionBoundaryCommandId = "region-helper.goToMatchingRegionBoundary";
 
-export function goToMatchingRegionBoundary(): void {
+export function goToMatchingRegionBoundary(regionStore: RegionStore): void {
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
     return;
   }
 
-  const document = editor.document;
   const cursorLine = editor.selection.active.line;
-
   // Get all regions in the current document
-  const { topLevelRegions } = parseAllRegions(document);
-  const mostNestedRegion = getCursorActiveRegion(topLevelRegions, cursorLine);
+  const mostNestedRegion = getCursorActiveRegion(regionStore.topLevelRegions, cursorLine);
   if (!mostNestedRegion) {
     return;
   }

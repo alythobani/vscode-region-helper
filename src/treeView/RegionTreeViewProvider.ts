@@ -1,49 +1,26 @@
 import * as vscode from "vscode";
 import { getCursorActiveRegion } from "../lib/getCursorActiveRegion";
-import { parseAllRegions } from "../lib/parseAllRegions";
 import { type Region } from "../models/Region";
+import { type RegionStore } from "../state/RegionStore";
 import { RegionTreeItem } from "./RegionTreeItem";
 
 export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
-  private _onDidChangeTreeData = new vscode.EventEmitter<Region | undefined>();
+  private _onDidChangeTreeData = new vscode.EventEmitter<undefined>();
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
-
-  private topLevelRegions: Region[] = [];
 
   private treeView: vscode.TreeView<Region> | undefined;
 
-  constructor() {
-    this.refreshIfActiveDocumentExists();
+  constructor(private regionStore: RegionStore) {
     this.registerListeners();
   }
 
-  private refreshIfActiveDocumentExists(): void {
-    const activeDocument = vscode.window.activeTextEditor?.document;
-    if (activeDocument) {
-      this.refresh(activeDocument);
-    }
-  }
-
   private registerListeners(): void {
-    this.registerActiveTextEditorListener();
-    this.registerDocumentChangeListener();
+    this.registerRegionsChangeListener();
     this.registerSelectionChangeListener();
   }
 
-  private registerActiveTextEditorListener(): void {
-    vscode.window.onDidChangeActiveTextEditor((editor) => {
-      if (editor) {
-        this.refresh(editor.document);
-      }
-    });
-  }
-
-  private registerDocumentChangeListener(): void {
-    vscode.workspace.onDidChangeTextDocument((event) => {
-      if (vscode.window.activeTextEditor?.document === event.document) {
-        this.refresh(event.document);
-      }
-    });
+  private registerRegionsChangeListener(): void {
+    this.regionStore.onDidChangeRegions(() => this.onRegionsChange());
   }
 
   private registerSelectionChangeListener(): void {
@@ -54,8 +31,7 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
     });
   }
 
-  refresh(document: vscode.TextDocument): void {
-    this.topLevelRegions = parseAllRegions(document).topLevelRegions;
+  onRegionsChange(): void {
     this._onDidChangeTreeData.fire(undefined);
     this.highlightActiveRegion();
   }
@@ -69,7 +45,7 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
   }
 
   getChildren(element?: Region): Region[] {
-    return element ? element.children : this.topLevelRegions;
+    return element ? element.children : this.regionStore.topLevelRegions;
   }
 
   setTreeView(treeView: vscode.TreeView<Region>): void {
@@ -81,7 +57,7 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
       return;
     }
     const cursorLine = vscode.window.activeTextEditor.selection.active.line;
-    const activeRegion = getCursorActiveRegion(this.topLevelRegions, cursorLine);
+    const activeRegion = getCursorActiveRegion(this.regionStore.topLevelRegions, cursorLine);
     if (!activeRegion) {
       return;
     }
