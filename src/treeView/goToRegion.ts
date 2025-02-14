@@ -7,12 +7,17 @@ export function goToRegion(startLineIdx: number): void {
   if (!activeTextEditor) {
     return;
   }
-  const position = new vscode.Position(startLineIdx, 0);
-  console.log("Going to region at line", startLineIdx);
+  const positionCharacter = getPositionCharacter(activeTextEditor, startLineIdx);
+  const position = new vscode.Position(startLineIdx, positionCharacter);
   activeTextEditor.selection = new vscode.Selection(position, position);
   activeTextEditor.revealRange(
     new vscode.Range(position, position),
     vscode.TextEditorRevealType.InCenterIfOutsideViewport
   );
-  console.log("Region at line", startLineIdx, "is now visible");
+}
+
+function getPositionCharacter(activeTextEditor: vscode.TextEditor, startLineIdx: number): number {
+  const line = activeTextEditor.document.lineAt(startLineIdx);
+  const { firstNonWhitespaceCharacterIndex } = line;
+  return firstNonWhitespaceCharacterIndex;
 }
