@@ -15,6 +15,9 @@ export default tseslint.config(
       },
     },
     rules: {
+      eqeqeq: "error",
+      "object-shorthand": "error",
+      "no-useless-rename": "error",
       "@typescript-eslint/explicit-function-return-type": "error",
       "@typescript-eslint/restrict-template-expressions": [
         "error",
@@ -42,7 +45,7 @@ export default tseslint.config(
           allowNumber: false,
         },
       ],
-      "object-shorthand": "error",
+      "@typescript-eslint/consistent-indexed-object-style": ["error", "record"],
       "@typescript-eslint/consistent-type-imports": ["error", { fixStyle: "inline-type-imports" }],
       "@typescript-eslint/consistent-type-definitions": ["error", "type"],
     },

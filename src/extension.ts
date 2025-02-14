@@ -1,24 +1,16 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
+import { RegionTreeViewProvider } from "./treeView/RegionTreeViewProvider";
+import { goToRegion, goToRegionCommandId } from "./treeView/goToRegion";
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext): void {
-  // Use the console to output diagnostic information (console.log) and errors (console.error)
-  // This line of code will only be executed once when your extension is activated
-  console.log('Congratulations, your extension "region-helper" is now active!');
+  console.log("Activating extension 'Region Helper'");
 
-  // The command has been defined in the package.json file
-  // Now provide the implementation of the command with registerCommand
-  // The commandId parameter must match the command field in package.json
-  const disposable = vscode.commands.registerCommand("region-helper.helloWorld", () => {
-    // The code you place here will be executed every time your command is executed
-    // Display a message box to the user
-    vscode.window.showInformationMessage("Hello World from Region Helper!");
-  });
+  const regionTreeViewProvider = new RegionTreeViewProvider();
+  vscode.window.registerTreeDataProvider("regionTreeView", regionTreeViewProvider);
 
-  context.subscriptions.push(disposable);
+  const goToRegionCommand = vscode.commands.registerCommand(goToRegionCommandId, goToRegion);
+
+  context.subscriptions.push(goToRegionCommand);
 }
 
 // This method is called when your extension is deactivated
