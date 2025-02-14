@@ -1,13 +1,12 @@
 import * as vscode from "vscode";
+import { getActiveRegion } from "../lib/getActiveRegion";
 import { parseAllRegions } from "../lib/parseAllRegions";
-import { type Region } from "../models/Region";
 
 export const goToMatchingRegionBoundaryCommandId = "region-helper.goToMatchingRegionBoundary";
 
 export function goToMatchingRegionBoundary(): void {
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
-    vscode.window.showInformationMessage("No active text editor.");
     return;
   }
 
@@ -16,29 +15,21 @@ export function goToMatchingRegionBoundary(): void {
 
   // Get all regions in the current document
   const { topLevelRegions } = parseAllRegions(document);
-  const matchingLine = findMatchingBoundary(topLevelRegions, cursorLine);
+  const mostNestedRegion = getActiveRegion(topLevelRegions, cursorLine);
+  if (!mostNestedRegion) {
+    return;
+  }
 
-  if (matchingLine !== undefined) {
-    moveCursorToLine(editor, matchingLine);
+  let targetLine: number;
+  if (cursorLine === mostNestedRegion.startLineIdx) {
+    targetLine = mostNestedRegion.endLineIdx; // Jump to matching #endregion
+  } else if (cursorLine === mostNestedRegion.endLineIdx) {
+    targetLine = mostNestedRegion.startLineIdx; // Jump to matching #region
   } else {
-    vscode.window.showInformationMessage("Cursor is not on a region boundary.");
+    targetLine = mostNestedRegion.endLineIdx; // Inside the region, jump to its end
   }
-}
 
-function findMatchingBoundary(regions: Region[], cursorLine: number): number | undefined {
-  for (const region of regions) {
-    if (cursorLine === region.startLineIdx) {
-      return region.endLineIdx; // Jump to #endregion
-    }
-    if (cursorLine === region.endLineIdx) {
-      return region.startLineIdx; // Jump to #region
-    }
-    const nestedMatch = findMatchingBoundary(region.children, cursorLine);
-    if (nestedMatch !== undefined) {
-      return nestedMatch;
-    }
-  }
-  return undefined;
+  moveCursorToLine(editor, targetLine);
 }
 
 function moveCursorToLine(editor: vscode.TextEditor, lineIdx: number): void {

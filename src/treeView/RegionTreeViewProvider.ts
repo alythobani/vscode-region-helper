@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { getActiveRegion } from "../lib/getActiveRegion";
 import { parseAllRegions } from "../lib/parseAllRegions";
 import { type Region } from "../models/Region";
 import { RegionTreeItem } from "./RegionTreeItem";
@@ -80,20 +81,10 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
       return;
     }
     const cursorLine = vscode.window.activeTextEditor.selection.active.line;
-    const activeRegion = this.findEnclosingRegion(this.topLevelRegions, cursorLine);
+    const activeRegion = getActiveRegion(this.topLevelRegions, cursorLine);
     if (!activeRegion) {
       return;
     }
     this.treeView.reveal(activeRegion, { select: true, focus: false });
-  }
-
-  private findEnclosingRegion(regions: Region[], cursorLine: number): Region | undefined {
-    for (const region of regions) {
-      if (cursorLine >= region.startLineIdx && cursorLine <= region.endLineIdx) {
-        // Recursively check if there's a more specific sub-region
-        return this.findEnclosingRegion(region.children, cursorLine) ?? region;
-      }
-    }
-    return undefined;
   }
 }
