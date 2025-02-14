@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { getActiveRegion } from "../lib/getActiveRegion";
+import { getCursorActiveRegion } from "../lib/getCursorActiveRegion";
 import { parseAllRegions } from "../lib/parseAllRegions";
 import { type Region } from "../models/Region";
 import { RegionTreeItem } from "./RegionTreeItem";
@@ -81,7 +81,7 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
       return;
     }
     const cursorLine = vscode.window.activeTextEditor.selection.active.line;
-    const activeRegion = getActiveRegion(this.topLevelRegions, cursorLine);
+    const activeRegion = getCursorActiveRegion(this.topLevelRegions, cursorLine);
     if (!activeRegion) {
       return;
     }
