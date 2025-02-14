@@ -13,7 +13,15 @@ export class RegionStore {
   }
 
   private registerListeners(): void {
+    this.registerActiveTextEditorChangeListener();
+    this.registerDocumentChangeListener();
+  }
+
+  private registerActiveTextEditorChangeListener(): void {
     vscode.window.onDidChangeActiveTextEditor(() => this.refresh());
+  }
+
+  private registerDocumentChangeListener(): void {
     vscode.workspace.onDidChangeTextDocument((event) => {
       if (vscode.window.activeTextEditor?.document === event.document) {
         this.refresh();
