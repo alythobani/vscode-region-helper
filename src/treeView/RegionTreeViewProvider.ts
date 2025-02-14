@@ -10,30 +10,36 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
 
   private treeView: vscode.TreeView<Region> | undefined;
 
-  constructor(private regionStore: RegionStore) {
-    this.registerListeners();
+  constructor(private regionStore: RegionStore, subscriptions: vscode.Disposable[]) {
+    this.registerListeners(subscriptions);
   }
 
-  private registerListeners(): void {
-    this.registerRegionsChangeListener();
-    this.registerSelectionChangeListener();
+  private registerListeners(subscriptions: vscode.Disposable[]): void {
+    this.registerRegionsChangeListener(subscriptions);
+    this.registerSelectionChangeListener(subscriptions);
   }
 
-  private registerRegionsChangeListener(): void {
-    this.regionStore.onDidChangeRegions(() => this.onRegionsChange());
+  private registerRegionsChangeListener(subscriptions: vscode.Disposable[]): void {
+    this.regionStore.onDidChangeRegions(() => this.onRegionsChange(), undefined, subscriptions);
   }
 
-  private registerSelectionChangeListener(): void {
-    vscode.window.onDidChangeTextEditorSelection((event) => {
-      if (event.textEditor === vscode.window.activeTextEditor) {
-        this.highlightActiveRegion();
-      }
-    });
+  private registerSelectionChangeListener(subscriptions: vscode.Disposable[]): void {
+    vscode.window.onDidChangeTextEditorSelection(
+      (event) => this.onSelectionChange(event),
+      undefined,
+      subscriptions
+    );
   }
 
-  onRegionsChange(): void {
+  private onRegionsChange(): void {
     this._onDidChangeTreeData.fire(undefined);
     this.highlightActiveRegion();
+  }
+
+  private onSelectionChange(event: vscode.TextEditorSelectionChangeEvent): void {
+    if (event.textEditor === vscode.window.activeTextEditor) {
+      this.highlightActiveRegion();
+    }
   }
 
   getTreeItem(region: Region): vscode.TreeItem {

@@ -7,26 +7,32 @@ export class RegionStore {
   private _onDidChangeRegions = new vscode.EventEmitter<void>();
   readonly onDidChangeRegions = this._onDidChangeRegions.event;
 
-  constructor() {
-    this.registerListeners();
+  constructor(subscriptions: vscode.Disposable[]) {
+    this.registerListeners(subscriptions);
     this.refresh();
   }
 
-  private registerListeners(): void {
-    this.registerActiveTextEditorChangeListener();
-    this.registerDocumentChangeListener();
+  private registerListeners(subscriptions: vscode.Disposable[]): void {
+    this.registerActiveTextEditorChangeListener(subscriptions);
+    this.registerDocumentChangeListener(subscriptions);
   }
 
-  private registerActiveTextEditorChangeListener(): void {
-    vscode.window.onDidChangeActiveTextEditor(() => this.refresh());
+  private registerActiveTextEditorChangeListener(subscriptions: vscode.Disposable[]): void {
+    vscode.window.onDidChangeActiveTextEditor(() => this.refresh(), undefined, subscriptions);
   }
 
-  private registerDocumentChangeListener(): void {
-    vscode.workspace.onDidChangeTextDocument((event) => {
-      if (vscode.window.activeTextEditor?.document === event.document) {
-        this.refresh();
-      }
-    });
+  private registerDocumentChangeListener(subscriptions: vscode.Disposable[]): void {
+    vscode.workspace.onDidChangeTextDocument(
+      (event) => this.onDocumentChange(event),
+      undefined,
+      subscriptions
+    );
+  }
+
+  private onDocumentChange(event: vscode.TextDocumentChangeEvent): void {
+    if (vscode.window.activeTextEditor?.document === event.document) {
+      this.refresh();
+    }
   }
 
   private refresh(): void {
