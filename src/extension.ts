@@ -6,7 +6,10 @@ export function activate(context: vscode.ExtensionContext): void {
   console.log("Activating extension 'Region Helper'");
 
   const regionTreeViewProvider = new RegionTreeViewProvider();
-  vscode.window.registerTreeDataProvider("regionTreeView", regionTreeViewProvider);
+  const treeView = vscode.window.createTreeView("regionHelperTreeView", {
+    treeDataProvider: regionTreeViewProvider,
+  });
+  regionTreeViewProvider.setTreeView(treeView);
 
   const goToRegionCommand = vscode.commands.registerCommand(goToRegionCommandId, goToRegion);
 

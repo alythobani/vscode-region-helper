@@ -9,10 +9,11 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
 
   private topLevelRegions: Region[] = [];
 
+  private treeView: vscode.TreeView<Region> | undefined;
+
   constructor() {
     this.refreshIfActiveDocumentExists();
-    this.registerActiveTextEditorListener();
-    this.registerDocumentChangeListener();
+    this.registerListeners();
   }
 
   private refreshIfActiveDocumentExists(): void {
@@ -20,6 +21,12 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
     if (activeDocument) {
       this.refresh(activeDocument);
     }
+  }
+
+  private registerListeners(): void {
+    this.registerActiveTextEditorListener();
+    this.registerDocumentChangeListener();
+    this.registerSelectionChangeListener();
   }
 
   private registerActiveTextEditorListener(): void {
@@ -38,16 +45,55 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
     });
   }
 
+  private registerSelectionChangeListener(): void {
+    vscode.window.onDidChangeTextEditorSelection((event) => {
+      if (event.textEditor === vscode.window.activeTextEditor) {
+        this.highlightActiveRegion();
+      }
+    });
+  }
+
   refresh(document: vscode.TextDocument): void {
     this.topLevelRegions = parseAllRegions(document).topLevelRegions;
     this._onDidChangeTreeData.fire(undefined);
+    this.highlightActiveRegion();
   }
 
   getTreeItem(region: Region): vscode.TreeItem {
     return new RegionTreeItem(region);
   }
 
+  getParent(element: Region): vscode.ProviderResult<Region> {
+    return element.parent;
+  }
+
   getChildren(element?: Region): Region[] {
     return element ? element.children : this.topLevelRegions;
+  }
+
+  setTreeView(treeView: vscode.TreeView<Region>): void {
+    this.treeView = treeView;
+  }
+
+  private highlightActiveRegion(): void {
+    if (!this.treeView || !vscode.window.activeTextEditor) {
+      return;
+    }
+    const cursorLine = vscode.window.activeTextEditor.selection.active.line;
+    const activeRegion = this.findEnclosingRegion(this.topLevelRegions, cursorLine);
+    if (!activeRegion) {
+      return;
+    }
+    this.treeView.reveal(activeRegion, { select: true, focus: false });
+  }
+
+  private findEnclosingRegion(regions: Region[], cursorLine: number): Region | undefined {
+    for (const region of regions) {
+      if (cursorLine >= region.startLineIdx && cursorLine <= region.endLineIdx) {
+        // Recursively check if there's a more specific sub-region
+        return this.findEnclosingRegion(region.children, cursorLine) ?? region;
+      }
+    }
+    return undefined;
   }
 }

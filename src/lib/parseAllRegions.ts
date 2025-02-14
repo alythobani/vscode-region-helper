@@ -47,6 +47,7 @@ export function parseAllRegions(document: vscode.TextDocument): RegionParseResul
       lastOpenRegion.endLineIdx = lineIdx;
       const maybeParentRegion = openRegionsStack[openRegionsStack.length - 1];
       if (maybeParentRegion) {
+        lastOpenRegion.parent = maybeParentRegion;
         maybeParentRegion.children.push(lastOpenRegion);
       } else {
         topLevelRegions.push(lastOpenRegion);
