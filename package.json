@@ -21,7 +21,12 @@
   ],
   "main": "./dist/extension.js",
   "contributes": {
-    "commands": [],
+    "commands": [
+      {
+        "command": "region-helper.goToMatchingRegionBoundary",
+        "title": "Go to Matching Region Boundary"
+      }
+    ],
     "views": {
       "explorer": [
         {
