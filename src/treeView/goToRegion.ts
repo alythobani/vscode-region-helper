@@ -14,6 +14,7 @@ export function goToRegion(startLineIdx: number): void {
     new vscode.Range(position, position),
     vscode.TextEditorRevealType.InCenterIfOutsideViewport
   );
+  vscode.window.showTextDocument(activeTextEditor.document, activeTextEditor.viewColumn);
 }
 
 function getPositionCharacter(activeTextEditor: vscode.TextEditor, startLineIdx: number): number {
