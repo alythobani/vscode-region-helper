@@ -1,45 +1,34 @@
 # Region Helper
 
-A VSCode extension for navigating and visualizing code regions in your files.
+A VSCode extension for navigating and visualizing code regions in your files. Provides an interactive tree view and convenience commands for jumping between, searching, and selecting regions in your files.
 
-## Features (planned)
+## Features
 
-- 📂 **Region Tree View**: See all regions in a tree-viewer in the sidebar, with the cursor's active region automatically highlighted.
-- ⏩ **Jump to Matching Region Boundary**: Quickly jump between region boundaries (like how Vim's `%` motion jumps between matching parentheses).
+### 📂 Region Tree View
 
-## Extension Settings
+- Visualizes all regions in the active file in a collapsible tree view in the Explorer sidebar
+- Automatically highlights the cursor’s active region in the tree view
+- Navigates to a given region when clicked
 
-None yet! If I ever get around to it, I'll add some settings through the `contributes.configuration` extension point.
+### 🐇 Jump to Matching Region Boundary
 
-<!-- For example:
+- Jumps between boundaries of the cursor's active region (like Vim’s `%` motion and VSCode's builtin `Go to Bracket` command)
+- 📌 **Default keybinding**: `Alt + M`
 
-This extension contributes the following settings:
+### 🔍 Fuzzy Search Regions
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something. -->
+- Opens a fuzzy-searchable dropdown to jump to a region in the active file
+- 📌 **Default keybinding**:
+  - Windows/Linux: `Ctrl + Shift + R`
+  - Mac: `Cmd + Shift + R`
 
-<!-- ## Known Issues -->
+### 🎯 Select Current Region
 
-<!-- Calling out known issues can help limit users opening duplicate issues against your extension. -->
+- Selects the entirety of the cursor's active region
+- 📌 **Default keybinding**: `Alt + Shift + M`
 
-<!-- ## Release Notes
+## ❤️ Contributing / Feedback
 
-Users appreciate release notes as you update your extension.
+My capacity at any given time may be limited, so a response may not always be guaranteed, but feel free to [open an issue](https://github.com/alythobani/vscode-region-helper/issues) for any bug reports or suggestions. Pull requests are also welcome on issues marked as `accepting PRs`.
 
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z. -->
-
-<!-- ## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines) -->
+Have a great day and try to make someone else's day great too! 😊
