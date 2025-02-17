@@ -31,6 +31,19 @@
         "title": "Go to Region"
       }
     ],
+    "keybindings": [
+      {
+        "command": "region-helper.goToMatchingRegionBoundary",
+        "key": "alt+m",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "region-helper.goToRegionFromQuickPick",
+        "key": "ctrl+shift+r",
+        "mac": "cmd+shift+r",
+        "when": "editorTextFocus"
+      }
+    ],
     "views": {
       "explorer": [
         {
