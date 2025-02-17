@@ -26,7 +26,9 @@ export function activate(context: vscode.ExtensionContext): void {
   registerCommand(goToMatchingRegionBoundaryCommandId, () =>
     goToMatchingRegionBoundary(regionStore)
   );
-  registerCommand(goToRegionFromQuickPickCommandId, () => goToRegionFromQuickPick(regionStore));
+  registerCommand(goToRegionFromQuickPickCommandId, () =>
+    goToRegionFromQuickPick(regionStore, context.subscriptions)
+  );
 
   function registerCommand(
     commandId: string,
