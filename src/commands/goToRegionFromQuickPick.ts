@@ -1,9 +1,10 @@
 import * as vscode from "vscode";
 import { moveCursorToFirstNonWhitespaceCharOfLine } from "../lib/moveCursorToFirstNonWhitespaceOfLine";
+import { scrollCurrentLineIntoView, scrollLineIntoView } from "../lib/scrollUtils";
 import { type Region } from "../models/Region";
 import { type RegionStore } from "../state/RegionStore";
 
-type RegionQuickPickItem = vscode.QuickPickItem & { region: Region };
+type RegionQuickPickItem = vscode.QuickPickItem & { startLineIdx: number };
 
 export const goToRegionFromQuickPickCommandId = "region-helper.goToRegionFromQuickPick";
 
@@ -13,38 +14,34 @@ export function goToRegionFromQuickPick(regionStore: RegionStore): void {
     return;
   }
 
-  const regions = regionStore.topLevelRegions;
-  // if (regions.length === 0) {
-  //   vscode.window.showInformationMessage("No regions found in the current document.");
-  //   return;
-  // }
-
-  const regionQuickPickItems: RegionQuickPickItem[] = getRegionQuickPickItems(regions);
+  const regionQuickPickItems = getRegionQuickPickItems(regionStore.topLevelRegions);
 
   vscode.window
     .showQuickPick(regionQuickPickItems, {
       title: "Go to Region",
-      placeHolder: "Search for a region to jump to",
+      placeHolder:
+        regionQuickPickItems.length > 0 ? "Search for a region to jump to" : "No regions available",
       matchOnDescription: true,
+      onDidSelectItem(item: RegionQuickPickItem) {
+        const { startLineIdx } = item;
+        scrollLineIntoView(activeTextEditor, startLineIdx);
+      },
     })
     .then((selectedItem) => {
       if (selectedItem === undefined) {
+        scrollCurrentLineIntoView(activeTextEditor);
         return;
       }
-      moveCursorToFirstNonWhitespaceCharOfLine(activeTextEditor, selectedItem.region.startLineIdx);
+      moveCursorToFirstNonWhitespaceCharOfLine(activeTextEditor, selectedItem.startLineIdx);
     });
 }
 
 function getRegionQuickPickItems(regions: Region[]): RegionQuickPickItem[] {
   return regions.flatMap((region) => {
-    const regionName = region.name ?? "(Unnamed Region)";
-    return [
-      {
-        label: regionName,
-        description: `Line ${region.startLineIdx + 1}`,
-        region,
-      },
-      ...getRegionQuickPickItems(region.children),
-    ];
+    const label = region.name ?? "(Unnamed Region)";
+    const { startLineIdx } = region;
+    const description = `Line ${startLineIdx + 1}`;
+    const regionQuickPickItem = { label, description, startLineIdx };
+    return [regionQuickPickItem, ...getRegionQuickPickItems(region.children)];
   });
 }
