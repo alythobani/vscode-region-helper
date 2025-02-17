@@ -27,6 +27,10 @@
         "title": "Go to Matching Region Boundary"
       },
       {
+        "command": "region-helper.selectCurrentRegion",
+        "title": "Select Current Region"
+      },
+      {
         "command": "region-helper.goToRegionFromQuickPick",
         "title": "Go to Region"
       }
@@ -35,6 +39,11 @@
       {
         "command": "region-helper.goToMatchingRegionBoundary",
         "key": "alt+m",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "region-helper.selectCurrentRegion",
+        "key": "alt+shift+m",
         "when": "editorTextFocus"
       },
       {

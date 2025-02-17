@@ -7,6 +7,7 @@ import {
   goToRegionFromQuickPick,
   goToRegionFromQuickPickCommandId,
 } from "./commands/goToRegionFromQuickPick";
+import { selectCurrentRegion, selectCurrentRegionCommandId } from "./commands/selectCurrentRegion";
 import { RegionStore } from "./state/RegionStore";
 import { RegionTreeViewProvider } from "./treeView/RegionTreeViewProvider";
 import { goToRegionTreeItem, goToRegionTreeItemCommandId } from "./treeView/goToRegionTreeItem";
@@ -26,6 +27,7 @@ export function activate(context: vscode.ExtensionContext): void {
   registerCommand(goToMatchingRegionBoundaryCommandId, () =>
     goToMatchingRegionBoundary(regionStore)
   );
+  registerCommand(selectCurrentRegionCommandId, () => selectCurrentRegion(regionStore));
   registerCommand(goToRegionFromQuickPickCommandId, () =>
     goToRegionFromQuickPick(regionStore, context.subscriptions)
   );

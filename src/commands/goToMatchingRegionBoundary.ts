@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { getCursorActiveLineIdx } from "../lib/getCursorActiveLineIdx";
 import { getCursorActiveRegion } from "../lib/getCursorActiveRegion";
 import { moveCursorToFirstNonWhitespaceCharOfLine } from "../lib/moveCursorToFirstNonWhitespaceOfLine";
 import { type RegionStore } from "../state/RegionStore";
@@ -11,8 +12,7 @@ export function goToMatchingRegionBoundary(regionStore: RegionStore): void {
     return;
   }
 
-  const cursorLine = editor.selection.active.line;
-  // Get all regions in the current document
+  const cursorLine = getCursorActiveLineIdx(editor);
   const mostNestedRegion = getCursorActiveRegion(regionStore.topLevelRegions, cursorLine);
   if (!mostNestedRegion) {
     return;
