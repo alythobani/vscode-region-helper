@@ -1,6 +1,6 @@
 import type * as vscode from "vscode";
 import { type Region } from "../models/Region";
-import { regionBoundaryPatternsByLanguageId } from "./regionBoundaryPatterns";
+import { getRegionBoundaryPatternsByLanguageId } from "./regionBoundaryPatterns";
 
 type InvalidMarker = {
   errorMsg: string;
@@ -11,6 +11,8 @@ type RegionParseResult = {
   topLevelRegions: Region[];
   invalidMarkers: InvalidMarker[];
 };
+
+const regionBoundaryPatternsByLanguageId = getRegionBoundaryPatternsByLanguageId();
 
 export function parseAllRegions(document: vscode.TextDocument): RegionParseResult {
   const topLevelRegions: Region[] = [];
@@ -70,7 +72,7 @@ function getNewRegionFromStartMatch({
   startMatch: RegExpMatchArray;
   startLineIdx: number;
 }): Region {
-  const name = startMatch[1];
+  const name = startMatch[1]?.trim();
   return {
     name,
     startLineIdx,

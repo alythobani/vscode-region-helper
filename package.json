@@ -17,7 +17,11 @@
   ],
   "activationEvents": [
     "onLanguage:typescript",
-    "onLanguage:javascript"
+    "onLanguage:javascript",
+    "onLanguage:python",
+    "onLanguage:cpp",
+    "onLanguage:csharp",
+    "onLanguage:java"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -35,6 +39,81 @@
         "title": "Go to Region"
       }
     ],
+    "configuration": {
+      "title": "Region Helper",
+      "properties": {
+        "region-helper.regionBoundaryPatterns": {
+          "type": "object",
+          "description": "Regular expressions to match region boundaries for different languages.",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "startRegex": {
+                  "type": "string",
+                  "description": "Regular expression string (passed into JavaScript RegExp constructor) to match the start of a region. Should ideally include a capturing group for the region name."
+                },
+                "endRegex": {
+                  "type": "string",
+                  "description": "Regular expression string (passed into JavaScript RegExp constructor) to match the end of a region."
+                }
+              },
+              "required": [
+                "startRegex",
+                "endRegex"
+              ]
+            }
+          },
+          "default": {
+            "typescript": [
+              {
+                "startRegex": "^\\s*\\/\\*\\*?\\s*#region(?:\\s+(.+?))?\\s*\\*\\/",
+                "endRegex": "^\\s*\\/\\*\\*?\\s*#endregion\\s*\\*\\/"
+              },
+              {
+                "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.+?))?$",
+                "endRegex": "^\\s*\\/\\/\\s*#endregion\\s*$"
+              }
+            ],
+            "javascript": [
+              {
+                "startRegex": "^\\s*\\/\\*\\*?\\s*#region(?:\\s+(.+?))?\\s*\\*\\/",
+                "endRegex": "^\\s*\\/\\*\\*?\\s*#endregion\\s*\\*\\/"
+              },
+              {
+                "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.+?))?$",
+                "endRegex": "^\\s*\\/\\/\\s*#endregion\\s*$"
+              }
+            ],
+            "python": [
+              {
+                "startRegex": "^\\s*#\\s*region\\s+(.*)$",
+                "endRegex": "^\\s*#\\s*endregion"
+              }
+            ],
+            "cpp": [
+              {
+                "startRegex": "^\\s*//\\s*#region\\s+(.*)$",
+                "endRegex": "^\\s*//\\s*#endregion"
+              }
+            ],
+            "csharp": [
+              {
+                "startRegex": "^\\s*//\\s*#region\\s+(.*)$",
+                "endRegex": "^\\s*//\\s*#endregion"
+              }
+            ],
+            "java": [
+              {
+                "startRegex": "^\\s*//\\s*#region\\s+(.*)$",
+                "endRegex": "^\\s*//\\s*#endregion"
+              }
+            ]
+          }
+        }
+      }
+    },
     "keybindings": [
       {
         "command": "region-helper.goToRegionBoundary",
