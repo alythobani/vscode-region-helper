@@ -12,7 +12,7 @@ A Visual Studio Code extension for navigating and visualizing code regions in yo
 
 ### 🐇 Go to Region Boundary
 
-- Behaves like Vim’s `%` motion and VSCode's builtin `Go to Bracket` command, but for regions
+- Behaves like VSCode's builtin `Go to Bracket` command, but for regions
   - Jumps between boundaries of the cursor's active region, if the cursor is inside a region
   - Otherwise, jumps to the next region boundary if one exists
 - 📌 **Default keybinding**: `Alt + M`
