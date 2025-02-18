@@ -10,7 +10,7 @@ const testConfig: Configuration = {
   entry: "./src/test/parseAllRegions.test.ts",
 
   output: {
-    path: path.resolve(__dirname, "dist/src/test"),
+    path: path.resolve(__dirname, "dist-tests"),
     filename: "parseAllRegions.test.js",
     libraryTarget: "commonjs2",
   },

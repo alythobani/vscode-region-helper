@@ -145,7 +145,6 @@
     "vscode:prepublish": "npm run compile && npm run lint",
     "compile": "webpack --config webpack.config.ts",
     "watch": "webpack --config webpack.config.ts --watch",
-    "copy-test-samples": "mkdir -p dist/src/test/samples && cp -r src/test/samples dist/src/test/samples",
     "compile-tests": "webpack --config webpack.test.config.ts",
     "watch-tests": "webpack --config webpack.test.config.ts --watch",
     "package": "vsce package",
