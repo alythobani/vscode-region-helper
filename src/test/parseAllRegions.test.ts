@@ -9,13 +9,24 @@ suite("Parse all regions", () => {
 // #region TestRegion
 const x = 42;
 // #endregion
+
+/* #region AnotherRegion */
+class MyClass {
+  // #region InnerRegion
+  method() {}
+  // #endregion
+}
+/* #endregion */
       `,
       "typescript"
     );
 
     const result = parseAllRegions(document);
-    assert.strictEqual(result.topLevelRegions.length, 1);
+    assert.strictEqual(result.topLevelRegions.length, 2);
     assert.strictEqual(result.topLevelRegions[0]?.name, "TestRegion");
+    assert.strictEqual(result.topLevelRegions[1]?.name, "AnotherRegion");
+    assert.strictEqual(result.topLevelRegions[1]?.children.length, 1);
+    assert.strictEqual(result.topLevelRegions[1]?.children[0]?.name, "InnerRegion");
   });
 
   test("Parse Python regions", async () => {
@@ -34,6 +45,27 @@ def foo():
     const result = parseAllRegions(document);
     assert.strictEqual(result.topLevelRegions.length, 1);
     assert.strictEqual(result.topLevelRegions[0]?.children.length, 1);
+    assert.strictEqual(result.topLevelRegions[0]?.children[0]?.name, "InnerRegion");
+  });
+
+  test("Parse C# regions", async () => {
+    const document = await createTestDocument(
+      `
+// #region OuterRegion
+class MyClass {
+    // #region InnerRegion
+    void MyMethod() {}
+    // #endregion
+}
+// #endregion
+      `,
+      "csharp"
+    );
+
+    const result = parseAllRegions(document);
+    assert.strictEqual(result.topLevelRegions.length, 1);
+    assert.strictEqual(result.topLevelRegions[0]?.children.length, 1);
+    assert.strictEqual(result.topLevelRegions[0]?.children[0]?.name, "InnerRegion");
   });
 });
 
