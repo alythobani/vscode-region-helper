@@ -1,17 +1,25 @@
 import CopyWebpackPlugin from "copy-webpack-plugin";
+import { glob } from "glob";
 import path from "path";
 import type { Configuration } from "webpack";
+
+const testFilePaths = glob.sync("./src/test/**/*.test.ts");
 
 const testConfig: Configuration = {
   name: "test",
   target: "node",
   mode: "none",
 
-  entry: "./src/test/parseAllRegions.test.ts",
+  entry: Object.fromEntries(
+    testFilePaths.map((testFilePath) => [
+      testFilePath.replace("src/test/", "").replace(".ts", ""),
+      path.resolve(__dirname, testFilePath),
+    ])
+  ),
 
   output: {
     path: path.resolve(__dirname, "dist-tests"),
-    filename: "parseAllRegions.test.js",
+    filename: "[name].js",
     libraryTarget: "commonjs2",
   },
 
