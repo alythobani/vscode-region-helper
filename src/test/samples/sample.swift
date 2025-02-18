@@ -1,15 +1,17 @@
+import Foundation
+
 // #region FirstRegion
-int x = 42;
+let x = 42
 // #endregion
 
 // #region SecondRegion
 class MyClass {
     // #region InnerRegion
-    void MyMethod() {}
+    func myMethod() {}
     // #endregion
 
-    // #region
-    void MyMethod2() {}
-    // #endregion
+    /** #region */
+    func myMethod2() {}
+    /* #endregion */
 }
 // #endregion

@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    // #region FirstRegion
+    "target": "ESNext",
+    "module": "CommonJS"
+    // #endregion
+  },
+  // #region SecondRegion
+  "exclude": ["node_modules"],
+  "include": ["src"],
+  //   #region InnerRegion
+  "strict": true,
+  // #endregion
+  "strictNullChecks": true,
+  // #region
+  "alwaysStrict": true
+  // #endregion
+  // #endregion
+}

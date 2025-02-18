@@ -7,5 +7,9 @@ class MyClass {
   // #region InnerRegion
   method() {}
   // #endregion
+
+  /* #region */
+  method2() {}
+  /* #endregion */
 }
-/* #endregion */
+/** #endregion */

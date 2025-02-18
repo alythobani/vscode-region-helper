@@ -1,0 +1,19 @@
+#region FirstRegion
+type User {
+  id: ID!
+  name: String!
+}
+#endregion
+
+#region SecondRegion
+type Query {
+  users: [User!]!
+  #region InnerRegion
+  user(id: ID!): User
+  #endregion
+  allPosts: [Post!]!
+  #region
+  getSettings: Settings
+  #endregion
+}
+#endregion

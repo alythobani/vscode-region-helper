@@ -1,15 +1,15 @@
 // #region FirstRegion
-int x = 42;
+let x = 42
 // #endregion
 
 // #region SecondRegion
-class MyClass {
+type MyClass() =
     // #region InnerRegion
-    void MyMethod() {}
+    member this.MyMethod() = ()
     // #endregion
 
     // #region
-    void MyMethod2() {}
+    member this.MyOtherMethod() = ()
     // #endregion
-}
 // #endregion
+

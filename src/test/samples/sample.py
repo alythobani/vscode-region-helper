@@ -1,11 +1,16 @@
-# region FirstRegion
+#region FirstRegion
 x = 42
-# endregion
+#endregion
 
 # region SecondRegion
 class MyClass:
-    # region InnerRegion
+    #  region InnerRegion
     def method(self):
+        pass
+    #          endregion
+
+    #region
+    def method2(self):
         pass
     # endregion
 

@@ -1,15 +1,17 @@
+<?php
 // #region FirstRegion
-int x = 42;
+$x = 42;
 // #endregion
 
 // #region SecondRegion
 class MyClass {
     // #region InnerRegion
-    void MyMethod() {}
+    public function myMethod() {}
     // #endregion
 
     // #region
-    void MyMethod2() {}
+    public function myMethod2() {}
     // #endregion
 }
 // #endregion
+?>

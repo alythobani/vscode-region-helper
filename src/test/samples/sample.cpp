@@ -1,3 +1,5 @@
+#include <iostream>
+
 // #region FirstRegion
 int x = 42;
 // #endregion
@@ -5,11 +7,11 @@ int x = 42;
 // #region SecondRegion
 class MyClass {
     // #region InnerRegion
-    void MyMethod() {}
+    void myMethod() {}
     // #endregion
 
     // #region
-    void MyMethod2() {}
+    void myMethod2() {}
     // #endregion
-}
+};
 // #endregion
