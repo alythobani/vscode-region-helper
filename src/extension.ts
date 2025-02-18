@@ -1,8 +1,5 @@
 import * as vscode from "vscode";
-import {
-  goToMatchingRegionBoundary,
-  goToMatchingRegionBoundaryCommandId,
-} from "./commands/goToMatchingRegionBoundary";
+import { goToRegionBoundary, goToRegionBoundaryCommandId } from "./commands/goToRegionBoundary";
 import {
   goToRegionFromQuickPick,
   goToRegionFromQuickPickCommandId,
@@ -24,9 +21,7 @@ export function activate(context: vscode.ExtensionContext): void {
   regionTreeViewProvider.setTreeView(treeView);
 
   registerCommand(goToRegionTreeItemCommandId, goToRegionTreeItem);
-  registerCommand(goToMatchingRegionBoundaryCommandId, () =>
-    goToMatchingRegionBoundary(regionStore)
-  );
+  registerCommand(goToRegionBoundaryCommandId, () => goToRegionBoundary(regionStore));
   registerCommand(selectCurrentRegionCommandId, () => selectCurrentRegion(regionStore));
   registerCommand(goToRegionFromQuickPickCommandId, () =>
     goToRegionFromQuickPick(regionStore, context.subscriptions)

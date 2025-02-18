@@ -23,8 +23,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "region-helper.goToMatchingRegionBoundary",
-        "title": "Go to Matching Region Boundary"
+        "command": "region-helper.goToRegionBoundary",
+        "title": "Go to Region Boundary"
       },
       {
         "command": "region-helper.selectCurrentRegion",
@@ -37,7 +37,7 @@
     ],
     "keybindings": [
       {
-        "command": "region-helper.goToMatchingRegionBoundary",
+        "command": "region-helper.goToRegionBoundary",
         "key": "alt+m",
         "when": "editorTextFocus"
       },
