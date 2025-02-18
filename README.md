@@ -1,6 +1,6 @@
 # Region Helper
 
-A VSCode extension for navigating and visualizing code regions in your files. Provides an interactive tree view and convenience commands for jumping between, searching, and selecting regions in your files.
+A Visual Studio Code extension for navigating and visualizing code regions in your files. Provides an interactive tree view and convenience commands for jumping between, searching, and selecting regions in your files.
 
 ## Features
 
