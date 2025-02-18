@@ -1,8 +1,8 @@
 import * as vscode from "vscode";
-import { getCursorActiveLineIdx } from "./getCursorActiveLineIdx";
+import { getActiveCursorLineIdx } from "./getActiveCursorLineIdx";
 
 export function scrollCurrentLineIntoView(editor: vscode.TextEditor): void {
-  const currentLineIdx = getCursorActiveLineIdx(editor);
+  const currentLineIdx = getActiveCursorLineIdx(editor);
   scrollLineIntoView(editor, currentLineIdx);
 }
 

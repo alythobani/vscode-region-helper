@@ -1,8 +1,7 @@
 import * as vscode from "vscode";
 import { type Region } from "../models/Region";
 import { type RegionStore } from "../state/RegionStore";
-import { getCursorActiveLineIdx } from "../utils/getCursorActiveLineIdx";
-import { getCursorActiveRegion } from "../utils/getCursorActiveRegion";
+import { getActiveRegionInEditor } from "../utils/getActiveRegion";
 import {
   clearHighlightedRegions,
   highlightAndScrollRegionIntoView,
@@ -67,8 +66,7 @@ function getCurrentActiveRegionQuickPickItem({
   regionQuickPickItems: RegionQuickPickItem[];
   activeTextEditor: vscode.TextEditor;
 }): RegionQuickPickItem | undefined {
-  const currentLineIdx = getCursorActiveLineIdx(activeTextEditor);
-  const currentActiveRegion = getCursorActiveRegion(topLevelRegions, currentLineIdx);
+  const currentActiveRegion = getActiveRegionInEditor(topLevelRegions, activeTextEditor);
   return currentActiveRegion
     ? regionQuickPickItems.find((item) => item.startLineIdx === currentActiveRegion.startLineIdx)
     : regionQuickPickItems[0];

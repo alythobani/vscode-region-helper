@@ -1,31 +1,35 @@
 import * as vscode from "vscode";
+import { type Region } from "../models/Region";
 import { type RegionStore } from "../state/RegionStore";
-import { getCursorActiveLineIdx } from "../utils/getCursorActiveLineIdx";
-import { getCursorActiveRegion } from "../utils/getCursorActiveRegion";
+import { getActiveCursorLineIdx } from "../utils/getActiveCursorLineIdx";
+import { getActiveRegionAtLine } from "../utils/getActiveRegion";
 import { moveCursorToFirstNonWhitespaceCharOfLine } from "../utils/moveCursorToFirstNonWhitespaceOfLine";
 
 export const goToMatchingRegionBoundaryCommandId = "region-helper.goToMatchingRegionBoundary";
 
 export function goToMatchingRegionBoundary(regionStore: RegionStore): void {
-  const editor = vscode.window.activeTextEditor;
-  if (!editor) {
+  const { activeTextEditor } = vscode.window;
+  if (!activeTextEditor) {
     return;
   }
 
-  const cursorLine = getCursorActiveLineIdx(editor);
-  const mostNestedRegion = getCursorActiveRegion(regionStore.topLevelRegions, cursorLine);
-  if (!mostNestedRegion) {
+  const cursorLine = getActiveCursorLineIdx(activeTextEditor);
+  const activeRegion = getActiveRegionAtLine(regionStore.topLevelRegions, cursorLine);
+  if (!activeRegion) {
     return;
   }
 
-  let targetLine: number;
-  if (cursorLine === mostNestedRegion.startLineIdx) {
-    targetLine = mostNestedRegion.endLineIdx; // Jump to matching #endregion
-  } else if (cursorLine === mostNestedRegion.endLineIdx) {
-    targetLine = mostNestedRegion.startLineIdx; // Jump to matching #region
-  } else {
-    targetLine = mostNestedRegion.endLineIdx; // Inside the region, jump to its end
-  }
+  const regionBoundaryLine = getRegionBoundaryLineForJump(activeRegion, cursorLine);
+  moveCursorToFirstNonWhitespaceCharOfLine(activeTextEditor, regionBoundaryLine);
+}
 
-  moveCursorToFirstNonWhitespaceCharOfLine(editor, targetLine);
+function getRegionBoundaryLineForJump(activeRegion: Region, cursorLine: number): number {
+  const { startLineIdx, endLineIdx } = activeRegion;
+  if (cursorLine === startLineIdx) {
+    return endLineIdx;
+  }
+  if (cursorLine === endLineIdx) {
+    return startLineIdx;
+  }
+  return endLineIdx;
 }

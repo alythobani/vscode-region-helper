@@ -1,22 +1,21 @@
 import * as vscode from "vscode";
 import { type RegionStore } from "../state/RegionStore";
-import { getCursorActiveLineIdx } from "../utils/getCursorActiveLineIdx";
-import { getCursorActiveRegion } from "../utils/getCursorActiveRegion";
+import { getActiveRegionInEditor } from "../utils/getActiveRegion";
 import { selectLines } from "../utils/selectionUtils";
 
 export const selectCurrentRegionCommandId = "region-helper.selectCurrentRegion";
 
 export function selectCurrentRegion(regionStore: RegionStore): void {
-  const editor = vscode.window.activeTextEditor;
-  if (!editor) {
+  const { activeTextEditor } = vscode.window;
+  if (!activeTextEditor) {
     return;
   }
 
-  const cursorLineIdx = getCursorActiveLineIdx(editor);
-  const currentActiveRegion = getCursorActiveRegion(regionStore.topLevelRegions, cursorLineIdx);
+  const { topLevelRegions } = regionStore;
+  const currentActiveRegion = getActiveRegionInEditor(topLevelRegions, activeTextEditor);
   if (!currentActiveRegion) {
     return;
   }
   const { startLineIdx, endLineIdx } = currentActiveRegion;
-  selectLines({ editor, startLineIdx, endLineIdx });
+  selectLines({ activeTextEditor, startLineIdx, endLineIdx });
 }

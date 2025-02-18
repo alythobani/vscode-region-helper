@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
 import { type Region } from "../models/Region";
 import { type RegionStore } from "../state/RegionStore";
-import { getCursorActiveRegion } from "../utils/getCursorActiveRegion";
 import { RegionTreeItem } from "./RegionTreeItem";
 
 export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
@@ -16,16 +15,16 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
 
   private registerListeners(subscriptions: vscode.Disposable[]): void {
     this.registerRegionsChangeListener(subscriptions);
-    this.registerSelectionChangeListener(subscriptions);
+    this.registerActiveRegionChangeListener(subscriptions);
   }
 
   private registerRegionsChangeListener(subscriptions: vscode.Disposable[]): void {
     this.regionStore.onDidChangeRegions(() => this.onRegionsChange(), undefined, subscriptions);
   }
 
-  private registerSelectionChangeListener(subscriptions: vscode.Disposable[]): void {
-    vscode.window.onDidChangeTextEditorSelection(
-      (event) => this.onSelectionChange(event),
+  private registerActiveRegionChangeListener(subscriptions: vscode.Disposable[]): void {
+    this.regionStore.onDidChangeActiveRegion(
+      () => this.onActiveRegionChange(),
       undefined,
       subscriptions
     );
@@ -33,13 +32,18 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
 
   private onRegionsChange(): void {
     this._onDidChangeTreeData.fire(undefined);
+  }
+
+  private onActiveRegionChange(): void {
     this.highlightActiveRegion();
   }
 
-  private onSelectionChange(event: vscode.TextEditorSelectionChangeEvent): void {
-    if (event.textEditor === vscode.window.activeTextEditor) {
-      this.highlightActiveRegion();
+  private highlightActiveRegion(): void {
+    const { currentActiveRegion } = this.regionStore;
+    if (!this.treeView || !currentActiveRegion) {
+      return;
     }
+    this.treeView.reveal(currentActiveRegion, { select: true, focus: false });
   }
 
   getTreeItem(region: Region): vscode.TreeItem {
@@ -56,17 +60,5 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
 
   setTreeView(treeView: vscode.TreeView<Region>): void {
     this.treeView = treeView;
-  }
-
-  private highlightActiveRegion(): void {
-    if (!this.treeView || !vscode.window.activeTextEditor) {
-      return;
-    }
-    const cursorLine = vscode.window.activeTextEditor.selection.active.line;
-    const activeRegion = getCursorActiveRegion(this.regionStore.topLevelRegions, cursorLine);
-    if (!activeRegion) {
-      return;
-    }
-    this.treeView.reveal(activeRegion, { select: true, focus: false });
   }
 }
