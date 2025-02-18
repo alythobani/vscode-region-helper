@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { moveCursorToFirstNonWhitespaceCharOfLine } from "../lib/moveCursorToFirstNonWhitespaceOfLine";
+import { moveCursorToFirstNonWhitespaceCharOfLine } from "../utils/moveCursorToFirstNonWhitespaceOfLine";
 
 export const goToRegionTreeItemCommandId = "region-helper.goToRegionTreeItem";
 

@@ -1,8 +1,8 @@
 import * as vscode from "vscode";
-import { getCursorActiveLineIdx } from "../lib/getCursorActiveLineIdx";
-import { getCursorActiveRegion } from "../lib/getCursorActiveRegion";
-import { selectLines } from "../lib/utils/selectionUtils";
 import { type RegionStore } from "../state/RegionStore";
+import { getCursorActiveLineIdx } from "../utils/getCursorActiveLineIdx";
+import { getCursorActiveRegion } from "../utils/getCursorActiveRegion";
+import { selectLines } from "../utils/selectionUtils";
 
 export const selectCurrentRegionCommandId = "region-helper.selectCurrentRegion";
 

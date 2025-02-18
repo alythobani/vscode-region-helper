@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
-import { getCursorActiveRegion } from "../lib/getCursorActiveRegion";
 import { type Region } from "../models/Region";
 import { type RegionStore } from "../state/RegionStore";
+import { getCursorActiveRegion } from "../utils/getCursorActiveRegion";
 import { RegionTreeItem } from "./RegionTreeItem";
 
 export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {

@@ -1,11 +1,14 @@
 import * as vscode from "vscode";
-import { getCursorActiveLineIdx } from "../lib/getCursorActiveLineIdx";
-import { getCursorActiveRegion } from "../lib/getCursorActiveRegion";
-import { clearHighlightedRegions, highlightAndScrollRegionIntoView } from "../lib/highlightRegion";
-import { moveCursorToFirstNonWhitespaceCharOfLine } from "../lib/moveCursorToFirstNonWhitespaceOfLine";
-import { scrollCurrentLineIntoView } from "../lib/scrollUtils";
 import { type Region } from "../models/Region";
 import { type RegionStore } from "../state/RegionStore";
+import { getCursorActiveLineIdx } from "../utils/getCursorActiveLineIdx";
+import { getCursorActiveRegion } from "../utils/getCursorActiveRegion";
+import {
+  clearHighlightedRegions,
+  highlightAndScrollRegionIntoView,
+} from "../utils/highlightRegion";
+import { moveCursorToFirstNonWhitespaceCharOfLine } from "../utils/moveCursorToFirstNonWhitespaceOfLine";
+import { scrollCurrentLineIntoView } from "../utils/scrollUtils";
 
 type RegionQuickPickItem = vscode.QuickPickItem & { startLineIdx: number; endLineIdx: number };
 

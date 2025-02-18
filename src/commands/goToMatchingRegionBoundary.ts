@@ -1,8 +1,8 @@
 import * as vscode from "vscode";
-import { getCursorActiveLineIdx } from "../lib/getCursorActiveLineIdx";
-import { getCursorActiveRegion } from "../lib/getCursorActiveRegion";
-import { moveCursorToFirstNonWhitespaceCharOfLine } from "../lib/moveCursorToFirstNonWhitespaceOfLine";
 import { type RegionStore } from "../state/RegionStore";
+import { getCursorActiveLineIdx } from "../utils/getCursorActiveLineIdx";
+import { getCursorActiveRegion } from "../utils/getCursorActiveRegion";
+import { moveCursorToFirstNonWhitespaceCharOfLine } from "../utils/moveCursorToFirstNonWhitespaceOfLine";
 
 export const goToMatchingRegionBoundaryCommandId = "region-helper.goToMatchingRegionBoundary";
 
