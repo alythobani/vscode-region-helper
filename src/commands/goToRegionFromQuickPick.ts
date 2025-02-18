@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
 import { type Region } from "../models/Region";
 import { type RegionStore } from "../state/RegionStore";
-import { getActiveRegionInEditor } from "../utils/getActiveRegion";
 import {
   clearHighlightedRegions,
   highlightAndScrollRegionIntoView,
@@ -23,13 +22,9 @@ export function goToRegionFromQuickPick(
   }
 
   const regionQuickPick = vscode.window.createQuickPick<RegionQuickPickItem>();
-  const { topLevelRegions } = regionStore;
+  const { topLevelRegions, activeRegion } = regionStore;
   const regionQuickPickItems = getRegionQuickPickItems(topLevelRegions);
-  const initialActiveItem = getCurrentActiveRegionQuickPickItem({
-    topLevelRegions,
-    regionQuickPickItems,
-    activeTextEditor,
-  });
+  const initialActiveItem = getActiveRegionQuickPickItem({ activeRegion, regionQuickPickItems });
   initializeRegionQuickPick({
     regionQuickPick,
     regionQuickPickItems,
@@ -51,24 +46,21 @@ function getRegionQuickPickItems(regions: Region[]): RegionQuickPickItem[] {
 }
 
 function makeRegionQuickPickItem(region: Region): RegionQuickPickItem {
-  const label = region.name ?? "(Unnamed Region)";
-  const { startLineIdx, endLineIdx } = region;
+  const { name, startLineIdx, endLineIdx } = region;
+  const label = name ?? "(Unnamed Region)";
   const description = `Line ${startLineIdx + 1} to ${endLineIdx + 1}`;
   return { label, description, startLineIdx, endLineIdx };
 }
 
-function getCurrentActiveRegionQuickPickItem({
-  topLevelRegions,
+function getActiveRegionQuickPickItem({
+  activeRegion,
   regionQuickPickItems,
-  activeTextEditor,
 }: {
-  topLevelRegions: Region[];
+  activeRegion: Region | undefined;
   regionQuickPickItems: RegionQuickPickItem[];
-  activeTextEditor: vscode.TextEditor;
 }): RegionQuickPickItem | undefined {
-  const currentActiveRegion = getActiveRegionInEditor(topLevelRegions, activeTextEditor);
-  return currentActiveRegion
-    ? regionQuickPickItems.find((item) => item.startLineIdx === currentActiveRegion.startLineIdx)
+  return activeRegion
+    ? regionQuickPickItems.find((item) => item.startLineIdx === activeRegion.startLineIdx)
     : regionQuickPickItems[0];
 }
 

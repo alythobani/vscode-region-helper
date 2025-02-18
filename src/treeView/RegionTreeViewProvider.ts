@@ -39,11 +39,11 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
   }
 
   private highlightActiveRegion(): void {
-    const { currentActiveRegion } = this.regionStore;
-    if (!this.treeView || !currentActiveRegion) {
+    const { activeRegion } = this.regionStore;
+    if (!this.treeView || !activeRegion) {
       return;
     }
-    this.treeView.reveal(currentActiveRegion, { select: true, focus: false });
+    this.treeView.reveal(activeRegion, { select: true, focus: false });
   }
 
   getTreeItem(region: Region): vscode.TreeItem {

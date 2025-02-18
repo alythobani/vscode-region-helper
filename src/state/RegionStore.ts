@@ -8,7 +8,7 @@ export class RegionStore {
   private _onDidChangeRegions = new vscode.EventEmitter<void>();
   readonly onDidChangeRegions = this._onDidChangeRegions.event;
 
-  private _currentActiveRegion: Region | undefined = undefined;
+  private _activeRegion: Region | undefined = undefined;
   private _onDidChangeActiveRegion = new vscode.EventEmitter<void>();
   readonly onDidChangeActiveRegion = this._onDidChangeActiveRegion.event;
 
@@ -71,9 +71,9 @@ export class RegionStore {
   }
 
   private refreshActiveRegion(): void {
-    const oldActiveRegion = this._currentActiveRegion;
-    this._currentActiveRegion = getActiveRegion(this._topLevelRegions);
-    if (this._currentActiveRegion !== oldActiveRegion) {
+    const oldActiveRegion = this._activeRegion;
+    this._activeRegion = getActiveRegion(this._topLevelRegions);
+    if (this._activeRegion !== oldActiveRegion) {
       this._onDidChangeActiveRegion.fire();
     }
   }
@@ -82,7 +82,7 @@ export class RegionStore {
     return this._topLevelRegions;
   }
 
-  get currentActiveRegion(): Region | undefined {
-    return this._currentActiveRegion;
+  get activeRegion(): Region | undefined {
+    return this._activeRegion;
   }
 }
