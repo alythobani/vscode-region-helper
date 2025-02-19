@@ -1,20 +1,20 @@
 # Sample markdown file
 
-<!-- #region FirstRegion -->
+<!--#region FirstRegion-->
 Some markdown content here...
-<!-- #endregion -->
+<!--#endregion-->
 
 <!-- #region SecondRegion -->
 More markdown...
 
-<!-- #region InnerRegion -->
+<!--   #region   InnerRegion    -->
 Inner markdown region.
-<!-- #endregion -->
+<!--  #endregion   ends InnerRegion  -->
 
-<!-- #region -->
+<!--  #region  -->
 
 Unnamed region.
 
-<!-- #endregion-->
+<!--#endregion-->
 
-<!-- #endregion -->
+<!--  #endregion -->

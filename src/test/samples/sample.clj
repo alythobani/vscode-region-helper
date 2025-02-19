@@ -1,16 +1,16 @@
-;; #region FirstRegion
+;#region FirstRegion
 (def x 42)
-;; #endregion
+;;#endregion
 
-;;   #region SecondRegion
+;;;;   #region SecondRegion  
 (defn my-class []
-    ;; #region InnerRegion
+    ;   #region    InnerRegion   
     (defn my-method [] nil)
-    ;; #endregion
+    ;;   #endregion    ends InnerRegion  
 
-    ;;   #region
+    ;;   #region  
     (defn my-method2 [] nil)
-    ;; #endregion
+    ;;#endregion  
 )
 ;; #endregion
 

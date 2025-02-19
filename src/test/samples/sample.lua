@@ -1,16 +1,16 @@
--- #region FirstRegion
+--#region FirstRegion
 local x = 42
--- #endregion
+--#endregion
 
--- #region SecondRegion
+-- #region SecondRegion  
 MyClass = {}
 function MyClass:method()
-  -- #region InnerRegion
+    --    #region   InnerRegion  
   print("Hello")
-  -- #endregion
+    --         #endregion    ends InnerRegion  
 
-  --   #region
+  --  #region  
     print("Unnamed region")
-    --   #endregion
+--#endregion  
 end
 -- #endregion

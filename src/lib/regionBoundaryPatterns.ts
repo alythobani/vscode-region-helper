@@ -1,52 +1,47 @@
 import * as vscode from "vscode";
 
+type LanguageId = string;
+
 type RegionBoundaryPattern = {
-  /** The regular expression that matches the start of a region. Should capture the name of the region. */
+  /** The regular expression that matches the start of a region. Should ideally capture the name of the region. */
   startRegex: RegExp;
   /** The regular expression that matches the end of a region. */
   endRegex: RegExp;
 };
+type RegionBoundaryPatternMap = Record<LanguageId, RegionBoundaryPattern>;
 
-type LanguageId = string;
-
-type BoundaryPatternConfig = {
+type RawRegionBoundaryPattern = {
   startRegex: string;
   endRegex: string;
 };
+type RegionBoundaryPatternsConfig = Record<LanguageId, RawRegionBoundaryPattern>;
 
-export function getRegionBoundaryPatternsByLanguageId(): Record<
-  LanguageId,
-  RegionBoundaryPattern[]
-> {
-  const config = vscode.workspace.getConfiguration("region-helper");
-  const rawPatterns = config.get<Record<string, BoundaryPatternConfig[]>>(
-    "regionBoundaryPatterns",
-    {}
-  );
-  return parseRegionBoundaryPatterns(rawPatterns);
+export function getRegionBoundaryPatternMap(): RegionBoundaryPatternMap {
+  const rawBoundaryPatternByLanguageId = getRegionBoundaryPatternsConfig();
+  return parseLanguagePatternsConfig(rawBoundaryPatternByLanguageId);
 }
 
-function parseRegionBoundaryPatterns(
-  rawPatterns: Record<LanguageId, BoundaryPatternConfig[]>
-): Record<string, RegionBoundaryPattern[]> {
-  const parsedPatterns: Record<LanguageId, RegionBoundaryPattern[]> = {};
+function getRegionBoundaryPatternsConfig(): RegionBoundaryPatternsConfig {
+  const config = vscode.workspace.getConfiguration("region-helper");
+  return config.get("regionBoundaryPatternByLanguageId", {});
+}
 
-  for (const [languageId, languagePatterns] of Object.entries(rawPatterns)) {
-    parsedPatterns[languageId] = [];
-    for (const pattern of languagePatterns) {
-      const parsedPattern = parseRegionBoundaryPattern(pattern, languageId);
-      if (!parsedPattern) {
-        continue;
-      }
-      parsedPatterns[languageId].push(parsedPattern);
+function parseLanguagePatternsConfig(
+  rawBoundaryPatternByLanguageId: RegionBoundaryPatternsConfig
+): RegionBoundaryPatternMap {
+  const parsedPatternByLanguageId: RegionBoundaryPatternMap = {};
+  for (const [languageId, pattern] of Object.entries(rawBoundaryPatternByLanguageId)) {
+    const parsedPattern = parseRegionBoundaryPattern(pattern, languageId);
+    if (!parsedPattern) {
+      continue;
     }
+    parsedPatternByLanguageId[languageId] = parsedPattern;
   }
-
-  return parsedPatterns;
+  return parsedPatternByLanguageId;
 }
 
 function parseRegionBoundaryPattern(
-  rawPattern: BoundaryPatternConfig,
+  rawPattern: RawRegionBoundaryPattern,
   languageId: string
 ): RegionBoundaryPattern | undefined {
   try {
@@ -55,7 +50,7 @@ function parseRegionBoundaryPattern(
       endRegex: new RegExp(rawPattern.endRegex),
     };
   } catch (e) {
-    console.error(`Failed to parse region boundary pattern for language "${languageId}"`, e);
+    console.error(`Failed to parse region boundary pattern for language '${languageId}'`, e);
     return undefined;
   }
 }

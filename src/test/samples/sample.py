@@ -4,10 +4,10 @@ x = 42
 
 # region SecondRegion
 class MyClass:
-    #  region InnerRegion
+    #  region    InnerRegion
     def method(self):
         pass
-    #          endregion
+    #          endregion   ends InnerRegion
 
     #region
     def method2(self):

@@ -1,25 +1,23 @@
-// #region FirstRegion
+//#region FirstRegion
 const x: number = 42;
-// #endregion
+//#endregion
 
-/* #region SecondRegion */
+// #region SecondRegion
 class MyComponent extends React.Component {
+  //   #region    InnerRegion
   render(): JSX.Element {
     return (
       <div>
-        Hello
-        {/* #region InnerRegion */}
-        <span>World</span>
-        {/**  #endregion  */}
+        Hello <span>World</span>
       </div>
     );
   }
-  // #endregion
+  //  #endregion   ends InnerRegion
 
   //  #region
   render2(): JSX.Element {
     return <div>Unnamed region</div>;
   }
-  // #endregion
+  //#endregion
 }
-/**  #endregion  */
+// #endregion

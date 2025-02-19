@@ -2,16 +2,20 @@ package main
 
 import "fmt"
 
-// #region FirstRegion
+//#region FirstRegion
 var x = 42
-// #endregion
+//#endregion
 
-// #region SecondRegion
+// #region      SecondRegion
 type MyClass struct{}
 
 // #region InnerRegion
 func (m MyClass) myMethod() {}
-// #endregion
+        //        #endregion ends InnerRegion
+
+        // #region
+func (m MyClass) myMethod2() {}
+//#endregion
 
 // #endregion
 

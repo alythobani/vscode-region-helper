@@ -1,17 +1,17 @@
 <?php
-// #region FirstRegion
+//#region FirstRegion
 $x = 42;
-// #endregion
+//   #endregion
 
 // #region SecondRegion
 class MyClass {
-    // #region InnerRegion
+    // #region   InnerRegion
     public function myMethod() {}
-    // #endregion
+    //#endregion    ends InnerRegion
 
     // #region
     public function myMethod2() {}
-    // #endregion
+    //      #endregion
 }
 // #endregion
 ?>

@@ -4,12 +4,12 @@ int x = 42;
 
 // #region SecondRegion
 class MyClass {
-    // #region InnerRegion
+    //  #region InnerRegion  
     void MyMethod() {}
-    // #endregion
+    //#endregion   ends  InnerRegion 
 
     // #region
     void MyMethod2() {}
-    // #endregion
+    //    #endregion  
 }
 // #endregion

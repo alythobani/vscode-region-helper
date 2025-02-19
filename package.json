@@ -16,12 +16,7 @@
     "Visualization"
   ],
   "activationEvents": [
-    "onLanguage:typescript",
-    "onLanguage:javascript",
-    "onLanguage:python",
-    "onLanguage:cpp",
-    "onLanguage:csharp",
-    "onLanguage:java"
+    "onLanguage"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -42,74 +37,227 @@
     "configuration": {
       "title": "Region Helper",
       "properties": {
-        "region-helper.regionBoundaryPatterns": {
+        "region-helper.regionBoundaryPatternByLanguageId": {
           "type": "object",
-          "description": "Regular expressions to match region boundaries for different languages.",
+          "description": "Regular expression strings to match region boundaries for different languages.",
           "additionalProperties": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "startRegex": {
-                  "type": "string",
-                  "description": "Regular expression string (passed into JavaScript RegExp constructor) to match the start of a region. Should ideally include a capturing group for the region name."
-                },
-                "endRegex": {
-                  "type": "string",
-                  "description": "Regular expression string (passed into JavaScript RegExp constructor) to match the end of a region."
-                }
+            "type": "object",
+            "properties": {
+              "startRegex": {
+                "type": "string",
+                "description": "Regular expression string (passed into JavaScript RegExp constructor) to match the start of a region. Should ideally include a capturing group for the region name."
               },
-              "required": [
-                "startRegex",
-                "endRegex"
-              ]
-            }
+              "endRegex": {
+                "type": "string",
+                "description": "Regular expression string (passed into JavaScript RegExp constructor) to match the end of a region."
+              }
+            },
+            "required": [
+              "startRegex",
+              "endRegex"
+            ]
           },
           "default": {
-            "typescript": [
-              {
-                "startRegex": "^\\s*\\/\\*\\*?\\s*#region(?:\\s+(.+?))?\\s*\\*\\/",
-                "endRegex": "^\\s*\\/\\*\\*?\\s*#endregion\\s*\\*\\/"
-              },
-              {
-                "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.+?))?$",
-                "endRegex": "^\\s*\\/\\/\\s*#endregion\\s*$"
-              }
-            ],
-            "javascript": [
-              {
-                "startRegex": "^\\s*\\/\\*\\*?\\s*#region(?:\\s+(.+?))?\\s*\\*\\/",
-                "endRegex": "^\\s*\\/\\*\\*?\\s*#endregion\\s*\\*\\/"
-              },
-              {
-                "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.+?))?$",
-                "endRegex": "^\\s*\\/\\/\\s*#endregion\\s*$"
-              }
-            ],
-            "python": [
-              {
-                "startRegex": "^\\s*#\\s*region\\s+(.*)$",
-                "endRegex": "^\\s*#\\s*endregion"
-              }
-            ],
-            "cpp": [
-              {
-                "startRegex": "^\\s*//\\s*#region\\s+(.*)$",
-                "endRegex": "^\\s*//\\s*#endregion"
-              }
-            ],
-            "csharp": [
-              {
-                "startRegex": "^\\s*//\\s*#region\\s+(.*)$",
-                "endRegex": "^\\s*//\\s*#endregion"
-              }
-            ],
-            "java": [
-              {
-                "startRegex": "^\\s*//\\s*#region\\s+(.*)$",
-                "endRegex": "^\\s*//\\s*#endregion"
-              }
-            ]
+            "c": {
+              "startRegex": "^\\s*\\/\\/\\s*#region\\s+(.*)$",
+              "endRegex": "^\\s*\\/\\/\\s*#endregion"
+            },
+            "clojure": {
+              "startRegex": "^\\s*;+\\s*#region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*;+\\s*#endregion(?:\\s.*)?$"
+            },
+            "cpp": {
+              "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
+            },
+            "csharp": {
+              "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
+            },
+            "css": {
+              "startRegex": "^\\s*\\/\\/\\s*#region\\s+(.*)$",
+              "endRegex": "^\\s*\\/\\/\\s*#endregion"
+            },
+            "dart": {
+              "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
+            },
+            "dockercompose": {
+              "startRegex": "^\\s*#\\s*region\\s+(.*)$",
+              "endRegex": "^\\s*#\\s*endregion"
+            },
+            "dockerfile": {
+              "startRegex": "^\\s*#\\s*region\\s+(.*)$",
+              "endRegex": "^\\s*#\\s*endregion"
+            },
+            "elixir": {
+              "startRegex": "^\\s*#\\s*region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*#\\s*endregion(?:\\s.*)?"
+            },
+            "erlang": {
+              "startRegex": "^\\s*%+\\s*#region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*%+\\s*#endregion(?:\\s.*)?$"
+            },
+            "fsharp": {
+              "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
+            },
+            "go": {
+              "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
+            },
+            "graphql": {
+              "startRegex": "^\\s*#\\s*region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*#\\s*endregion(?:\\s.*)?"
+            },
+            "haskell": {
+              "startRegex": "^\\s*--\\s+#region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*--\\s+#endregion(?:\\s.*)?$"
+            },
+            "html": {
+              "startRegex": "^\\s*<!--\\s*#region(?:\\s+(.*?)\\s*)?-->",
+              "endRegex": "^\\s*<!--\\s*#endregion(?:\\s.*)?-->"
+            },
+            "java": {
+              "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
+            },
+            "javascript": {
+              "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
+            },
+            "javascriptreact": {
+              "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
+            },
+            "json": {
+              "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
+            },
+            "jsonc": {
+              "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
+            },
+            "julia": {
+              "startRegex": "^\\s*#\\s*region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*#\\s*endregion(?:\\s.*)?"
+            },
+            "kotlin": {
+              "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
+            },
+            "less": {
+              "startRegex": "^\\s*\\/\\/\\s*#region\\s+(.*)$",
+              "endRegex": "^\\s*\\/\\/\\s*#endregion"
+            },
+            "lua": {
+              "startRegex": "^\\s*--\\s*#region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*--\\s*#endregion(?:\\s.*)?$"
+            },
+            "makefile": {
+              "startRegex": "^\\s*#\\s*region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*#\\s*endregion(?:\\s.*)?"
+            },
+            "markdown": {
+              "startRegex": "^\\s*<!--\\s*#region(?:\\s+(.*?)\\s*)?-->",
+              "endRegex": "^\\s*<!--\\s*#endregion(?:\\s.*)?-->"
+            },
+            "objective-c": {
+              "startRegex": "^\\s*\\/\\/\\s*#region\\s+(.*)$",
+              "endRegex": "^\\s*\\/\\/\\s*#endregion"
+            },
+            "objective-cpp": {
+              "startRegex": "^\\s*\\/\\/\\s*#region\\s+(.*)$",
+              "endRegex": "^\\s*\\/\\/\\s*#endregion"
+            },
+            "ocaml": {
+              "startRegex": "^\\s*\\(\\*\\s*#region\\s+(.*)$",
+              "endRegex": "^\\s*\\(\\*\\s*#endregion"
+            },
+            "pascal": {
+              "startRegex": "^\\s*\\(\\*\\s*#region\\s+(.*)$",
+              "endRegex": "^\\s*\\(\\*\\s*#endregion"
+            },
+            "perl": {
+              "startRegex": "^\\s*#\\s*region\\s+(.*)$",
+              "endRegex": "^\\s*#\\s*endregion"
+            },
+            "perl6": {
+              "startRegex": "^\\s*#\\s*region\\s+(.*)$",
+              "endRegex": "^\\s*#\\s*endregion"
+            },
+            "php": {
+              "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
+            },
+            "python": {
+              "startRegex": "^\\s*#\\s*region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*#\\s*endregion(?:\\s.*)?"
+            },
+            "r": {
+              "startRegex": "^\\s*#\\s*region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*#\\s*endregion(?:\\s.*)?"
+            },
+            "ruby": {
+              "startRegex": "^\\s*#\\s*region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*#\\s*endregion(?:\\s.*)?"
+            },
+            "rust": {
+              "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
+            },
+            "scss": {
+              "startRegex": "^\\s*\\/\\/\\s*#region\\s+(.*)$",
+              "endRegex": "^\\s*\\/\\/\\s*#endregion"
+            },
+            "shellscript": {
+              "startRegex": "^\\s*#\\s*region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*#\\s*endregion(?:\\s.*)?"
+            },
+            "sql": {
+              "startRegex": "^\\s*--\\s*#region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*--\\s*#endregion(?:\\s.*)?$"
+            },
+            "stylus": {
+              "startRegex": "^\\s*\\/\\/\\s*#region\\s+(.*)$",
+              "endRegex": "^\\s*\\/\\/\\s*#endregion"
+            },
+            "svelte": {
+              "startRegex": "^\\s*\\/\\/\\s*#region\\s+(.*)$",
+              "endRegex": "^\\s*\\/\\/\\s*#endregion"
+            },
+            "swift": {
+              "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
+            },
+            "toml": {
+              "startRegex": "^\\s*#\\s*region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*#\\s*endregion(?:\\s.*)?"
+            },
+            "typescript": {
+              "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
+            },
+            "typescriptreact": {
+              "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
+            },
+            "vue": {
+              "startRegex": "^\\s*\\/\\/\\s*#region\\s+(.*)$",
+              "endRegex": "^\\s*\\/\\/\\s*#endregion"
+            },
+            "vue-html": {
+              "startRegex": "^\\s*<!--\\s*#region\\s+(.*)\\s*-->$",
+              "endRegex": "^\\s*<!--\\s*#endregion\\s*-->$"
+            },
+            "xml": {
+              "startRegex": "^\\s*<!--\\s*#region\\s+(.*)\\s*-->$",
+              "endRegex": "^\\s*<!--\\s*#endregion\\s*-->$"
+            },
+            "yaml": {
+              "startRegex": "^\\s*#\\s*region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*#\\s*endregion(?:\\s.*)?"
+            }
           }
         }
       }
@@ -145,7 +293,7 @@
     "vscode:prepublish": "npm run compile && npm run lint",
     "compile": "webpack --config webpack.config.ts",
     "watch": "webpack --config webpack.config.ts --watch",
-    "compile-tests": "webpack --config webpack.test.config.ts",
+    "compile-tests": "rm -rf dist-tests && webpack --config webpack.test.config.ts",
     "watch-tests": "webpack --config webpack.test.config.ts --watch",
     "package": "vsce package",
     "pretest": "npm run compile-tests && npm run lint",

@@ -6,11 +6,11 @@ all:
 #region SecondRegion
 clean:
 	rm -rf build/
-	#region InnerRegion
+	#      region   InnerRegion  
 	rm -rf logs/
-	#endregion
+	#endregion   ends  InnerRegion 
 	rm -rf temp/
-	#region
+	#region  
 	rm -rf cache/
-	#endregion
-#endregion
+	#   endregion  
+#   endregion

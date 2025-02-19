@@ -4,9 +4,9 @@ x <- 42
 
 # region SecondRegion
 my_function <- function() {
-  #region InnerRegion
+  #region      InnerRegion
   print("Hello")
-  #endregion
+  #endregion      ends InnerRegion
 
  #   region
  print("Unnamed region")

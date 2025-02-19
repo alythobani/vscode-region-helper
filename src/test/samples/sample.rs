@@ -1,19 +1,19 @@
 fn main() {
     // #region FirstRegion
     let x = 42;
-    // #endregion
+    //#endregion
 
-    // #region SecondRegion
+    //    #region SecondRegion
     struct MyClass;
 
     impl MyClass {
         // #region InnerRegion
         fn my_method(&self) {}
-        // #endregion
+        //   #endregion   ends InnerRegion
 
         // #region
         fn my_method2(&self) {}
-        // #endregion
+        //#endregion
     }
-    // #endregion
+    //  #endregion
 }

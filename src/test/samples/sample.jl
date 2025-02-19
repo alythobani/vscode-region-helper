@@ -1,14 +1,14 @@
-# region FirstRegion
+#region FirstRegion
 x = 42
-# endregion
+#endregion
 
-#region SecondRegion
+# region SecondRegion  
 struct MyClass
-  #region InnerRegion
+  #  region    InnerRegion   
   function method()
     println("Hello")
   end
-  #endregion
+  #  endregion    ends InnerRegion
 
     #region
     function method2()
@@ -16,4 +16,4 @@ struct MyClass
     end
     #   endregion
 end
-# endregion
+# endregion  

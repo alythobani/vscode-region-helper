@@ -3,17 +3,17 @@
     // #region FirstRegion
     "target": "ESNext",
     "module": "CommonJS"
-    // #endregion
+    //#endregion
   },
-  // #region SecondRegion
+  //#region SecondRegion
   "exclude": ["node_modules"],
   "include": ["src"],
-  //   #region InnerRegion
+  //   #region        InnerRegion
   "strict": true,
-  // #endregion
+  // #endregion   ends InnerRegion
   "strictNullChecks": true,
   // #region
   "alwaysStrict": true
-  // #endregion
-  // #endregion
+  //  #endregion
+  //#endregion
 }

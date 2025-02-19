@@ -1,17 +1,17 @@
-# region FirstRegion
+#region FirstRegion
 x = 42
 #endregion
 
-#region SecondRegion
+# region SecondRegion
 defmodule MyClass do
-  #region InnerRegion
+  #  region   InnerRegion
   def my_method do
   end
-  # endregion
+  #   endregion   ends InnerRegion
 
-  #   region
+  #region
   def my_method2 do
   end
-  #endregion
+    #     endregion
 end
 #  endregion

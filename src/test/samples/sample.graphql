@@ -5,15 +5,15 @@ type User {
 }
 #endregion
 
-#region SecondRegion
+#  region SecondRegion
 type Query {
   users: [User!]!
-  #region InnerRegion
+  #  region     InnerRegion  
   user(id: ID!): User
-  #endregion
+  #   endregion   ends InnerRegion
   allPosts: [Post!]!
   #region
   getSettings: Settings
-  #endregion
+       #     endregion
 }
-#endregion
+# endregion

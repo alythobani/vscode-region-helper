@@ -1,25 +1,25 @@
-# region FirstRegion
+#region FirstRegion
 title = "My Project"
 version = "1.0.0"
 #endregion
 
-#region SecondRegion
+# region SecondRegion  
 [database]
 host = "localhost"
 port = 5432
 myarray = [
     "one",
-    #     region InnerRegion
+    #     region    InnerRegion   
     "two",
     "three"
-    #  endregion
+    #  endregion   ends InnerRegion  
 ]
 user = "admin"
 password = "secret"
 backup = true
 #region
 debug = false
-#endregion
+# endregion
 
-#endregion
+# endregion  
 

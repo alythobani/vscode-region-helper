@@ -1,4 +1,4 @@
-// #region FirstRegion
+//#region FirstRegion
 int x = 42;
 // #endregion
 
@@ -6,11 +6,11 @@ int x = 42;
 class MyClass {
   // #region InnerRegion
   void myMethod() {}
-  // #endregion
+  //#endregion
 
 //   #region
     void myMethod2() {}
-//   #endregion
+  //      #endregion ends unnamed region
 }
 // #endregion
 

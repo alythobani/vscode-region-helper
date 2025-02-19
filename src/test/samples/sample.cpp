@@ -1,17 +1,17 @@
 #include <iostream>
 
-// #region FirstRegion
+//#region FirstRegion
 int x = 42;
-// #endregion
+//#endregion
 
 // #region SecondRegion
 class MyClass {
-    // #region InnerRegion
+    //  #region    InnerRegion    
     void myMethod() {}
-    // #endregion
+    //   #endregion    ends InnerRegion  
 
     // #region
     void myMethod2() {}
-    // #endregion
+    //#endregion
 };
-// #endregion
+//  #endregion

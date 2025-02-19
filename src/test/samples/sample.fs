@@ -1,15 +1,15 @@
-// #region FirstRegion
+//#region   FirstRegion
 let x = 42
-// #endregion
+//#endregion
 
 // #region SecondRegion
 type MyClass() =
     // #region InnerRegion
     member this.MyMethod() = ()
-    // #endregion
+    // #endregion ends InnerRegion
 
     // #region
     member this.MyOtherMethod() = ()
-    // #endregion
+    //        #endregion
 // #endregion
 

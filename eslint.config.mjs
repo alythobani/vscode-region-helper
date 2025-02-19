@@ -2,12 +2,12 @@ import eslint from "@eslint/js";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ["src/test/**/*"] },
+  { ignores: ["src/test/samples/**"] },
   eslint.configs.recommended,
   ...tseslint.configs.strictTypeChecked,
   ...tseslint.configs.stylisticTypeChecked,
   {
-    files: ["**/*.ts", "**/*.tsx"],
+    files: ["**/*.ts", "**/*.tsx", "**/*.test.ts"],
     languageOptions: {
       parserOptions: {
         projectService: true,

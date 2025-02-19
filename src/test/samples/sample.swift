@@ -1,17 +1,17 @@
 import Foundation
 
-// #region FirstRegion
+//#region FirstRegion
 let x = 42
-// #endregion
+//#endregion
 
-// #region SecondRegion
+//  #region SecondRegion
 class MyClass {
-    // #region InnerRegion
+    // #region     InnerRegion
     func myMethod() {}
-    // #endregion
+    //   #endregion   ends InnerRegion
 
-    /** #region */
+    // #region     
     func myMethod2() {}
-    /* #endregion */
+    // #endregion   
 }
-// #endregion
+//   #endregion

@@ -2,14 +2,14 @@
 x = 42
 -- #endregion
 
--- #region SecondRegion
+-- #region SecondRegion  
 data MyClass = MyClass
-  -- #region InnerRegion
+    --    #region   InnerRegion  
   deriving Show
-  -- #endregion
+    --         #endregion    ends InnerRegion  
 
---   #region
+  --  #region  
 deriving UnnamedRegion
--- #endregion
+--  #endregion  
 -- #endregion
 

@@ -1,13 +1,17 @@
 fun main() {
     // #region FirstRegion
     val x = 42
-    // #endregion
+    //#endregion
 
-    // #region SecondRegion
+    //#region SecondRegion  
     class MyClass {
-        // #region InnerRegion
+        // #region   InnerRegion   
         fun myMethod() {}
-        // #endregion
+        //  #endregion   ends InnerRegion 
+
+        // #region
+        fun myMethod2() {}
+               //#endregion 
     }
     // #endregion
 }

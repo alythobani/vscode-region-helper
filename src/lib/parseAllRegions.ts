@@ -1,6 +1,6 @@
 import type * as vscode from "vscode";
 import { type Region } from "../models/Region";
-import { getRegionBoundaryPatternsByLanguageId } from "./regionBoundaryPatterns";
+import { getRegionBoundaryPatternMap } from "./regionBoundaryPatterns";
 
 type InvalidMarker = {
   errorMsg: string;
@@ -12,7 +12,7 @@ type RegionParseResult = {
   invalidMarkers: InvalidMarker[];
 };
 
-const regionBoundaryPatternsByLanguageId = getRegionBoundaryPatternsByLanguageId();
+const regionBoundaryPatternByLanguageId = getRegionBoundaryPatternMap();
 
 export function parseAllRegions(document: vscode.TextDocument): RegionParseResult {
   const topLevelRegions: Region[] = [];
@@ -20,47 +20,48 @@ export function parseAllRegions(document: vscode.TextDocument): RegionParseResul
   const openRegionsStack: Region[] = [];
 
   const { languageId } = document;
-  const regionPatterns = regionBoundaryPatternsByLanguageId[languageId] ?? [];
-  if (regionPatterns.length === 0) {
+  const regionBoundaryPattern = regionBoundaryPatternByLanguageId[languageId];
+  if (regionBoundaryPattern === undefined) {
     return { topLevelRegions, invalidMarkers };
   }
 
+  const { startRegex, endRegex } = regionBoundaryPattern;
   for (let lineIdx = 0; lineIdx < document.lineCount; lineIdx++) {
     const lineText = document.lineAt(lineIdx).text;
-    for (const { startRegex, endRegex } of regionPatterns) {
-      const startMatch = lineText.match(startRegex);
-      if (startMatch) {
-        const newRegion = getNewRegionFromStartMatch({ startMatch, startLineIdx: lineIdx });
-        openRegionsStack.push(newRegion);
-        break; // No need to check other patterns; move to the next line
-      }
-      const endMatch = lineText.match(endRegex);
-      if (!endMatch) {
-        continue;
-      }
-      const lastOpenRegion = openRegionsStack.pop();
-      if (!lastOpenRegion) {
-        invalidMarkers.push({
-          errorMsg: "Region end boundary has no matching start boundary",
-          lineIdx,
-        });
-        break; // Can still treat following regions in editor as valid; move to the next line
-      }
-      lastOpenRegion.endLineIdx = lineIdx;
-      const maybeParentRegion = openRegionsStack[openRegionsStack.length - 1];
-      if (maybeParentRegion) {
-        lastOpenRegion.parent = maybeParentRegion;
-        maybeParentRegion.children.push(lastOpenRegion);
-      } else {
-        topLevelRegions.push(lastOpenRegion);
-      }
+    const startMatch = lineText.match(startRegex);
+    if (startMatch) {
+      const newRegion = getNewRegionFromStartMatch({ startMatch, startLineIdx: lineIdx });
+      openRegionsStack.push(newRegion);
+      continue;
+    }
+    const endMatch = lineText.match(endRegex);
+    if (!endMatch) {
+      continue; // Not a start or end boundary; move to the next line
+    }
+    const lastOpenRegion = openRegionsStack.pop();
+    if (!lastOpenRegion) {
+      const invalidEndMarker: InvalidMarker = {
+        errorMsg: "Region end boundary has no matching start boundary",
+        lineIdx,
+      };
+      invalidMarkers.push(invalidEndMarker);
+      continue; // Can still treat following regions in editor as valid; move to the next line
+    }
+    lastOpenRegion.endLineIdx = lineIdx;
+    const maybeParentRegion = openRegionsStack[openRegionsStack.length - 1];
+    if (maybeParentRegion) {
+      lastOpenRegion.parent = maybeParentRegion;
+      maybeParentRegion.children.push(lastOpenRegion);
+    } else {
+      topLevelRegions.push(lastOpenRegion);
     }
   }
   for (const openRegion of openRegionsStack) {
-    invalidMarkers.push({
+    const invalidStartMarker: InvalidMarker = {
       errorMsg: "Region start boundary has no matching end boundary",
       lineIdx: openRegion.startLineIdx,
-    });
+    };
+    invalidMarkers.push(invalidStartMarker);
   }
   return { topLevelRegions, invalidMarkers };
 }
@@ -72,9 +73,9 @@ function getNewRegionFromStartMatch({
   startMatch: RegExpMatchArray;
   startLineIdx: number;
 }): Region {
-  const name = startMatch[1]?.trim();
+  const trimmedName = startMatch[1]?.trim();
   return {
-    name,
+    name: trimmedName === "" ? undefined : trimmedName,
     startLineIdx,
     endLineIdx: -1,
     children: [],

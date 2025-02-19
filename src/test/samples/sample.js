@@ -1,15 +1,16 @@
-// #region FirstRegion
+//#region FirstRegion
 const x = 42;
-// #endregion
+//#endregion
 
-/* #region SecondRegion */
+// #region SecondRegion
 class MyClass {
-  // #region InnerRegion
+  //    #region   InnerRegion
   method() {}
-  // #endregion
+  //      #endregion   ends InnerRegion
 
   // #region
   anotherMethod() {}
-  //  #endregion
+  //#endregion
 }
-/**  #endregion  */
+
+//  #endregion

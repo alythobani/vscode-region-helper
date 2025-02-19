@@ -1,17 +1,17 @@
-%% #region FirstRegion
+%   #region FirstRegion
 X = 42.
-%% #endregion
+   %%         #endregion
 
-%% #region SecondRegion
+% #region SecondRegion
 -module(my_class).
 -export([my_method/0]).
 
-%% #region InnerRegion
+%#region  InnerRegion  
 my_method() -> ok.
-%% #endregion
+  %%   #endregion ends InnerRegion  
 
 % #region
 method_in_unnamed_region() -> ok.
-%%%   #endregion
+%%%#endregion
 
-%% #endregion
+%#endregion

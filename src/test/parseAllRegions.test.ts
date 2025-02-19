@@ -1,50 +1,32 @@
 import * as assert from "assert";
-import { promises as fs } from "fs";
+import { readdirSync } from "fs";
 import * as path from "path";
-import * as vscode from "vscode";
-import { parseAllRegions } from "../lib/parseAllRegions";
 
-const testLanguages = ["typescript", "python", "csharp"];
+import { parseAllRegions } from "../lib/parseAllRegions";
+import { assertExists } from "../utils/assertUtils";
+import { createTestSampleDocument } from "./utils/createTestSampleDocument";
 
 suite("Parse all regions", () => {
-  for (const languageId of testLanguages) {
-    test(`Parse regions in ${languageId}`, async () => {
-      const document = await createTestDocumentForLanguage(languageId);
-      const result = parseAllRegions(document);
+  const sampleDir = path.join(__dirname, "samples");
+  const sampleFileNames = readdirSync(sampleDir);
 
-      assert.strictEqual(result.topLevelRegions.length, 2, "Expected 2 top-level regions");
-      assert.strictEqual(result.topLevelRegions[0]?.name, "FirstRegion");
-      assert.strictEqual(result.topLevelRegions[1]?.name, "SecondRegion");
-      assert.strictEqual(result.topLevelRegions[1]?.children.length, 1, "Expected 1 nested region");
-      assert.strictEqual(result.topLevelRegions[1]?.children[0]?.name, "InnerRegion");
+  for (const sampleFileName of sampleFileNames) {
+    test(`Parse regions in ${sampleFileName}`, async () => {
+      const sampleDocument = await createTestSampleDocument(sampleFileName);
+      const result = parseAllRegions(sampleDocument);
+      const { topLevelRegions } = result;
+      assert.strictEqual(topLevelRegions.length, 2, "Expected 2 top-level regions");
+      const [firstRegion, secondRegion] = topLevelRegions;
+      assertExists(firstRegion);
+      assertExists(secondRegion);
+      assert.strictEqual(firstRegion.name, "FirstRegion");
+      assert.strictEqual(secondRegion.name, "SecondRegion");
+      assert.strictEqual(secondRegion.children.length, 2, "Expected 2 nested regions");
+      const [subregion1, subregion2] = secondRegion.children;
+      assertExists(subregion1);
+      assertExists(subregion2);
+      assert.strictEqual(subregion1.name, "InnerRegion");
+      assert.strictEqual(subregion2.name, undefined);
     });
   }
 });
-
-async function createTestDocumentForLanguage(languageId: string): Promise<vscode.TextDocument> {
-  const extension = getFileExtensionForLanguage(languageId);
-  const fileName = `sample.${extension}`;
-  return createTestDocumentFromSampleFile(fileName, languageId);
-}
-
-async function createTestDocumentFromSampleFile(
-  filename: string,
-  languageId: string
-): Promise<vscode.TextDocument> {
-  const filePath = path.join(__dirname, "samples", filename);
-  const content = await fs.readFile(filePath, "utf8");
-  return vscode.workspace.openTextDocument({ language: languageId, content });
-}
-
-function getFileExtensionForLanguage(languageId: string): string {
-  switch (languageId) {
-    case "typescript":
-      return "ts";
-    case "python":
-      return "py";
-    case "csharp":
-      return "cs";
-    default:
-      throw new Error(`Unsupported language: ${languageId}`);
-  }
-}

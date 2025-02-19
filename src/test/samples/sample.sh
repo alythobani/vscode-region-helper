@@ -1,17 +1,17 @@
 #!/bin/bash
 
-# region FirstRegion
+#region FirstRegion
 x=42
-# endregion
+#endregion
 
-# region SecondRegion
+#   region SecondRegion
 function my_function {
-    # region InnerRegion
+    #  region   InnerRegion
     echo "Inner region"
-    # endregion
+    #endregion    ends InnerRegion
 
     #region 
     echo "Unnamed region"
-    #endregion
+    #     endregion
 }
 # endregion
