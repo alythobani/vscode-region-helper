@@ -2,7 +2,7 @@
 X = 42.
    %%         #endregion
 
-% #region SecondRegion
+% #region Second Region
 -module(my_class).
 -export([my_method/0]).
 

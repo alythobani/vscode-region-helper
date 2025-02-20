@@ -2,7 +2,7 @@
 SELECT * FROM users;
 --#endregion
 
--- #region SecondRegion  
+-- #region Second Region  
 CREATE TABLE customers (
     id INT PRIMARY KEY,
     name VARCHAR(100)

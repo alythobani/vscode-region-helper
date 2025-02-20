@@ -20,7 +20,7 @@ suite("Parse all regions", () => {
       assertExists(firstRegion);
       assertExists(secondRegion);
       assert.strictEqual(firstRegion.name, "FirstRegion");
-      assert.strictEqual(secondRegion.name, "SecondRegion");
+      assert.strictEqual(secondRegion.name, "Second Region");
       assert.strictEqual(secondRegion.children.length, 2, "Expected 2 nested regions");
       const [subregion1, subregion2] = secondRegion.children;
       assertExists(subregion1);

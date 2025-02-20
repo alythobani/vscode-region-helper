@@ -2,7 +2,7 @@
 local x = 42
 --#endregion
 
--- #region SecondRegion  
+-- #region Second Region  
 MyClass = {}
 function MyClass:method()
     --    #region   InnerRegion  

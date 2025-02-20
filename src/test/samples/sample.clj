@@ -2,7 +2,7 @@
 (def x 42)
 ;;#endregion
 
-;;;;   #region SecondRegion  
+;;;;   #region Second Region  
 (defn my-class []
     ;   #region    InnerRegion   
     (defn my-method [] nil)

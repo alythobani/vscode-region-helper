@@ -4,7 +4,7 @@
 Some markdown content here...
 <!--#endregion-->
 
-<!-- #region SecondRegion -->
+<!-- #region Second Region -->
 More markdown...
 
 <!--   #region   InnerRegion    -->

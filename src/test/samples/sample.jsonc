@@ -5,7 +5,7 @@
     "module": "CommonJS"
     //#endregion
   },
-  //#region SecondRegion
+  //#region Second Region
   "exclude": ["node_modules"],
   "include": ["src"],
   //   #region        InnerRegion

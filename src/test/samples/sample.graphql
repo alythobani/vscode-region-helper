@@ -5,7 +5,7 @@ type User {
 }
 #endregion
 
-#  region SecondRegion
+#  region Second Region
 type Query {
   users: [User!]!
   #  region     InnerRegion  

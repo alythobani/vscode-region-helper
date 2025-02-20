@@ -6,7 +6,7 @@ import "fmt"
 var x = 42
 //#endregion
 
-// #region      SecondRegion
+// #region      Second Region
 type MyClass struct{}
 
 // #region InnerRegion

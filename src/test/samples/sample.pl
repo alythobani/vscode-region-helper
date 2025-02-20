@@ -2,7 +2,7 @@
 my $x = 42;
 #endregion
 
-#  region SecondRegion
+#  region Second Region
 sub my_function {
   #  region    InnerRegion    
   print "Hello, World!\n";

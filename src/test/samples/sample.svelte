@@ -4,7 +4,7 @@
 </script>
 <!--#endregion-->
 
-<!--   #region SecondRegion -->
+<!--   #region Second Region -->
 <div>
   <!--  #region    InnerRegion   -->
   <p>Hello, World!</p>

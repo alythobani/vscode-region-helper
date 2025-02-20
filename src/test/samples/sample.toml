@@ -3,7 +3,7 @@ title = "My Project"
 version = "1.0.0"
 #endregion
 
-# region SecondRegion  
+# region Second Region  
 [database]
 host = "localhost"
 port = 5432

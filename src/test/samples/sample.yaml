@@ -4,8 +4,8 @@ regions:
     x: 42
 #endregion
 
-  #   region SecondRegion
-  SecondRegion:
+  #   region Second Region
+  Second Region:
     MyClass:
       #   region     InnerRegion    
       InnerRegion:

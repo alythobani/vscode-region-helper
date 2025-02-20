@@ -5,7 +5,7 @@ begin
 end.
 // #endregion
 
-{  #region    SecondRegion  }
+{  #region    Second Region  }
 procedure MyProcedure;
 begin
   (*    #region    InnerRegion    *)

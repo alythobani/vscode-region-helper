@@ -2,7 +2,7 @@
 let x = 42
 //#endregion
 
-// #region SecondRegion
+// #region Second Region
 type MyClass() =
     // #region InnerRegion
     member this.MyMethod() = ()

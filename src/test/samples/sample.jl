@@ -2,7 +2,7 @@
 x = 42
 #endregion
 
-# region SecondRegion  
+# region Second Region  
 struct MyClass
   #  region    InnerRegion   
   function method()

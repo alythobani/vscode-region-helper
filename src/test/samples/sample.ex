@@ -2,7 +2,7 @@
 x = 42
 #endregion
 
-# region SecondRegion
+# region Second Region
 defmodule MyClass do
   #  region   InnerRegion
   def my_method do

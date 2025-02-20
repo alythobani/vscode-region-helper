@@ -3,7 +3,7 @@ all:
 	@echo "Building project..."
 #endregion
 
-#region SecondRegion
+#region Second Region
 clean:
 	rm -rf build/
 	#      region   InnerRegion  

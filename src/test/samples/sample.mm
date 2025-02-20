@@ -2,7 +2,7 @@
 #import <iostream>
 //#endregion
 
-//  #region SecondRegion
+//  #region Second Region
 class MyClass {
   //  #region    InnerRegion  
   void myMethod() {

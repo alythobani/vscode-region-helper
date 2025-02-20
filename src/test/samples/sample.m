@@ -2,7 +2,7 @@
 #import <Foundation/Foundation.h>
 //#endregion
 
-//  #region SecondRegion
+//  #region Second Region
 @interface MyClass : NSObject
 //  #region    InnerRegion  
 - (void)myMethod;

@@ -5,7 +5,7 @@ services:
     image: nginx
   #endregion
 
-  # region SecondRegion
+  # region Second Region
   app:
     build: .
     #  region    InnerRegion     

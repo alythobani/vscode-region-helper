@@ -2,7 +2,7 @@
 let x = 42
 (*#endregion*)
 
-(*  #region SecondRegion *)
+(*  #region Second Region *)
 let my_function () =
   (*  #region    InnerRegion   *)
   Printf.printf "Hello, World!\n"
