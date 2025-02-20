@@ -2,7 +2,7 @@ import eslint from "@eslint/js";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ["src/test/samples/**", "src/test/invalidSamples/**"] },
+  { ignores: ["src/test/validSamples/**", "src/test/invalidSamples/**"] },
   eslint.configs.recommended,
   ...tseslint.configs.strictTypeChecked,
   ...tseslint.configs.stylisticTypeChecked,

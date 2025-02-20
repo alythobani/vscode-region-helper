@@ -10,7 +10,7 @@ import {
 } from "./utils/createTestSampleDocument";
 
 suite("Parse files with only valid regions", () => {
-  const sampleDir = path.join(__dirname, "samples");
+  const sampleDir = path.join(__dirname, "validSamples");
   const sampleFileNames = readdirSync(sampleDir);
 
   for (const sampleFileName of sampleFileNames) {

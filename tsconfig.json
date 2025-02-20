@@ -28,5 +28,5 @@
     "noPropertyAccessFromIndexSignature": true /* Enforces using indexed accessors for keys declared using an indexed type. */
   },
   "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["src/test/samples", "src/test/invalidSamples", "dist", "out"]
+  "exclude": ["src/test/validSamples", "src/test/invalidSamples", "dist", "out"]
 }

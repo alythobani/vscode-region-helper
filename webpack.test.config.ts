@@ -43,7 +43,7 @@ const testConfig: Configuration = {
   plugins: [
     new CopyWebpackPlugin({
       patterns: [
-        { from: "src/test/samples", to: "samples" },
+        { from: "src/test/validSamples", to: "validSamples" },
         { from: "src/test/invalidSamples", to: "invalidSamples" },
       ],
     }),
