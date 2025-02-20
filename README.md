@@ -21,6 +21,7 @@ Provides an **interactive tree view**, **diagnostics for unmatched region bounda
 
 - Like VSCode’s built-in **"Go to Bracket"**, but for regions.
 - Jumps between **matching region start and end boundaries**.
+- Jumps to the **next region** if the cursor is not already inside a region.
 - 📌 **Default Keybinding**: `Alt + M`
 
 ### 🔍 Go to Region (Fuzzy Search)
