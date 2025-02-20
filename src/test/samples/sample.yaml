@@ -1,16 +1,16 @@
+#region FirstRegion
 regions:
-  #region FirstRegion
   FirstRegion:
     x: 42
-  #endregion
+#endregion
 
   #   region SecondRegion
   SecondRegion:
     MyClass:
-      #   region     InnerRegion  
+      #   region     InnerRegion    
       InnerRegion:
         method: example
-      #   endregion    ends InnerRegion  
+      #   endregion    ends InnerRegion    
       y: 42
       #region
       z: 42

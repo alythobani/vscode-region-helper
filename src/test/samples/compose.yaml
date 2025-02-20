@@ -1,0 +1,20 @@
+version: '3'
+services:
+  #region FirstRegion
+  web:
+    image: nginx
+  #endregion
+
+  # region SecondRegion
+  app:
+    build: .
+    #  region    InnerRegion     
+    environment:
+      - NODE_ENV=production
+    #          endregion   ends InnerRegion    
+
+    #region
+    ports:
+      - "3000:3000"
+    #endregion
+  #  endregion

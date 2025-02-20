@@ -44,12 +44,32 @@
             "type": "object",
             "properties": {
               "startRegex": {
-                "type": "string",
-                "description": "Regular expression string (passed into JavaScript RegExp constructor) to match the start of a region. Should ideally include a capturing group for the region name."
+                "description": "JS-format regular expression string (or array of regex strings) to match the start of a region. Should ideally include a capturing group for the region name.",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                ]
               },
               "endRegex": {
-                "type": "string",
-                "description": "Regular expression string (passed into JavaScript RegExp constructor) to match the end of a region."
+                "description": "JS-format regular expression string (or array of regex strings) to match the end of a region.",
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                ]
               }
             },
             "required": [
@@ -59,8 +79,8 @@
           },
           "default": {
             "c": {
-              "startRegex": "^\\s*\\/\\/\\s*#region\\s+(.*)$",
-              "endRegex": "^\\s*\\/\\/\\s*#endregion"
+              "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
             },
             "clojure": {
               "startRegex": "^\\s*;+\\s*#region(?:\\s+(.*?)\\s*)?$",
@@ -75,20 +95,20 @@
               "endRegex": "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
             },
             "css": {
-              "startRegex": "^\\s*\\/\\/\\s*#region\\s+(.*)$",
-              "endRegex": "^\\s*\\/\\/\\s*#endregion"
+              "startRegex": "^\\s*\\/\\*\\s*#region(?:\\s+(.*?)\\s*)?\\*\\/",
+              "endRegex": "^\\s*\\/\\*\\s*#endregion(?:\\s.*)?\\*\\/"
             },
             "dart": {
               "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
               "endRegex": "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
             },
             "dockercompose": {
-              "startRegex": "^\\s*#\\s*region\\s+(.*)$",
-              "endRegex": "^\\s*#\\s*endregion"
+              "startRegex": "^\\s*#\\s*region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*#\\s*endregion(?:\\s.*)?"
             },
             "dockerfile": {
-              "startRegex": "^\\s*#\\s*region\\s+(.*)$",
-              "endRegex": "^\\s*#\\s*endregion"
+              "startRegex": "^\\s*#\\s*region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*#\\s*endregion(?:\\s.*)?"
             },
             "elixir": {
               "startRegex": "^\\s*#\\s*region(?:\\s+(.*?)\\s*)?$",
@@ -147,8 +167,14 @@
               "endRegex": "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
             },
             "less": {
-              "startRegex": "^\\s*\\/\\/\\s*#region\\s+(.*)$",
-              "endRegex": "^\\s*\\/\\/\\s*#endregion"
+              "startRegex": [
+                "^\\s*\\/\\*\\s*#region(?:\\s+(.*?)\\s*)?\\*\\/",
+                "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$"
+              ],
+              "endRegex": [
+                "^\\s*\\/\\*\\s*#endregion(?:\\s.*)?\\*\\/",
+                "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
+              ]
             },
             "lua": {
               "startRegex": "^\\s*--\\s*#region(?:\\s+(.*?)\\s*)?$",
@@ -163,28 +189,32 @@
               "endRegex": "^\\s*<!--\\s*#endregion(?:\\s.*)?-->"
             },
             "objective-c": {
-              "startRegex": "^\\s*\\/\\/\\s*#region\\s+(.*)$",
-              "endRegex": "^\\s*\\/\\/\\s*#endregion"
+              "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
             },
             "objective-cpp": {
-              "startRegex": "^\\s*\\/\\/\\s*#region\\s+(.*)$",
-              "endRegex": "^\\s*\\/\\/\\s*#endregion"
+              "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
             },
             "ocaml": {
-              "startRegex": "^\\s*\\(\\*\\s*#region\\s+(.*)$",
-              "endRegex": "^\\s*\\(\\*\\s*#endregion"
+              "startRegex": "^\\s*\\(\\*\\s*#region(?:\\s+(.*?)\\s*)?\\*\\)",
+              "endRegex": "^\\s*\\(\\*\\s*#endregion(?:\\s.*)?\\*\\)"
             },
             "pascal": {
-              "startRegex": "^\\s*\\(\\*\\s*#region\\s+(.*)$",
-              "endRegex": "^\\s*\\(\\*\\s*#endregion"
+              "startRegex": [
+                "^\\s*\\(\\*\\s*#region(?:\\s+(.*?)\\s*)?\\*\\)",
+                "^\\s*\\{\\s*#region(?:\\s+(.*?)\\s*)?\\}",
+                "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$"
+              ],
+              "endRegex": [
+                "^\\s*\\(\\*\\s*#endregion(?:\\s.*)?\\*\\)",
+                "^\\s*\\{\\s*#endregion(?:\\s.*)?\\}",
+                "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
+              ]
             },
             "perl": {
-              "startRegex": "^\\s*#\\s*region\\s+(.*)$",
-              "endRegex": "^\\s*#\\s*endregion"
-            },
-            "perl6": {
-              "startRegex": "^\\s*#\\s*region\\s+(.*)$",
-              "endRegex": "^\\s*#\\s*endregion"
+              "startRegex": "^\\s*#\\s*region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*#\\s*endregion(?:\\s.*)?"
             },
             "php": {
               "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
@@ -207,8 +237,14 @@
               "endRegex": "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
             },
             "scss": {
-              "startRegex": "^\\s*\\/\\/\\s*#region\\s+(.*)$",
-              "endRegex": "^\\s*\\/\\/\\s*#endregion"
+              "startRegex": [
+                "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
+                "^\\s*\\/\\*\\s*#region(?:\\s+(.*?)\\s*)?\\*\\/"
+              ],
+              "endRegex": [
+                "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$",
+                "^\\s*\\/\\*\\s*#endregion(?:\\s.*)?\\*\\/"
+              ]
             },
             "shellscript": {
               "startRegex": "^\\s*#\\s*region(?:\\s+(.*?)\\s*)?$",
@@ -219,12 +255,12 @@
               "endRegex": "^\\s*--\\s*#endregion(?:\\s.*)?$"
             },
             "stylus": {
-              "startRegex": "^\\s*\\/\\/\\s*#region\\s+(.*)$",
-              "endRegex": "^\\s*\\/\\/\\s*#endregion"
+              "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
+              "endRegex": "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
             },
             "svelte": {
-              "startRegex": "^\\s*\\/\\/\\s*#region\\s+(.*)$",
-              "endRegex": "^\\s*\\/\\/\\s*#endregion"
+              "startRegex": "^\\s*<!--\\s*#region(?:\\s+(.*?)\\s*)?-->",
+              "endRegex": "^\\s*<!--\\s*#endregion(?:\\s.*)?-->"
             },
             "swift": {
               "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
@@ -243,16 +279,18 @@
               "endRegex": "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
             },
             "vue": {
-              "startRegex": "^\\s*\\/\\/\\s*#region\\s+(.*)$",
-              "endRegex": "^\\s*\\/\\/\\s*#endregion"
-            },
-            "vue-html": {
-              "startRegex": "^\\s*<!--\\s*#region\\s+(.*)\\s*-->$",
-              "endRegex": "^\\s*<!--\\s*#endregion\\s*-->$"
+              "startRegex": [
+                "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
+                "^\\s*<!--\\s*#region(?:\\s+(.*?)\\s*)?-->"
+              ],
+              "endRegex": [
+                "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$",
+                "^\\s*<!--\\s*#endregion(?:\\s.*)?-->"
+              ]
             },
             "xml": {
-              "startRegex": "^\\s*<!--\\s*#region\\s+(.*)\\s*-->$",
-              "endRegex": "^\\s*<!--\\s*#endregion\\s*-->$"
+              "startRegex": "^\\s*<!--\\s*#region(?:\\s+(.*?)\\s*)?-->",
+              "endRegex": "^\\s*<!--\\s*#endregion(?:\\s.*)?-->"
             },
             "yaml": {
               "startRegex": "^\\s*#\\s*region(?:\\s+(.*?)\\s*)?$",

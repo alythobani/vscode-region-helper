@@ -1,0 +1,19 @@
+<!--#region FirstRegion-->
+<note>
+  <to>Tove</to>
+</note>
+<!--#endregion-->
+
+<!--   #region SecondRegion -->
+<document>
+  <!--  #region    InnerRegion   -->
+  <section>
+    <title>Inner Region</title>
+  </section>
+  <!--  #endregion   ends InnerRegion   -->
+
+  <!-- #region -->
+  <footer>Footer content</footer>
+  <!-- #endregion -->
+</document>
+<!--   #endregion -->

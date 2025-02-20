@@ -1,6 +1,6 @@
 import type * as vscode from "vscode";
 import { type Region } from "../models/Region";
-import { getRegionBoundaryPatternMap } from "./regionBoundaryPatterns";
+import { getRegionBoundaryPatternMap, type RegexOrArray } from "./regionBoundaryPatterns";
 
 type InvalidMarker = {
   errorMsg: string;
@@ -28,13 +28,13 @@ export function parseAllRegions(document: vscode.TextDocument): RegionParseResul
   const { startRegex, endRegex } = regionBoundaryPattern;
   for (let lineIdx = 0; lineIdx < document.lineCount; lineIdx++) {
     const lineText = document.lineAt(lineIdx).text;
-    const startMatch = lineText.match(startRegex);
+    const startMatch = matchLineWithRegexOrArray(lineText, startRegex);
     if (startMatch) {
       const newRegion = getNewRegionFromStartMatch({ startMatch, startLineIdx: lineIdx });
       openRegionsStack.push(newRegion);
       continue;
     }
-    const endMatch = lineText.match(endRegex);
+    const endMatch = matchLineWithRegexOrArray(lineText, endRegex);
     if (!endMatch) {
       continue; // Not a start or end boundary; move to the next line
     }
@@ -64,6 +64,22 @@ export function parseAllRegions(document: vscode.TextDocument): RegionParseResul
     invalidMarkers.push(invalidStartMarker);
   }
   return { topLevelRegions, invalidMarkers };
+}
+
+function matchLineWithRegexOrArray(
+  lineText: string,
+  regexOrArray: RegexOrArray
+): RegExpMatchArray | null {
+  if (Array.isArray(regexOrArray)) {
+    for (const regex of regexOrArray) {
+      const match = lineText.match(regex);
+      if (match) {
+        return match;
+      }
+    }
+    return null;
+  }
+  return lineText.match(regexOrArray);
 }
 
 function getNewRegionFromStartMatch({

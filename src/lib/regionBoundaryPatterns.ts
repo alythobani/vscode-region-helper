@@ -2,17 +2,21 @@ import * as vscode from "vscode";
 
 type LanguageId = string;
 
+export type RegexOrArray = RegExp | RegExp[];
+
 type RegionBoundaryPattern = {
   /** The regular expression that matches the start of a region. Should ideally capture the name of the region. */
-  startRegex: RegExp;
+  startRegex: RegexOrArray;
   /** The regular expression that matches the end of a region. */
-  endRegex: RegExp;
+  endRegex: RegexOrArray;
 };
 type RegionBoundaryPatternMap = Record<LanguageId, RegionBoundaryPattern>;
 
+type RegexStringOrArray = string | string[];
+
 type RawRegionBoundaryPattern = {
-  startRegex: string;
-  endRegex: string;
+  startRegex: RegexStringOrArray;
+  endRegex: RegexStringOrArray;
 };
 type RegionBoundaryPatternsConfig = Record<LanguageId, RawRegionBoundaryPattern>;
 
@@ -46,11 +50,19 @@ function parseRegionBoundaryPattern(
 ): RegionBoundaryPattern | undefined {
   try {
     return {
-      startRegex: new RegExp(rawPattern.startRegex),
-      endRegex: new RegExp(rawPattern.endRegex),
+      startRegex: parseRegexOrArray(rawPattern.startRegex),
+      endRegex: parseRegexOrArray(rawPattern.endRegex),
     };
   } catch (e) {
     console.error(`Failed to parse region boundary pattern for language '${languageId}'`, e);
     return undefined;
+  }
+}
+
+function parseRegexOrArray(input: RegexStringOrArray): RegexOrArray {
+  if (Array.isArray(input)) {
+    return input.map((s) => new RegExp(s));
+  } else {
+    return new RegExp(input);
   }
 }
