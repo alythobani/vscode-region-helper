@@ -72,7 +72,6 @@ function initializeRegionQuickPick({
   activeTextEditor: vscode.TextEditor;
 }): void {
   regionQuickPick.items = regionQuickPickItems;
-  regionQuickPick.title = "Go to Region";
   regionQuickPick.placeholder = getRegionQuickPickPlaceholder(regionQuickPickItems);
   regionQuickPick.matchOnDescription = true;
   regionQuickPick.canSelectMany = false;

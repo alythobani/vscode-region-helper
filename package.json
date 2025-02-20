@@ -31,7 +31,7 @@
       },
       {
         "command": "region-helper.goToRegionFromQuickPick",
-        "title": "Go to Region"
+        "title": "Go to Region..."
       }
     ],
     "configuration": {
