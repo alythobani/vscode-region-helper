@@ -1,16 +1,20 @@
 import * as vscode from "vscode";
-import { parseAllRegions } from "../lib/parseAllRegions";
+import { type InvalidMarker, parseAllRegions } from "../lib/parseAllRegions";
 import { type Region } from "../models/Region";
 import { getActiveRegion } from "../utils/getActiveRegion";
 
 export class RegionStore {
   private _topLevelRegions: Region[] = [];
+  private _invalidMarkers: InvalidMarker[] = [];
   private _onDidChangeRegions = new vscode.EventEmitter<void>();
   readonly onDidChangeRegions = this._onDidChangeRegions.event;
 
   private _activeRegion: Region | undefined = undefined;
   private _onDidChangeActiveRegion = new vscode.EventEmitter<void>();
   readonly onDidChangeActiveRegion = this._onDidChangeActiveRegion.event;
+
+  private _onDidChangeInvalidMarkers = new vscode.EventEmitter<void>();
+  readonly onDidChangeInvalidMarkers = this._onDidChangeInvalidMarkers.event;
 
   constructor(subscriptions: vscode.Disposable[]) {
     this.registerListeners(subscriptions);
@@ -66,8 +70,16 @@ export class RegionStore {
 
   private refreshRegions(): void {
     const activeDocument = vscode.window.activeTextEditor?.document;
-    this._topLevelRegions = activeDocument ? parseAllRegions(activeDocument).topLevelRegions : [];
+    if (!activeDocument) {
+      this._topLevelRegions = [];
+      this._invalidMarkers = [];
+    } else {
+      const { topLevelRegions, invalidMarkers } = parseAllRegions(activeDocument);
+      this._topLevelRegions = topLevelRegions;
+      this._invalidMarkers = invalidMarkers;
+    }
     this._onDidChangeRegions.fire();
+    this._onDidChangeInvalidMarkers.fire(); // Notify diagnostics manager of invalid markers
   }
 
   private refreshActiveRegion(): void {
@@ -84,5 +96,9 @@ export class RegionStore {
 
   get activeRegion(): Region | undefined {
     return this._activeRegion;
+  }
+
+  get invalidMarkers(): InvalidMarker[] {
+    return this._invalidMarkers;
   }
 }

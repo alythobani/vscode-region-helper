@@ -12,10 +12,7 @@ type RegionQuickPickItem = vscode.QuickPickItem & { startLineIdx: number; endLin
 
 export const goToRegionFromQuickPickCommandId = "region-helper.goToRegionFromQuickPick";
 
-export function goToRegionFromQuickPick(
-  regionStore: RegionStore,
-  subscriptions: vscode.Disposable[]
-): void {
+export function goToRegionFromQuickPick(regionStore: RegionStore): void {
   const { activeTextEditor } = vscode.window;
   if (!activeTextEditor) {
     return;
@@ -30,7 +27,6 @@ export function goToRegionFromQuickPick(
     regionQuickPickItems,
     initialActiveItem,
     activeTextEditor,
-    subscriptions,
   });
   regionQuickPick.show();
   if (initialActiveItem) {
@@ -69,13 +65,11 @@ function initializeRegionQuickPick({
   regionQuickPickItems,
   initialActiveItem,
   activeTextEditor,
-  subscriptions,
 }: {
   regionQuickPick: vscode.QuickPick<RegionQuickPickItem>;
   regionQuickPickItems: RegionQuickPickItem[];
   initialActiveItem: RegionQuickPickItem | undefined;
   activeTextEditor: vscode.TextEditor;
-  subscriptions: vscode.Disposable[];
 }): void {
   regionQuickPick.items = regionQuickPickItems;
   regionQuickPick.title = "Go to Region";
@@ -83,21 +77,11 @@ function initializeRegionQuickPick({
   regionQuickPick.matchOnDescription = true;
   regionQuickPick.canSelectMany = false;
   regionQuickPick.activeItems = initialActiveItem ? [initialActiveItem] : [];
-  regionQuickPick.onDidHide(
-    () => onDidHideQuickPick(regionQuickPick, activeTextEditor),
-    undefined,
-    subscriptions
+  regionQuickPick.onDidHide(() => onDidHideQuickPick(regionQuickPick, activeTextEditor));
+  regionQuickPick.onDidChangeActive((items) =>
+    onDidChangeActiveQuickPickItems(items, activeTextEditor)
   );
-  regionQuickPick.onDidChangeActive(
-    (items) => onDidChangeActiveQuickPickItems(items, activeTextEditor),
-    undefined,
-    subscriptions
-  );
-  regionQuickPick.onDidAccept(
-    () => onDidAcceptQuickPickItem(regionQuickPick, activeTextEditor),
-    undefined,
-    subscriptions
-  );
+  regionQuickPick.onDidAccept(() => onDidAcceptQuickPickItem(regionQuickPick, activeTextEditor));
 }
 
 function getRegionQuickPickPlaceholder(regionQuickPickItems: RegionQuickPickItem[]): string {
