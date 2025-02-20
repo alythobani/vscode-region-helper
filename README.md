@@ -1,5 +1,7 @@
 # Region Helper
 
+<!-- [![VSCode Marketplace](https://img.shields.io/visual-studio-marketplace/v/AlyThobani.region-helper?label=VSCode%20Marketplace)](https://marketplace.visualstudio.com/items?itemName=AlyThobani.region-helper) -->
+
 A <!-- [Visual Studio Code](https://marketplace.visualstudio.com/region-helper) --> **Visual Studio Code** extension for **navigating, visualizing, and managing code regions** in your files.  
 
 Provides an **interactive tree view**, **diagnostics for unmatched region boundaries**, and **convenient commands** for jumping, searching, and selecting regions.
@@ -48,12 +50,19 @@ Provides an **interactive tree view**, **diagnostics for unmatched region bounda
 2. **Reload VSCode** after installation.
 3. **Enjoy faster region navigation** and better code organization! -->
 
+## 🚧 Known Limitations
+
+- **Go to Region**'s dropdown is not fully fuzzy-searchable; it only supports camelCase matching. This is due to a [limitation in VSCode's API](https://github.com/microsoft/vscode/issues/34088#issuecomment-328734452).
+- **Region Tree View** may still highlight the last active region when the cursor is outside of any region. This is another [limitation of VSCode's API](https://github.com/microsoft/vscode/issues/48754).
+
 ## ❤️ Contributing & Feedback
 
 I may have limited availability, but **bug reports, suggestions, and contributions** are always welcome! Feel free to:
 
-- **[Open an issue](https://github.com/alythobani/vscode-region-helper/issues/new/choose)** for bugs or feature requests.
-- **[Browse issues that accept PRs](https://github.com/alythobani/vscode-region-helper/issues?q=state%3Aopen%20label%3A%22accepting%20PRs%22)** and submit a pull request.
+- **[File an issue](https://github.com/alythobani/vscode-region-helper/issues/new/choose)** for bugs or feature requests.
+- **[Browse issues open to PRs](https://github.com/alythobani/vscode-region-helper/issues?q=state%3Aopen%20label%3A%22accepting%20PRs%22)** and submit one if you'd like to help.
 <!-- - **[Leave a review](https://marketplace.visualstudio.com/items?itemName=alythobani.region-helper&ssr=false#review-details)** on the VSCode Marketplace. -->
+
+---
 
 Hope you enjoy using **Region Helper**. Have a great day, and try to make someone else's day great too! 😊
