@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { type InvalidMarker } from "../lib/parseAllRegions";
 import { type RegionStore } from "../state/RegionStore";
+import { throwNever } from "../utils/errorUtils";
 
 export class RegionDiagnosticsManager {
   private _diagnostics = vscode.languages.createDiagnosticCollection("region-helper");
@@ -45,9 +46,20 @@ function createDiagnostic(
   invalidMarker: InvalidMarker,
   activeTextEditor: vscode.TextEditor
 ): vscode.Diagnostic {
-  const { lineIdx, errorMsg } = invalidMarker;
+  const { lineIdx } = invalidMarker;
   const line = activeTextEditor.document.lineAt(lineIdx);
-  const { length: lineLength } = line.text;
-  const range = new vscode.Range(lineIdx, 0, lineIdx, lineLength);
+  const range = new vscode.Range(lineIdx, 0, lineIdx, line.text.length);
+  const errorMsg = getErrorMessage(invalidMarker);
   return new vscode.Diagnostic(range, errorMsg, vscode.DiagnosticSeverity.Warning);
+}
+
+function getErrorMessage(invalidMarker: InvalidMarker): string {
+  switch (invalidMarker.markerType) {
+    case "start":
+      return "Unexpected region start: No matching end boundary found below.";
+    case "end":
+      return "Unexpected region end: No matching start boundary found above.";
+    default:
+      throwNever(invalidMarker.markerType);
+  }
 }

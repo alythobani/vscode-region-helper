@@ -3,7 +3,7 @@ import { type Region } from "../models/Region";
 import { getRegionBoundaryPatternMap, type RegexOrArray } from "./regionBoundaryPatterns";
 
 export type InvalidMarker = {
-  errorMsg: string;
+  markerType: "start" | "end";
   lineIdx: number;
 };
 
@@ -40,11 +40,7 @@ export function parseAllRegions(document: vscode.TextDocument): RegionParseResul
     }
     const lastOpenRegion = openRegionsStack.pop();
     if (!lastOpenRegion) {
-      const invalidEndMarker: InvalidMarker = {
-        errorMsg: "Unmatched region end boundary: No corresponding start boundary found.",
-        lineIdx,
-      };
-      invalidMarkers.push(invalidEndMarker);
+      invalidMarkers.push({ markerType: "end", lineIdx });
       continue; // Can still treat following regions in editor as valid; move to the next line
     }
     lastOpenRegion.endLineIdx = lineIdx;
@@ -57,11 +53,7 @@ export function parseAllRegions(document: vscode.TextDocument): RegionParseResul
     }
   }
   for (const openRegion of openRegionsStack) {
-    const invalidStartMarker: InvalidMarker = {
-      errorMsg: "Unmatched region start boundary: No corresponding end boundary found.",
-      lineIdx: openRegion.startLineIdx,
-    };
-    invalidMarkers.push(invalidStartMarker);
+    invalidMarkers.push({ markerType: "start", lineIdx: openRegion.startLineIdx });
   }
   return { topLevelRegions, invalidMarkers };
 }
