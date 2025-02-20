@@ -51,7 +51,11 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
   }
 
   getParent(element: Region): vscode.ProviderResult<Region> {
-    return element.parent;
+    const { parent } = element;
+    if (!parent || parent.wasClosed) {
+      return undefined;
+    }
+    return parent;
   }
 
   getChildren(element?: Region): Region[] {

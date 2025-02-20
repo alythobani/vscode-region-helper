@@ -42,7 +42,10 @@ const testConfig: Configuration = {
   },
   plugins: [
     new CopyWebpackPlugin({
-      patterns: [{ from: "src/test/samples", to: "samples" }],
+      patterns: [
+        { from: "src/test/samples", to: "samples" },
+        { from: "src/test/invalidSamples", to: "invalidSamples" },
+      ],
     }),
   ],
   devtool: "nosources-source-map",

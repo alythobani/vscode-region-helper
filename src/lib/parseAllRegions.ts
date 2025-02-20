@@ -26,12 +26,14 @@ export function parseAllRegions(document: vscode.TextDocument): RegionParseResul
   }
 
   const { startRegex, endRegex } = regionBoundaryPattern;
+  let regionIdx = 0;
   for (let lineIdx = 0; lineIdx < document.lineCount; lineIdx++) {
     const lineText = document.lineAt(lineIdx).text;
     const startMatch = matchLineWithRegexOrArray(lineText, startRegex);
     if (startMatch) {
-      const newRegion = getNewRegionFromStartMatch({ startMatch, startLineIdx: lineIdx });
+      const newRegion = makeNewOpenRegion({ startMatch, startLineIdx: lineIdx, regionIdx });
       openRegionsStack.push(newRegion);
+      regionIdx = 0;
       continue;
     }
     const endMatch = matchLineWithRegexOrArray(lineText, endRegex);
@@ -43,6 +45,7 @@ export function parseAllRegions(document: vscode.TextDocument): RegionParseResul
       invalidMarkers.push({ markerType: "end", lineIdx });
       continue; // Can still treat following regions in editor as valid; move to the next line
     }
+    lastOpenRegion.wasClosed = true;
     lastOpenRegion.endLineIdx = lineIdx;
     const maybeParentRegion = openRegionsStack[openRegionsStack.length - 1];
     if (maybeParentRegion) {
@@ -51,9 +54,11 @@ export function parseAllRegions(document: vscode.TextDocument): RegionParseResul
     } else {
       topLevelRegions.push(lastOpenRegion);
     }
+    regionIdx = lastOpenRegion.regionIdx + 1;
   }
   for (const openRegion of openRegionsStack) {
     invalidMarkers.push({ markerType: "start", lineIdx: openRegion.startLineIdx });
+    addClosedChildrenToTopLevelRegions(openRegion, topLevelRegions);
   }
   return { topLevelRegions, invalidMarkers };
 }
@@ -74,18 +79,34 @@ function matchLineWithRegexOrArray(
   return lineText.match(regexOrArray);
 }
 
-function getNewRegionFromStartMatch({
+function makeNewOpenRegion({
   startMatch,
   startLineIdx,
+  regionIdx,
 }: {
   startMatch: RegExpMatchArray;
   startLineIdx: number;
+  regionIdx: number;
 }): Region {
   const trimmedName = startMatch[1]?.trim();
   return {
     name: trimmedName === "" ? undefined : trimmedName,
     startLineIdx,
     endLineIdx: -1,
+    regionIdx,
+    wasClosed: false,
     children: [],
   };
+}
+
+function addClosedChildrenToTopLevelRegions(region: Region, topLevelRegions: Region[]): void {
+  for (const childRegion of region.children) {
+    if (childRegion.wasClosed) {
+      childRegion.parent = undefined;
+      childRegion.regionIdx = topLevelRegions.length;
+      topLevelRegions.push(childRegion);
+      continue;
+    }
+    addClosedChildrenToTopLevelRegions(childRegion, topLevelRegions);
+  }
 }

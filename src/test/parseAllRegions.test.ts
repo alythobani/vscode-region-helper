@@ -4,9 +4,12 @@ import * as path from "path";
 
 import { parseAllRegions } from "../lib/parseAllRegions";
 import { assertExists } from "../utils/assertUtils";
-import { createTestSampleDocument } from "./utils/createTestSampleDocument";
+import {
+  createTestInvalidSampleDocument,
+  createTestSampleDocument,
+} from "./utils/createTestSampleDocument";
 
-suite("Parse all regions", () => {
+suite("Parse files with only valid regions", () => {
   const sampleDir = path.join(__dirname, "samples");
   const sampleFileNames = readdirSync(sampleDir);
 
@@ -14,19 +17,65 @@ suite("Parse all regions", () => {
     test(`Parse regions in ${sampleFileName}`, async () => {
       const sampleDocument = await createTestSampleDocument(sampleFileName);
       const result = parseAllRegions(sampleDocument);
+
       const { topLevelRegions } = result;
+
       assert.strictEqual(topLevelRegions.length, 2, "Expected 2 top-level regions");
       const [firstRegion, secondRegion] = topLevelRegions;
       assertExists(firstRegion);
       assertExists(secondRegion);
       assert.strictEqual(firstRegion.name, "FirstRegion");
+      assert.strictEqual(firstRegion.regionIdx, 0);
       assert.strictEqual(secondRegion.name, "Second Region");
+      assert.strictEqual(secondRegion.regionIdx, 1);
+
       assert.strictEqual(secondRegion.children.length, 2, "Expected 2 nested regions");
       const [subregion1, subregion2] = secondRegion.children;
       assertExists(subregion1);
       assertExists(subregion2);
       assert.strictEqual(subregion1.name, "InnerRegion");
+      assert.strictEqual(subregion1.regionIdx, 0);
       assert.strictEqual(subregion2.name, undefined);
+
+      assert.strictEqual(subregion2.regionIdx, 1);
+    });
+  }
+});
+
+suite("Parse all regions with invalid markers", () => {
+  const invalidSampleDir = path.join(__dirname, "invalidSamples");
+  const invalidSampleFileNames = readdirSync(invalidSampleDir);
+
+  for (const invalidSampleFileName of invalidSampleFileNames) {
+    test(`Parse valid and invalid regions in ${invalidSampleFileName}`, async () => {
+      const invalidSampleDocument = await createTestInvalidSampleDocument(invalidSampleFileName);
+
+      const { topLevelRegions, invalidMarkers } = parseAllRegions(invalidSampleDocument);
+
+      assert.strictEqual(topLevelRegions.length, 2, "Expected 2 top-level regions");
+      const [firstRegion, secondRegion] = topLevelRegions;
+      assertExists(firstRegion);
+      assertExists(secondRegion);
+      assert.strictEqual(firstRegion.name, "FirstRegion");
+      assert.strictEqual(firstRegion.regionIdx, 0);
+      assert.strictEqual(secondRegion.name, "Second Region");
+      assert.strictEqual(secondRegion.regionIdx, 1);
+
+      assert.strictEqual(secondRegion.children.length, 2, "Expected 2 nested regions");
+      const [subregion1, subregion2] = secondRegion.children;
+      assertExists(subregion1);
+      assertExists(subregion2);
+      assert.strictEqual(subregion1.name, "InnerRegion");
+      assert.strictEqual(subregion1.regionIdx, 0);
+      assert.strictEqual(subregion2.name, undefined);
+      assert.strictEqual(subregion2.regionIdx, 1);
+
+      assert.strictEqual(invalidMarkers.length, 2, "Expected 2 invalid markers");
+      const [invalidEndMarker, invalidStartMarker] = invalidMarkers;
+      assertExists(invalidEndMarker);
+      assertExists(invalidStartMarker);
+      assert.strictEqual(invalidEndMarker.markerType, "end");
+      assert.strictEqual(invalidStartMarker.markerType, "start");
     });
   }
 });
