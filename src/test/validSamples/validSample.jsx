@@ -2,9 +2,6 @@
 const x = 42;
 //#endregion
 
-// #endregion Invalid end boundary
-// #region Invalid start boundary
-
 // #region Second Region
 class MyComponent extends React.Component {
   //    #region    InnerRegion

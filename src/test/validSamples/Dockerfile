@@ -2,9 +2,6 @@
 FROM node:14
 #endregion
 
-  # endregion Invalid end boundary
-  # region Invalid start boundary
-
 # region Second Region
 WORKDIR /app
 #  region    InnerRegion  

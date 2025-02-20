@@ -2,9 +2,6 @@
 SELECT * FROM users;
 --#endregion
 
--- #endregion Invalid end boundary
--- #region Invalid start boundary
-
 -- #region Second Region  
 CREATE TABLE customers (
     id INT PRIMARY KEY,

@@ -4,9 +4,6 @@
 </script>
 <!--#endregion-->
 
-<!-- #endregion Invalid end boundary -->
-<!-- #region Invalid start boundary -->
-
 <!--   #region Second Region -->
 <div>
   <!--  #region    InnerRegion   -->

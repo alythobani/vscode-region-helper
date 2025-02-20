@@ -18,7 +18,7 @@ suite("Parse files with only valid regions", () => {
       const sampleDocument = await createTestSampleDocument(sampleFileName);
       const result = parseAllRegions(sampleDocument);
 
-      const { topLevelRegions } = result;
+      const { topLevelRegions, invalidMarkers } = result;
 
       assert.strictEqual(topLevelRegions.length, 2, "Expected 2 top-level regions");
       const [firstRegion, secondRegion] = topLevelRegions;
@@ -36,8 +36,9 @@ suite("Parse files with only valid regions", () => {
       assert.strictEqual(subregion1.name, "InnerRegion");
       assert.strictEqual(subregion1.regionIdx, 0);
       assert.strictEqual(subregion2.name, undefined);
-
       assert.strictEqual(subregion2.regionIdx, 1);
+
+      assert.strictEqual(invalidMarkers.length, 0, "Expected 0 invalid markers");
     });
   }
 });

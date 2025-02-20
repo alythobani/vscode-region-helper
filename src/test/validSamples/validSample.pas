@@ -5,9 +5,6 @@ begin
 end.
 // #endregion
 
-(*#endregion Invalid end boundary*)
-{#region Invalid start boundary}
-
 {  #region    Second Region  }
 procedure MyProcedure;
 begin

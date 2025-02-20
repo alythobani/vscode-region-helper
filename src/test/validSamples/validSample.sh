@@ -4,9 +4,6 @@
 x=42
 #endregion
 
-  # endregion Invalid end boundary
-  # region Invalid start boundary
-
 #   region Second Region
 function my_function {
     #  region   InnerRegion

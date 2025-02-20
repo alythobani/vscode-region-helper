@@ -3,9 +3,6 @@ title = "My Project"
 version = "1.0.0"
 #endregion
 
-  # endregion Invalid end boundary
-  # region Invalid start boundary
-
 # region Second Region  
 [database]
 host = "localhost"

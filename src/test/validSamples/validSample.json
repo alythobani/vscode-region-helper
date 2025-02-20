@@ -4,8 +4,6 @@
   "property2": "value2",
   "property3": "value3",
   //#endregion
-  // #endregion Invalid end boundary
-  // #region Invalid start boundary
   "property4": "value4",
   //   #region       Second Region
   "property5": "value5",

@@ -3,9 +3,6 @@ all:
 	@echo "Building project..."
 #endregion
 
-  # endregion Invalid end boundary
-  # region Invalid start boundary
-
 #region Second Region
 clean:
 	rm -rf build/

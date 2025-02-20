@@ -2,9 +2,6 @@
 #import <Foundation/Foundation.h>
 //#endregion
 
-// #endregion Invalid end boundary
-// #region Invalid start boundary
-
 //  #region Second Region
 @interface MyClass : NSObject
 //  #region    InnerRegion  

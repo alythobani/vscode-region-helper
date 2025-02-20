@@ -4,9 +4,6 @@
 </template>
 <!--#endregion-->
 
-<!-- #endregion Invalid end boundary -->
-<!-- #region Invalid start boundary -->
-
 <!--   #region Second Region -->
 <script>
 export default {

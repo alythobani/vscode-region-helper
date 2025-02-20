@@ -2,9 +2,6 @@
 X = 42.
    %%         #endregion
 
-% #endregion Invalid end boundary
-% #region Invalid start boundary
-
 % #region Second Region
 -module(my_class).
 -export([my_method/0]).

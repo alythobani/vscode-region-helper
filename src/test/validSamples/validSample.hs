@@ -2,9 +2,6 @@
 x = 42
 -- #endregion
 
--- #endregion Invalid end boundary
--- #region Invalid start boundary
-
 -- #region Second Region  
 data MyClass = MyClass
     --    #region   InnerRegion  
