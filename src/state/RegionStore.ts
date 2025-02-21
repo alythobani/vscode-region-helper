@@ -4,6 +4,8 @@ import { type Region } from "../models/Region";
 import { getActiveRegion } from "../utils/getActiveRegion";
 
 export class RegionStore {
+  private static _instance: RegionStore | undefined = undefined;
+
   private _topLevelRegions: Region[] = [];
   private _invalidMarkers: InvalidMarker[] = [];
   private _onDidChangeRegions = new vscode.EventEmitter<void>();
@@ -16,9 +18,24 @@ export class RegionStore {
   private _onDidChangeInvalidMarkers = new vscode.EventEmitter<void>();
   readonly onDidChangeInvalidMarkers = this._onDidChangeInvalidMarkers.event;
 
-  constructor(subscriptions: vscode.Disposable[]) {
+  private constructor(subscriptions: vscode.Disposable[]) {
     this.registerListeners(subscriptions);
     this.refreshRegionsAndActiveRegion();
+  }
+
+  static initialize(subscriptions: vscode.Disposable[]): RegionStore {
+    if (this._instance) {
+      throw new Error("RegionStore is already initialized! Only one instance is allowed.");
+    }
+    this._instance = new RegionStore(subscriptions);
+    return this._instance;
+  }
+
+  static getInstance(): RegionStore {
+    if (!this._instance) {
+      throw new Error("RegionStore is not initialized! Call `initialize()` first.");
+    }
+    return this._instance;
   }
 
   private registerListeners(subscriptions: vscode.Disposable[]): void {

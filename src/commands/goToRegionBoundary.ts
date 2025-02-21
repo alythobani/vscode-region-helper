@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { goToNextTopLevelRegionBoundary } from "../lib/goToNextTopLevelRegionBoundary";
 import { type Region } from "../models/Region";
 import { type RegionStore } from "../state/RegionStore";
 import { getActiveCursorLineIdx } from "../utils/getActiveCursorLineIdx";
@@ -20,23 +21,6 @@ export function goToRegionBoundary(regionStore: RegionStore): void {
   }
   const regionBoundaryLine = getRegionBoundaryLineForJump(activeRegion, cursorLine);
   moveCursorToFirstNonWhitespaceCharOfLine(activeTextEditor, regionBoundaryLine);
-}
-
-function goToNextTopLevelRegionBoundary({
-  activeTextEditor,
-  topLevelRegions,
-  cursorLine,
-}: {
-  activeTextEditor: vscode.TextEditor;
-  topLevelRegions: Region[];
-  cursorLine: number;
-}): void {
-  for (const region of topLevelRegions) {
-    if (region.startLineIdx > cursorLine) {
-      moveCursorToFirstNonWhitespaceCharOfLine(activeTextEditor, region.startLineIdx);
-      return;
-    }
-  }
 }
 
 function getRegionBoundaryLineForJump(activeRegion: Region, cursorLine: number): number {

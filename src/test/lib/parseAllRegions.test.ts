@@ -1,24 +1,22 @@
 import * as assert from "assert";
-import { readdirSync } from "fs";
-import * as path from "path";
 
-import { parseAllRegions } from "../lib/parseAllRegions";
-import { assertExists } from "../utils/assertUtils";
+import { parseAllRegions } from "../../lib/parseAllRegions";
+import { assertExists } from "../../utils/assertUtils";
 import {
-  createTestInvalidSampleDocument,
-  createTestSampleDocument,
-} from "./utils/createTestSampleDocument";
+  getAllFileNamesInSampleFolder,
+  openInvalidSampleDocument,
+  openValidSampleDocument,
+} from "../utils/openSampleDocument";
 
 suite("Parse files with only valid regions", () => {
-  const sampleDir = path.join(__dirname, "validSamples");
-  const sampleFileNames = readdirSync(sampleDir);
+  const validSamplesFolderName = "validSamples";
+  const sampleFileNames = getAllFileNamesInSampleFolder(validSamplesFolderName);
 
   for (const sampleFileName of sampleFileNames) {
     test(`Parse regions in ${sampleFileName}`, async () => {
-      const sampleDocument = await createTestSampleDocument(sampleFileName);
-      const result = parseAllRegions(sampleDocument);
+      const sampleDocument = await openValidSampleDocument(sampleFileName);
 
-      const { topLevelRegions, invalidMarkers } = result;
+      const { topLevelRegions, invalidMarkers } = parseAllRegions(sampleDocument);
 
       assert.strictEqual(topLevelRegions.length, 2, "Expected 2 top-level regions");
       const [firstRegion, secondRegion] = topLevelRegions;
@@ -44,12 +42,12 @@ suite("Parse files with only valid regions", () => {
 });
 
 suite("Parse all regions with invalid markers", () => {
-  const invalidSampleDir = path.join(__dirname, "invalidSamples");
-  const invalidSampleFileNames = readdirSync(invalidSampleDir);
+  const invalidSamplesFolderName = "invalidSamples";
+  const invalidSampleFileNames = getAllFileNamesInSampleFolder(invalidSamplesFolderName);
 
   for (const invalidSampleFileName of invalidSampleFileNames) {
     test(`Parse valid and invalid regions in ${invalidSampleFileName}`, async () => {
-      const invalidSampleDocument = await createTestInvalidSampleDocument(invalidSampleFileName);
+      const invalidSampleDocument = await openInvalidSampleDocument(invalidSampleFileName);
 
       const { topLevelRegions, invalidMarkers } = parseAllRegions(invalidSampleDocument);
 

@@ -32,6 +32,10 @@
       {
         "command": "region-helper.goToRegionFromQuickPick",
         "title": "Go to Region..."
+      },
+      {
+        "command": "region-helper.goToNextRegion",
+        "title": "Go to Next Region"
       }
     ],
     "configuration": {
@@ -315,6 +319,11 @@
         "command": "region-helper.goToRegionFromQuickPick",
         "key": "ctrl+shift+r",
         "mac": "cmd+shift+r",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "region-helper.goToNextRegion",
+        "key": "ctrl+alt+n",
         "when": "editorTextFocus"
       }
     ],
