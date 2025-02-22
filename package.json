@@ -23,19 +23,23 @@
     "commands": [
       {
         "command": "region-helper.goToRegionBoundary",
-        "title": "Go to Region Boundary"
+        "title": "Region Helper: Go to Region Boundary"
       },
       {
         "command": "region-helper.selectCurrentRegion",
-        "title": "Select Current Region"
+        "title": "Region Helper: Select Current Region"
       },
       {
         "command": "region-helper.goToRegionFromQuickPick",
-        "title": "Go to Region..."
+        "title": "Region Helper: Go to Region..."
       },
       {
         "command": "region-helper.goToNextRegion",
-        "title": "Go to Next Region"
+        "title": "Region Helper: Go to Next Region"
+      },
+      {
+        "command": "region-helper.goToPreviousRegion",
+        "title": "Region Helper: Go to Previous Region"
       }
     ],
     "configuration": {
