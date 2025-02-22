@@ -6,6 +6,8 @@ A <!-- [Visual Studio Code](https://marketplace.visualstudio.com/region-helper) 
 
 Provides an **interactive tree view**, **diagnostics for unmatched region boundaries**, and **convenient commands** for jumping, searching, and selecting regions.
 
+![Region Helper Demo](./assets/readme-gifs/0-main-demo.gif)
+
 ## Features
 
 ### 📂 Region Tree View
@@ -14,10 +16,14 @@ Provides an **interactive tree view**, **diagnostics for unmatched region bounda
 - **Automatically highlights** the cursor’s active region.
 - Click a region to **instantly navigate** to it.
 
+![Region Tree View Demo](./assets/readme-gifs/1-tree-view.gif)
+
 ### ⚠️ Region Diagnostics
 
 - Detects **unmatched region boundaries** (start or end) and **adds warnings** in both the editor and the Problems panel.
 - Helps you **catch incomplete or misplaced** regions quickly.
+
+![Region Diagnostics Demo](./assets/readme-gifs/2-diagnostics.gif)
 
 ### 🔍 Go to Region (Fuzzy Search)
 
@@ -26,12 +32,16 @@ Provides an **interactive tree view**, **diagnostics for unmatched region bounda
   - **Windows/Linux**: `Ctrl + Shift + R`
   - **Mac**: `Cmd + Shift + R`
 
+![Go to Region Demo](./assets/readme-gifs/3-go-to-region.gif)
+
 ### 🐇 Go to Region Boundary
 
 - Like VSCode’s built-in **"Go to Bracket"**, but for regions.
 - Jumps between **matching region start and end boundaries**.
 - Jumps to the **next region** if the cursor is not already inside a region.
 - 📌 **Default Keybinding**: `Alt + M`
+
+![Go to Region Boundary Demo](./assets/readme-gifs/4-boundary.gif)
 
 ### ⏭️ Go to Next / Previous Region
 
@@ -40,10 +50,14 @@ Provides an **interactive tree view**, **diagnostics for unmatched region bounda
   - **Next**: `Ctrl + Alt + N`
   - **Previous**: `Ctrl + Alt + P`
 
+![Go to Next / Previous Region Demo](./assets/readme-gifs/5-prev-next.gif)
+
 ### 🎯 Select Current Region
 
 - Selects the **entire region** the cursor is currently inside.
 - 📌 **Default Keybinding**: `Alt + Shift + M`
+
+![Select Current Region Demo](./assets/readme-gifs/6-select.gif)
 
 ### ⚙️ Custom Region Patterns
 
