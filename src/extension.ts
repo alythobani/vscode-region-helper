@@ -11,6 +11,7 @@ import { RegionDiagnosticsManager } from "./diagnostics/RegionDiagnosticsManager
 import { type FlattenedRegion } from "./lib/flattenRegions";
 import { type InvalidMarker } from "./lib/parseAllRegions";
 import { type Region } from "./models/Region";
+import { RegionSymbolProvider } from "./outline/RegionSymbolProvider";
 import { RegionStore } from "./state/RegionStore";
 import { RegionTreeViewProvider } from "./treeView/RegionTreeViewProvider";
 import { goToRegionTreeItem, goToRegionTreeItemCommandId } from "./treeView/goToRegionTreeItem";
@@ -51,6 +52,14 @@ export function activate(context: vscode.ExtensionContext): RegionHelperAPI {
 
   const regionDiagnosticsManager = new RegionDiagnosticsManager(regionStore, subscriptions);
   subscriptions.push(regionDiagnosticsManager.diagnostics);
+
+  const regionSymbolProvider = new RegionSymbolProvider(regionStore);
+  const symbolProviderDisposable = vscode.languages.registerDocumentSymbolProvider(
+    { scheme: "file" },
+    regionSymbolProvider,
+    { label: "Regions" }
+  );
+  subscriptions.push(symbolProviderDisposable);
 
   registerCommand(goToRegionTreeItemCommandId, goToRegionTreeItem);
   registerCommand(goToRegionBoundaryCommandId, () => goToRegionBoundary(regionStore));

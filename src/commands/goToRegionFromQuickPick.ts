@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { getRegionDisplayName } from "../lib/getRegionDisplayName";
+import { getRegionDisplayName, getRegionRangeText } from "../lib/getRegionDisplayInfo";
 import { getRegionParents } from "../lib/getRegionParents";
 import { type Region } from "../models/Region";
 import { type RegionStore } from "../state/RegionStore";
@@ -46,7 +46,7 @@ function getRegionQuickPickItems(regions: Region[]): RegionQuickPickItem[] {
 function makeRegionQuickPickItem(region: Region): RegionQuickPickItem {
   const { startLineIdx, endLineIdx } = region;
   const label = getRegionQuickPickItemLabel(region);
-  const description = `Line ${startLineIdx + 1} to ${endLineIdx + 1}`;
+  const description = getRegionRangeText(region);
   return { label, description, startLineIdx, endLineIdx };
 }
 
