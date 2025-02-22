@@ -10,6 +10,9 @@ vsc-extension-quickstart.md
 **/tsconfig.json
 **/.eslintrc.json
 **/*.map
+.aider*
 **/*.ts
 **/.vscode-test.*
 dist-tests/**
+**/eslint.config.mjs
+assets/readme-gifs/**
