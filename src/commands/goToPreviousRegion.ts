@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { getPreviousRegion } from "../lib/getPreviousRegion";
 import { moveCursorToRegion } from "../lib/moveCursorToRegion";
 import { type RegionStore } from "../state/RegionStore";
+import { getActiveCursorLineIdx } from "../utils/getActiveCursorLineIdx";
 
 export const goToPreviousRegionCommandId = "region-helper.goToPreviousRegion";
 
@@ -12,7 +13,8 @@ export function goToPreviousRegion({
   if (!activeTextEditor) {
     return;
   }
-  const maybePreviousRegion = getPreviousRegion(flattenedRegions, activeTextEditor);
+  const cursorLineIdx = getActiveCursorLineIdx(activeTextEditor);
+  const maybePreviousRegion = getPreviousRegion(flattenedRegions, cursorLineIdx);
   if (!maybePreviousRegion) {
     return;
   }
