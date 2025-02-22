@@ -25,8 +25,8 @@ export type RegionHelperAPI = {
   getFlattenedRegions(): FlattenedRegion[];
   /** Returns the currently active region in the current active editor, if any. */
   getActiveRegion(): Region | undefined;
-  /** Returns an up-to-date list of invalid markers in the current active editor. The list will be
-   * empty if no editor is active. */
+  /** Returns an up-to-date list of invalid markers (unmatched boundaries) in the current active
+   * editor. The list will be empty if no editor is active. */
   getInvalidMarkers(): InvalidMarker[];
   /** An event that fires when the list of regions in the current active editor changes. */
   onDidChangeRegions: vscode.Event<void>;

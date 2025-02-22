@@ -3,7 +3,7 @@ import { type Region } from "../models/Region";
 import { getRegionBoundaryPatternMap, type RegexOrArray } from "./regionBoundaryPatterns";
 
 export type InvalidMarker = {
-  markerType: "start" | "end";
+  boundaryType: "start" | "end";
   lineIdx: number;
 };
 
@@ -42,7 +42,7 @@ export function parseAllRegions(document: vscode.TextDocument): RegionParseResul
     }
     const lastOpenRegion = openRegionsStack.pop();
     if (!lastOpenRegion) {
-      invalidMarkers.push({ markerType: "end", lineIdx });
+      invalidMarkers.push({ boundaryType: "end", lineIdx });
       continue; // Can still treat following regions in editor as valid; move to the next line
     }
     lastOpenRegion.wasClosed = true;
@@ -57,7 +57,7 @@ export function parseAllRegions(document: vscode.TextDocument): RegionParseResul
     regionIdx = lastOpenRegion.regionIdx + 1;
   }
   for (const openRegion of openRegionsStack) {
-    invalidMarkers.push({ markerType: "start", lineIdx: openRegion.startLineIdx });
+    invalidMarkers.push({ boundaryType: "start", lineIdx: openRegion.startLineIdx });
     addClosedChildrenToTopLevelRegions(openRegion, topLevelRegions);
   }
   return { topLevelRegions, invalidMarkers };

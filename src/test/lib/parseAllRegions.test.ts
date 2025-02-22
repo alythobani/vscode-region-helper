@@ -73,8 +73,8 @@ suite("Parse all regions with invalid markers", () => {
       const [invalidEndMarker, invalidStartMarker] = invalidMarkers;
       assertExists(invalidEndMarker);
       assertExists(invalidStartMarker);
-      assert.strictEqual(invalidEndMarker.markerType, "end");
-      assert.strictEqual(invalidStartMarker.markerType, "start");
+      assert.strictEqual(invalidEndMarker.boundaryType, "end");
+      assert.strictEqual(invalidStartMarker.boundaryType, "start");
     });
   }
 });

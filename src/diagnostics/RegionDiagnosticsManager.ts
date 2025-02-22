@@ -54,12 +54,12 @@ function createDiagnostic(
 }
 
 function getErrorMessage(invalidMarker: InvalidMarker): string {
-  switch (invalidMarker.markerType) {
+  switch (invalidMarker.boundaryType) {
     case "start":
       return "Unexpected region start: No matching end boundary found below.";
     case "end":
       return "Unexpected region end: No matching start boundary found above.";
     default:
-      throwNever(invalidMarker.markerType);
+      throwNever(invalidMarker.boundaryType);
   }
 }
