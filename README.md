@@ -2,7 +2,7 @@
 
 [![VSCode Marketplace](https://img.shields.io/visual-studio-marketplace/v/AlyThobani.region-helper?label=VSCode%20Marketplace)](https://marketplace.visualstudio.com/items?itemName=AlyThobani.region-helper)
 
-A [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=AlyThobani.region-helper) **Visual Studio Code** extension for **navigating, visualizing, and managing code regions** in your files.  
+A [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=AlyThobani.region-helper) extension for **navigating, visualizing, and managing code regions** in your files.
 
 Provides an **interactive tree view**, **diagnostics for unmatched region boundaries**, and **convenient commands** for jumping, searching, and selecting regions.
 

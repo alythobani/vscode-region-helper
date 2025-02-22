@@ -14,7 +14,7 @@
   },
   "icon": "./assets/icon.png",
   "license": "GPL-3.0-only",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "engines": {
     "vscode": "^1.97.0"
   },
