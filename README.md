@@ -19,6 +19,13 @@ Provides an **interactive tree view**, **diagnostics for unmatched region bounda
 - Detects **unmatched region boundaries** (start or end) and **adds warnings** in both the editor and the Problems panel.
 - Helps you **catch incomplete or misplaced** regions quickly.
 
+### 🔍 Go to Region (Fuzzy Search)
+
+- Opens a **fuzzy-searchable dropdown** to jump to any region in the active file.
+- 📌 **Default Keybinding**:
+  - **Windows/Linux**: `Ctrl + Shift + R`
+  - **Mac**: `Cmd + Shift + R`
+
 ### 🐇 Go to Region Boundary
 
 - Like VSCode’s built-in **"Go to Bracket"**, but for regions.
@@ -26,12 +33,12 @@ Provides an **interactive tree view**, **diagnostics for unmatched region bounda
 - Jumps to the **next region** if the cursor is not already inside a region.
 - 📌 **Default Keybinding**: `Alt + M`
 
-### 🔍 Go to Region (Fuzzy Search)
+### ⏭️ Go to Next / Previous Region
 
-- Opens a **fuzzy-searchable dropdown** to jump to any region in the active file.
-- 📌 **Default Keybinding**:
-  - **Windows/Linux**: `Ctrl + Shift + R`
-  - **Mac**: `Cmd + Shift + R`
+- Jumps to the **next or previous region** in the file.
+- 📌 **Default Keybindings**:
+  - **Next**: `Ctrl + Alt + N`
+  - **Previous**: `Ctrl + Alt + P`
 
 ### 🎯 Select Current Region
 
