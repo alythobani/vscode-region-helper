@@ -8,7 +8,7 @@ import { getActiveCursorLineIdx } from "../utils/getActiveCursorLineIdx";
  * Returns the previous region before the cursor, circling back to the last region if necessary.
  */
 export function getPreviousRegion(
-  { flattenedRegions }: Pick<RegionStore, "flattenedRegions">,
+  flattenedRegions: RegionStore["flattenedRegions"],
   activeTextEditor: vscode.TextEditor
 ): Region | undefined {
   const cursorLine = getActiveCursorLineIdx(activeTextEditor);

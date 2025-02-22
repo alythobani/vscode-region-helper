@@ -12,7 +12,7 @@ export function goToPreviousRegion({
   if (!activeTextEditor) {
     return;
   }
-  const maybePreviousRegion = getPreviousRegion({ flattenedRegions }, activeTextEditor);
+  const maybePreviousRegion = getPreviousRegion(flattenedRegions, activeTextEditor);
   if (!maybePreviousRegion) {
     return;
   }
