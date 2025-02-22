@@ -325,6 +325,11 @@
         "command": "region-helper.goToNextRegion",
         "key": "ctrl+alt+n",
         "when": "editorTextFocus"
+      },
+      {
+        "command": "region-helper.goToPreviousRegion",
+        "key": "ctrl+alt+p",
+        "when": "editorTextFocus"
       }
     ],
     "views": {

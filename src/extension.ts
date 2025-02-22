@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { goToNextRegion, goToNextRegionCommandId } from "./commands/goToNextRegion";
+import { goToPreviousRegion, goToPreviousRegionCommandId } from "./commands/goToPreviousRegion";
 import { goToRegionBoundary, goToRegionBoundaryCommandId } from "./commands/goToRegionBoundary";
 import {
   goToRegionFromQuickPick,
@@ -7,6 +8,7 @@ import {
 } from "./commands/goToRegionFromQuickPick";
 import { selectCurrentRegion, selectCurrentRegionCommandId } from "./commands/selectCurrentRegion";
 import { RegionDiagnosticsManager } from "./diagnostics/RegionDiagnosticsManager";
+import { type FlattenedRegion } from "./lib/flattenRegions";
 import { type InvalidMarker } from "./lib/parseAllRegions";
 import { type Region } from "./models/Region";
 import { RegionStore } from "./state/RegionStore";
@@ -15,6 +17,7 @@ import { goToRegionTreeItem, goToRegionTreeItemCommandId } from "./treeView/goTo
 
 export type RegionHelperAPI = {
   getTopLevelRegions(): Region[];
+  getFlattenedRegions(): FlattenedRegion[];
   getActiveRegion(): Region | undefined;
   getInvalidMarkers(): InvalidMarker[];
   onDidChangeRegions: vscode.Event<void>;
@@ -43,6 +46,7 @@ export function activate(context: vscode.ExtensionContext): RegionHelperAPI {
   registerCommand(selectCurrentRegionCommandId, () => selectCurrentRegion(regionStore));
   registerCommand(goToRegionFromQuickPickCommandId, () => goToRegionFromQuickPick(regionStore));
   registerCommand(goToNextRegionCommandId, () => goToNextRegion(regionStore));
+  registerCommand(goToPreviousRegionCommandId, () => goToPreviousRegion(regionStore));
 
   function registerCommand(
     commandId: string,
@@ -55,6 +59,9 @@ export function activate(context: vscode.ExtensionContext): RegionHelperAPI {
   return {
     getTopLevelRegions(): Region[] {
       return regionStore.topLevelRegions;
+    },
+    getFlattenedRegions(): FlattenedRegion[] {
+      return regionStore.flattenedRegions;
     },
     getActiveRegion(): Region | undefined {
       return regionStore.activeRegion;

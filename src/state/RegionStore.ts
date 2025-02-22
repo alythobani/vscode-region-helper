@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { type FlattenedRegion, flattenRegions } from "../lib/flattenRegions";
 import { type InvalidMarker, parseAllRegions } from "../lib/parseAllRegions";
 import { type Region } from "../models/Region";
 import { getActiveRegion } from "../utils/getActiveRegion";
@@ -7,7 +8,7 @@ export class RegionStore {
   private static _instance: RegionStore | undefined = undefined;
 
   private _topLevelRegions: Region[] = [];
-  private _invalidMarkers: InvalidMarker[] = [];
+  private _flattenedRegions: FlattenedRegion[] = [];
   private _onDidChangeRegions = new vscode.EventEmitter<void>();
   readonly onDidChangeRegions = this._onDidChangeRegions.event;
 
@@ -15,6 +16,7 @@ export class RegionStore {
   private _onDidChangeActiveRegion = new vscode.EventEmitter<void>();
   readonly onDidChangeActiveRegion = this._onDidChangeActiveRegion.event;
 
+  private _invalidMarkers: InvalidMarker[] = [];
   private _onDidChangeInvalidMarkers = new vscode.EventEmitter<void>();
   readonly onDidChangeInvalidMarkers = this._onDidChangeInvalidMarkers.event;
 
@@ -89,10 +91,12 @@ export class RegionStore {
     const activeDocument = vscode.window.activeTextEditor?.document;
     if (!activeDocument) {
       this._topLevelRegions = [];
+      this._flattenedRegions = [];
       this._invalidMarkers = [];
     } else {
       const { topLevelRegions, invalidMarkers } = parseAllRegions(activeDocument);
       this._topLevelRegions = topLevelRegions;
+      this._flattenedRegions = flattenRegions(topLevelRegions);
       this._invalidMarkers = invalidMarkers;
     }
     this._onDidChangeRegions.fire();
@@ -109,6 +113,10 @@ export class RegionStore {
 
   get topLevelRegions(): Region[] {
     return this._topLevelRegions;
+  }
+
+  get flattenedRegions(): FlattenedRegion[] {
+    return this._flattenedRegions;
   }
 
   get activeRegion(): Region | undefined {

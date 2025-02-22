@@ -22,7 +22,7 @@ export function getNextRegion(
     return maybeNextChildRegion;
   }
 
-  return getNextSiblingRegion({ activeRegion, topLevelRegions });
+  return getNextSiblingOrHigherLevelRegion({ activeRegion, topLevelRegions });
 }
 
 /**
@@ -64,10 +64,10 @@ function getNextChildRegion({
 }
 
 /**
- * Returns the next sibling region after `activeRegion`, going up a tree level when reaching a final
- * child, and circling back to the first top level region if necessary.
+ * Returns the next sibling or higher-level region after `activeRegion`, going up a tree level when
+ * reaching a final child, and circling back to the first top level region if necessary.
  */
-function getNextSiblingRegion({
+function getNextSiblingOrHigherLevelRegion({
   activeRegion,
   topLevelRegions,
 }: {
