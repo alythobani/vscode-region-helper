@@ -47,8 +47,8 @@ Provides an **interactive tree view**, **diagnostics for unmatched region bounda
 
 - Jumps to the **next or previous region** in the file.
 - 📌 **Default Keybindings**:
-  - **Next**: `Ctrl + Alt + N`
-  - **Previous**: `Ctrl + Alt + P`
+  - **Next Region**: `Ctrl + Alt + N`
+  - **Previous Region**: `Ctrl + Alt + P`
 
 ![Go to Next / Previous Region Demo](./assets/readme-gifs/5-prev-next.gif)
 
