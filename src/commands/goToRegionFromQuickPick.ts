@@ -1,4 +1,6 @@
 import * as vscode from "vscode";
+import { getRegionDisplayName } from "../lib/getRegionDisplayName";
+import { getRegionParents } from "../lib/getRegionParents";
 import { type Region } from "../models/Region";
 import { type RegionStore } from "../state/RegionStore";
 import {
@@ -42,10 +44,18 @@ function getRegionQuickPickItems(regions: Region[]): RegionQuickPickItem[] {
 }
 
 function makeRegionQuickPickItem(region: Region): RegionQuickPickItem {
-  const { name, startLineIdx, endLineIdx } = region;
-  const label = name ?? "(Unnamed Region)";
+  const { startLineIdx, endLineIdx } = region;
+  const label = getRegionQuickPickItemLabel(region);
   const description = `Line ${startLineIdx + 1} to ${endLineIdx + 1}`;
   return { label, description, startLineIdx, endLineIdx };
+}
+
+function getRegionQuickPickItemLabel(region: Region): string {
+  const displayName = getRegionDisplayName(region);
+  const parents = getRegionParents(region);
+  const numParents = parents.length;
+  const indent = "  ".repeat(numParents);
+  return `${indent}${displayName}`;
 }
 
 function getActiveRegionQuickPickItem({
