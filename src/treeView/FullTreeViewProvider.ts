@@ -83,7 +83,7 @@ export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeIte
     return element;
   }
 
-  getParent(element: FullTreeItem): FullTreeItem | null {
+  getParent(element: FullTreeItem): FullTreeItem | undefined {
     return element.parent;
   }
 
@@ -97,17 +97,70 @@ export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeIte
   private buildTree(): FullTreeItem[] {
     console.log("Building tree");
     const regionItems = this.regionStore.topLevelRegions.map((region) =>
-      this.convertRegionToTreeItem(region, null)
+      this.convertRegionToTreeItem(region, undefined)
     );
     console.log("Region items:", regionItems);
     const symbolItems = this.documentSymbols.map((symbol) =>
-      this.convertSymbolToTreeItem(symbol, null)
+      this.convertSymbolToTreeItem(symbol, undefined)
     );
     console.log("Symbol items:", symbolItems);
-    return [...regionItems, ...symbolItems];
+    const flattenedRegions = this.flattenRegions(this.regionStore.topLevelRegions, undefined);
+    const flattenedSymbols = this.flattenSymbols(this.documentSymbols, undefined);
+    return this.mergeRegionsAndSymbols(flattenedRegions, flattenedSymbols);
   }
 
-  private convertRegionToTreeItem(region: Region, parent: FullTreeItem | null): FullTreeItem {
+  private flattenRegions(regions: Region[], parent: FullTreeItem | undefined): FullTreeItem[] {
+    return regions.flatMap((region) => {
+      const item = this.convertRegionToTreeItem(region, parent);
+      return [item, ...this.flattenRegions(region.children, item)];
+    });
+  }
+
+  private flattenSymbols(
+    symbols: vscode.DocumentSymbol[],
+    parent: FullTreeItem | undefined
+  ): FullTreeItem[] {
+    return symbols.flatMap((symbol) => {
+      const item = this.convertSymbolToTreeItem(symbol, parent);
+      return [item, ...this.flattenSymbols(symbol.children, item)];
+    });
+  }
+
+  private mergeRegionsAndSymbols(regions: FullTreeItem[], symbols: FullTreeItem[]): FullTreeItem[] {
+    const merged: FullTreeItem[] = [];
+    const allItems = [...regions, ...symbols];
+
+    // Sort by start position (line first, then character)
+    allItems.sort((a, b) => {
+      if (a.range.start.line !== b.range.start.line) {
+        return a.range.start.line - b.range.start.line;
+      }
+      return a.range.start.character - b.range.start.character;
+    });
+
+    const stack: FullTreeItem[] = [];
+
+    for (const item of allItems) {
+      let lastInStack = stack[stack.length - 1];
+      while (lastInStack !== undefined && !lastInStack.range.contains(item.range)) {
+        stack.pop();
+        lastInStack = stack[stack.length - 1];
+      }
+
+      if (lastInStack !== undefined) {
+        lastInStack.children.push(item);
+        item.parent = stack[stack.length - 1];
+      } else {
+        merged.push(item);
+      }
+
+      stack.push(item);
+    }
+
+    return merged;
+  }
+
+  private convertRegionToTreeItem(region: Region, parent: FullTreeItem | undefined): FullTreeItem {
     const item = new FullTreeItem(
       region.name ?? "Unnamed region",
       new vscode.Range(region.startLineIdx, 0, region.endLineIdx, 0),
@@ -121,7 +174,7 @@ export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeIte
 
   private convertSymbolToTreeItem(
     symbol: vscode.DocumentSymbol,
-    parent: FullTreeItem | null
+    parent: FullTreeItem | undefined
   ): FullTreeItem {
     const item = new FullTreeItem(
       symbol.name,
