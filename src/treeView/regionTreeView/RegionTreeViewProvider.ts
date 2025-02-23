@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
-import { type Region } from "../models/Region";
-import { type RegionStore } from "../state/RegionStore";
+import { type Region } from "../../models/Region";
+import { type RegionStore } from "../../state/RegionStore";
 import { RegionTreeItem } from "./RegionTreeItem";
 
 export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {

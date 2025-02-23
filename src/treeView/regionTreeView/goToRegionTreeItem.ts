@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
-import { focusEditor } from "../utils/focusEditor";
-import { moveCursorToFirstNonWhitespaceCharOfLine } from "../utils/moveCursorToFirstNonWhitespaceOfLine";
+import { focusEditor } from "../../utils/focusEditor";
+import { moveCursorToFirstNonWhitespaceCharOfLine } from "../../utils/moveCursorToFirstNonWhitespaceOfLine";
 
 export const goToRegionTreeItemCommandId = "region-helper.goToRegionTreeItem";
 

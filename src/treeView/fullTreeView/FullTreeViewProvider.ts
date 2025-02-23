@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
-import { fetchDocumentSymbolsAfterDelay } from "../lib/fetchDocumentSymbols";
-import { type Region } from "../models/Region";
-import { type RegionStore } from "../state/RegionStore";
+import { fetchDocumentSymbolsAfterDelay } from "../../lib/fetchDocumentSymbols";
+import { type Region } from "../../models/Region";
+import { type RegionStore } from "../../state/RegionStore";
 import { type FullTreeItem, getRegionFullTreeItem, getSymbolFullTreeItem } from "./FullTreeItem";
 
 const MAX_NUM_DOCUMENT_SYMBOLS_FETCH_ATTEMPTS = 5;

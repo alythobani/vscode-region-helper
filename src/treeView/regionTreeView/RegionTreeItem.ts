@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
-import { getRegionDisplayName, getRegionRangeText } from "../lib/getRegionDisplayInfo";
-import { type Region } from "../models/Region";
+import { getRegionDisplayName, getRegionRangeText } from "../../lib/getRegionDisplayInfo";
+import { type Region } from "../../models/Region";
 import { goToRegionTreeItemCommandId } from "./goToRegionTreeItem";
 
 export class RegionTreeItem extends vscode.TreeItem {

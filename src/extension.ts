@@ -12,10 +12,16 @@ import { type FlattenedRegion } from "./lib/flattenRegions";
 import { type InvalidMarker } from "./lib/parseAllRegions";
 import { type Region } from "./models/Region";
 import { RegionStore } from "./state/RegionStore";
-import { FullTreeViewProvider } from "./treeView/FullTreeViewProvider";
-import { RegionTreeViewProvider } from "./treeView/RegionTreeViewProvider";
-import { goToFullTreeItem, goToFullTreeItemCommandId } from "./treeView/goToFullTreeItem";
-import { goToRegionTreeItem, goToRegionTreeItemCommandId } from "./treeView/goToRegionTreeItem";
+import { FullTreeViewProvider } from "./treeView/fullTreeView/FullTreeViewProvider";
+import {
+  goToFullTreeItem,
+  goToFullTreeItemCommandId,
+} from "./treeView/fullTreeView/goToFullTreeItem";
+import {
+  goToRegionTreeItem,
+  goToRegionTreeItemCommandId,
+} from "./treeView/regionTreeView/goToRegionTreeItem";
+import { RegionTreeViewProvider } from "./treeView/regionTreeView/RegionTreeViewProvider";
 
 export type RegionHelperAPI = {
   /** Returns an up-to-date list of top-level regions in the current active editor. This is used to
