@@ -11,9 +11,10 @@ import { RegionDiagnosticsManager } from "./diagnostics/RegionDiagnosticsManager
 import { type FlattenedRegion } from "./lib/flattenRegions";
 import { type InvalidMarker } from "./lib/parseAllRegions";
 import { type Region } from "./models/Region";
-import { RegionSymbolProvider } from "./outline/RegionSymbolProvider";
 import { RegionStore } from "./state/RegionStore";
+import { FullTreeViewProvider } from "./treeView/FullTreeViewProvider";
 import { RegionTreeViewProvider } from "./treeView/RegionTreeViewProvider";
+import { goToFullTreeItem, goToFullTreeItemCommandId } from "./treeView/goToFullTreeItem";
 import { goToRegionTreeItem, goToRegionTreeItemCommandId } from "./treeView/goToRegionTreeItem";
 
 export type RegionHelperAPI = {
@@ -50,18 +51,18 @@ export function activate(context: vscode.ExtensionContext): RegionHelperAPI {
   regionTreeViewProvider.setTreeView(treeView);
   subscriptions.push(treeView);
 
+  const fullTreeViewProvider = new FullTreeViewProvider(regionStore, subscriptions);
+  const fullTreeView = vscode.window.createTreeView("regionHelperFullTreeView", {
+    treeDataProvider: fullTreeViewProvider,
+  });
+  fullTreeViewProvider.setTreeView(fullTreeView);
+  subscriptions.push(fullTreeView);
+
   const regionDiagnosticsManager = new RegionDiagnosticsManager(regionStore, subscriptions);
   subscriptions.push(regionDiagnosticsManager.diagnostics);
 
-  const regionSymbolProvider = new RegionSymbolProvider(regionStore);
-  const symbolProviderDisposable = vscode.languages.registerDocumentSymbolProvider(
-    { scheme: "file" },
-    regionSymbolProvider,
-    { label: "Regions" }
-  );
-  subscriptions.push(symbolProviderDisposable);
-
   registerCommand(goToRegionTreeItemCommandId, goToRegionTreeItem);
+  registerCommand(goToFullTreeItemCommandId, goToFullTreeItem);
   registerCommand(goToRegionBoundaryCommandId, () => goToRegionBoundary(regionStore));
   registerCommand(selectCurrentRegionCommandId, () => selectCurrentRegion(regionStore));
   registerCommand(goToRegionFromQuickPickCommandId, () => goToRegionFromQuickPick(regionStore));

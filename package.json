@@ -348,6 +348,10 @@
         {
           "id": "regionHelperTreeView",
           "name": "Regions"
+        },
+        {
+          "id": "regionHelperFullTreeView",
+          "name": "Full Tree View (Regions Helper)"
         }
       ]
     }
