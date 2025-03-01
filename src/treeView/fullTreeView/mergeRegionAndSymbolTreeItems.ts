@@ -1,3 +1,4 @@
+import * as vscode from "vscode";
 import { type FullTreeItem } from "./FullTreeItem";
 
 export function mergeRegionsAndSymbols({
@@ -64,6 +65,8 @@ function generateFullTree({
   const parentStack: FullTreeItem[] = [];
   // Build the hierarchical tree structure
   for (const treeItem of flattenedFullTreeItems) {
+    treeItem.children = [];
+    treeItem.collapsibleState = vscode.TreeItemCollapsibleState.None;
     // Remove parents that are no longer valid (i.e., this item is outside their range)
     let currentParent = parentStack[parentStack.length - 1];
     for (
@@ -76,6 +79,7 @@ function generateFullTree({
     if (currentParent !== undefined) {
       // Assign this item as a child of the most recent valid parent
       currentParent.children.push(treeItem);
+      currentParent.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
       treeItem.parent = currentParent;
     } else {
       // No valid parent found → this is a top-level item

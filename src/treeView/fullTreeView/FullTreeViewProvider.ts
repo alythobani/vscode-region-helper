@@ -96,13 +96,10 @@ export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeIte
   }
 
   private buildTree(): FullTreeItem[] {
-    console.log("Building tree");
     const regionItems = this.regionStore.topLevelRegions.map((region) =>
       getRegionFullTreeItem(region)
     );
-    console.log("Region items:", regionItems);
     const symbolItems = this.documentSymbols.map((symbol) => getSymbolFullTreeItem(symbol));
-    console.log("Symbol items:", symbolItems);
     const flattenedRegionItems = flattenFullTreeItems(regionItems);
     const flattenedSymbolItems = flattenFullTreeItems(symbolItems);
     return mergeRegionsAndSymbols({ flattenedRegionItems, flattenedSymbolItems });
