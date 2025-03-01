@@ -3,8 +3,8 @@ import { fetchDocumentSymbolsAfterDelay } from "../../lib/fetchDocumentSymbols";
 import { type RegionStore } from "../../state/RegionStore";
 import { type FullTreeItem, getRegionFullTreeItem, getSymbolFullTreeItem } from "./FullTreeItem";
 import { flattenFullTreeItems } from "./flattenFullTreeItems";
+import { generateTopLevelFullTreeItems } from "./generateTopLevelFullTreeItems";
 import { getActiveFullTreeItem } from "./getActiveFullTreeItem";
-import { generateTopLevelFullTreeItems } from "./mergeRegionAndSymbolTreeItems";
 
 const MAX_NUM_DOCUMENT_SYMBOLS_FETCH_ATTEMPTS = 5;
 const DOCUMENT_SYMBOLS_FETCH_DELAY_MS = 300;
