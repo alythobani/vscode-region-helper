@@ -47,6 +47,7 @@ export function parseAllRegions(document: vscode.TextDocument): RegionParseResul
     }
     lastOpenRegion.wasClosed = true;
     lastOpenRegion.endLineIdx = lineIdx;
+    lastOpenRegion.endLineCharacterIdx = lineText.length;
     const maybeParentRegion = openRegionsStack[openRegionsStack.length - 1];
     if (maybeParentRegion) {
       lastOpenRegion.parent = maybeParentRegion;
@@ -93,6 +94,7 @@ function makeNewOpenRegion({
     name: trimmedName === "" ? undefined : trimmedName,
     startLineIdx,
     endLineIdx: -1,
+    endLineCharacterIdx: -1,
     regionIdx,
     wasClosed: false,
     children: [],

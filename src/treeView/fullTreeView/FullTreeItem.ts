@@ -31,7 +31,7 @@ export class FullTreeItem extends vscode.TreeItem {
 export function getRegionFullTreeItem(region: Region, parent?: FullTreeItem): FullTreeItem {
   const item = new FullTreeItem(
     getRegionDisplayName(region),
-    new vscode.Range(region.startLineIdx, 0, region.endLineIdx, 0),
+    new vscode.Range(region.startLineIdx, 0, region.endLineIdx, region.endLineCharacterIdx),
     "region",
     parent,
     region.children.map((child) => getRegionFullTreeItem(child, parent)),
