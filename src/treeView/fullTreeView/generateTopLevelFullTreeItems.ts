@@ -42,12 +42,9 @@ export function generateTopLevelFullTreeItems({
 
     // Remove parents that are no longer valid (i.e., this item is outside their range)
     let currentParent = parentStack[parentStack.length - 1];
-    for (
-      ;
-      currentParent !== undefined && !currentParent.range.contains(nextItem.range);
-      currentParent = parentStack[parentStack.length - 1]
-    ) {
+    while (currentParent !== undefined && !currentParent.range.contains(nextItem.range)) {
       parentStack.pop();
+      currentParent = parentStack[parentStack.length - 1];
     }
 
     if (currentParent !== undefined) {
