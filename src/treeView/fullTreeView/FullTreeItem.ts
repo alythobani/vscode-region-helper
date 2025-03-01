@@ -9,7 +9,7 @@ export class FullTreeItem extends vscode.TreeItem {
     public readonly range: vscode.Range,
     public readonly type: "region" | "symbol",
     public parent: FullTreeItem | undefined,
-    public readonly children: FullTreeItem[],
+    public children: FullTreeItem[],
     public readonly icon?: vscode.ThemeIcon
   ) {
     super(
