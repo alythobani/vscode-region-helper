@@ -4,7 +4,7 @@ import { type RegionStore } from "../../state/RegionStore";
 import { type FullTreeItem, getRegionFullTreeItem, getSymbolFullTreeItem } from "./FullTreeItem";
 import { flattenFullTreeItems } from "./flattenFullTreeItems";
 import { getActiveFullTreeItem } from "./getActiveFullTreeItem";
-import { mergeRegionsAndSymbols } from "./mergeRegionAndSymbolTreeItems";
+import { generateTopLevelFullTreeItems } from "./mergeRegionAndSymbolTreeItems";
 
 const MAX_NUM_DOCUMENT_SYMBOLS_FETCH_ATTEMPTS = 5;
 const DOCUMENT_SYMBOLS_FETCH_DELAY_MS = 300;
@@ -120,7 +120,7 @@ export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeIte
     const symbolItems = documentSymbols.map((symbol) => getSymbolFullTreeItem(symbol));
     const flattenedRegionItems = flattenFullTreeItems(regionItems);
     const flattenedSymbolItems = flattenFullTreeItems(symbolItems);
-    const topLevelFullTreeItems = mergeRegionsAndSymbols({
+    const topLevelFullTreeItems = generateTopLevelFullTreeItems({
       flattenedRegionItems,
       flattenedSymbolItems,
     });

@@ -1,92 +1,68 @@
 import * as vscode from "vscode";
+import { assertExists } from "../../utils/assertUtils";
 import { type FullTreeItem } from "./FullTreeItem";
 
-export function mergeRegionsAndSymbols({
+export function generateTopLevelFullTreeItems({
   flattenedRegionItems,
   flattenedSymbolItems,
 }: {
   flattenedRegionItems: FullTreeItem[];
   flattenedSymbolItems: FullTreeItem[];
 }): FullTreeItem[] {
-  const flattenedFullTreeItems = mergeFlattenedRegionAndSymbolTreeItems({
-    flattenedRegionItems,
-    flattenedSymbolItems,
-  });
-  return generateFullTree({ flattenedFullTreeItems });
-}
+  const topLevelFullTreeItems: FullTreeItem[] = [];
+  const parentStack: FullTreeItem[] = [];
 
-/**
- * Merges the flattened (and sorted within themselves) region and symbol tree items into a single
- * sorted list in O(n).
- */
-function mergeFlattenedRegionAndSymbolTreeItems({
-  flattenedRegionItems,
-  flattenedSymbolItems,
-}: {
-  flattenedRegionItems: FullTreeItem[];
-  flattenedSymbolItems: FullTreeItem[];
-}): FullTreeItem[] {
-  const flattenedFullTreeItems: FullTreeItem[] = [];
+  let regionIdx = 0;
+  let symbolIdx = 0;
+
   for (
-    let regionIdx = 0,
-      symbolIdx = 0,
-      regionItem = flattenedRegionItems[regionIdx],
-      symbolItem = flattenedSymbolItems[symbolIdx];
+    let regionItem = flattenedRegionItems[regionIdx], symbolItem = flattenedSymbolItems[symbolIdx];
     regionItem !== undefined || symbolItem !== undefined;
     regionItem = flattenedRegionItems[regionIdx], symbolItem = flattenedSymbolItems[symbolIdx]
   ) {
+    let nextItem: FullTreeItem;
     if (regionItem === undefined) {
-      // Append the remaining symbol items
-      flattenedFullTreeItems.push(...flattenedSymbolItems.slice(symbolIdx));
-      break;
-    }
-    if (symbolItem === undefined) {
-      // Append the remaining region items
-      flattenedFullTreeItems.push(...flattenedRegionItems.slice(regionIdx));
-      break;
-    }
-    if (regionItem.range.start.isBefore(symbolItem.range.start)) {
-      flattenedFullTreeItems.push(regionItem);
+      assertExists(symbolItem);
+      nextItem = symbolItem;
+      symbolIdx++;
+    } else if (symbolItem === undefined) {
+      assertExists(regionItem);
+      nextItem = regionItem;
+      regionIdx++;
+    } else if (regionItem.range.start.isBefore(symbolItem.range.start)) {
+      nextItem = regionItem;
       regionIdx++;
     } else {
-      flattenedFullTreeItems.push(symbolItem);
+      nextItem = symbolItem;
       symbolIdx++;
     }
-  }
-  return flattenedFullTreeItems;
-}
 
-function generateFullTree({
-  flattenedFullTreeItems,
-}: {
-  flattenedFullTreeItems: FullTreeItem[];
-}): FullTreeItem[] {
-  const mergedTreeRoots: FullTreeItem[] = [];
-  const parentStack: FullTreeItem[] = [];
-  // Build the hierarchical tree structure
-  for (const treeItem of flattenedFullTreeItems) {
-    treeItem.children = [];
-    treeItem.collapsibleState = vscode.TreeItemCollapsibleState.None;
+    nextItem.children = [];
+    nextItem.collapsibleState = vscode.TreeItemCollapsibleState.None;
+
     // Remove parents that are no longer valid (i.e., this item is outside their range)
     let currentParent = parentStack[parentStack.length - 1];
     for (
       ;
-      currentParent !== undefined && !currentParent.range.contains(treeItem.range);
+      currentParent !== undefined && !currentParent.range.contains(nextItem.range);
       currentParent = parentStack[parentStack.length - 1]
     ) {
       parentStack.pop();
     }
+
     if (currentParent !== undefined) {
-      // Assign this item as a child of the most recent valid parent
-      currentParent.children.push(treeItem);
+      // Attach as a child of the most recent valid parent
+      currentParent.children.push(nextItem);
       currentParent.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
-      treeItem.parent = currentParent;
+      nextItem.parent = currentParent;
     } else {
       // No valid parent found → this is a top-level item
-      mergedTreeRoots.push(treeItem);
+      topLevelFullTreeItems.push(nextItem);
     }
-    // Push this item onto the stack (it may become a parent for future items)
-    parentStack.push(treeItem);
+
+    // Push onto stack (it may become a parent for future items)
+    parentStack.push(nextItem);
   }
-  return mergedTreeRoots;
+
+  return topLevelFullTreeItems;
 }
