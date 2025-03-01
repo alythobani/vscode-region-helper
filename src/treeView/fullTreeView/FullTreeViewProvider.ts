@@ -14,7 +14,9 @@ export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeIte
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
   private treeView: vscode.TreeView<FullTreeItem> | undefined;
-  private topLevelFullTreeItems: FullTreeItem[] = [];
+
+  private _topLevelFullTreeItems: FullTreeItem[] = [];
+  private _activeFullTreeItem: FullTreeItem | undefined = undefined;
 
   constructor(private regionStore: RegionStore, subscriptions: vscode.Disposable[]) {
     this.registerListeners(subscriptions);
@@ -61,16 +63,21 @@ export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeIte
   private onSelectionChange(event: vscode.TextEditorSelectionChangeEvent): void {
     if (event.textEditor === vscode.window.activeTextEditor) {
       const cursorPosition = event.textEditor.selection.active;
-      const activeTreeItem = getActiveFullTreeItem(this.topLevelFullTreeItems, cursorPosition);
-      this.highlightActiveTreeItem(activeTreeItem);
+      const activeFullTreeItem = getActiveFullTreeItem(this._topLevelFullTreeItems, cursorPosition);
+      if (activeFullTreeItem === this._activeFullTreeItem) {
+        // No need to update the tree if the active tree item hasn't changed.
+        return;
+      }
+      this._activeFullTreeItem = activeFullTreeItem;
+      this.highlightActiveTreeItem();
     }
   }
 
-  private highlightActiveTreeItem(activeTreeItem: FullTreeItem | undefined): void {
-    if (!this.treeView || !activeTreeItem) {
+  private highlightActiveTreeItem(): void {
+    if (!this.treeView || !this._activeFullTreeItem) {
       return;
     }
-    this.treeView.reveal(activeTreeItem, { select: true, focus: false });
+    this.treeView.reveal(this._activeFullTreeItem, { select: true, focus: false });
   }
 
   private async updateSymbols(document: vscode.TextDocument, attemptIdx = 0): Promise<void> {
@@ -110,7 +117,7 @@ export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeIte
     if (element) {
       return element.children;
     }
-    return this.topLevelFullTreeItems;
+    return this._topLevelFullTreeItems;
   }
 
   private buildTree(documentSymbols: vscode.DocumentSymbol[]): void {
@@ -124,7 +131,7 @@ export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeIte
       flattenedRegionItems,
       flattenedSymbolItems,
     });
-    this.topLevelFullTreeItems = topLevelFullTreeItems;
+    this._topLevelFullTreeItems = topLevelFullTreeItems;
   }
 
   setTreeView(treeView: vscode.TreeView<FullTreeItem>): void {
