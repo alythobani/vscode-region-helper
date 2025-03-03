@@ -1,7 +1,10 @@
 import * as vscode from "vscode";
 import { type Region } from "../../models/Region";
 import { type RegionStore } from "../../state/RegionStore";
+import { debounce } from "../../utils/debounce";
 import { RegionTreeItem } from "./RegionTreeItem";
+
+const DEBOUNCE_DELAY_MS = 300;
 
 export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
   private _onDidChangeTreeData = new vscode.EventEmitter<undefined>();
@@ -19,22 +22,28 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
   }
 
   private registerRegionsChangeListener(subscriptions: vscode.Disposable[]): void {
-    this.regionStore.onDidChangeRegions(() => this.onRegionsChange(), undefined, subscriptions);
+    this.regionStore.onDidChangeRegions(
+      debounce(this.onRegionsChange.bind(this), DEBOUNCE_DELAY_MS),
+      undefined,
+      subscriptions
+    );
   }
 
   private registerActiveRegionChangeListener(subscriptions: vscode.Disposable[]): void {
     this.regionStore.onDidChangeActiveRegion(
-      () => this.onActiveRegionChange(),
+      debounce(this.onActiveRegionChange.bind(this), DEBOUNCE_DELAY_MS),
       undefined,
       subscriptions
     );
   }
 
   private onRegionsChange(): void {
+    console.log("RegionTreeViewProvider: onRegionsChange");
     this._onDidChangeTreeData.fire(undefined);
   }
 
   private onActiveRegionChange(): void {
+    console.log("RegionTreeViewProvider: onActiveRegionChange");
     this.highlightActiveRegion();
   }
 

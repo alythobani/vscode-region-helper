@@ -1,13 +1,13 @@
 import * as vscode from "vscode";
-import { fetchDocumentSymbolsAfterDelay } from "../../lib/fetchDocumentSymbols";
+import { type DocumentSymbolStore } from "../../state/DocumentSymbolStore";
 import { type RegionStore } from "../../state/RegionStore";
+import { debounce } from "../../utils/debounce";
 import { type FullTreeItem, getRegionFullTreeItem, getSymbolFullTreeItem } from "./FullTreeItem";
 import { flattenFullTreeItems } from "./flattenFullTreeItems";
 import { generateTopLevelFullTreeItems } from "./generateTopLevelFullTreeItems";
 import { getActiveFullTreeItem } from "./getActiveFullTreeItem";
 
-const MAX_NUM_DOCUMENT_SYMBOLS_FETCH_ATTEMPTS = 5;
-const DOCUMENT_SYMBOLS_FETCH_DELAY_MS = 300;
+const DEBOUNCE_DELAY_MS = 300;
 
 export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeItem> {
   private _onDidChangeTreeData = new vscode.EventEmitter<FullTreeItem | undefined>();
@@ -18,90 +18,90 @@ export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeIte
   private _topLevelFullTreeItems: FullTreeItem[] = [];
   private _activeFullTreeItem: FullTreeItem | undefined = undefined;
 
-  constructor(private regionStore: RegionStore, subscriptions: vscode.Disposable[]) {
+  constructor(
+    private regionStore: RegionStore,
+    private documentSymbolStore: DocumentSymbolStore,
+    subscriptions: vscode.Disposable[]
+  ) {
     this.registerListeners(subscriptions);
-    if (vscode.window.activeTextEditor?.document) {
-      void this.updateSymbols(vscode.window.activeTextEditor.document);
-    }
+    this.buildAndRefreshTree();
   }
 
   private registerListeners(subscriptions: vscode.Disposable[]): void {
-    vscode.window.onDidChangeActiveTextEditor(
-      (editor) => {
-        if (editor?.document) {
-          void this.updateSymbols(editor.document);
-        }
-      },
+    this.regionStore.onDidChangeRegions(
+      debounce(this.onRegionsChange.bind(this), DEBOUNCE_DELAY_MS),
       this,
       subscriptions
     );
-    vscode.workspace.onDidChangeTextDocument(
-      (event) => {
-        if (vscode.window.activeTextEditor?.document === event.document) {
-          void this.updateSymbols(event.document);
-        }
-      },
+    this.documentSymbolStore.onDidChangeDocumentSymbols(
+      debounce(this.onDocumentSymbolsChange.bind(this), DEBOUNCE_DELAY_MS),
       this,
       subscriptions
     );
-    this.regionStore.onDidChangeRegions(() => this.onRegionsChange(), undefined, subscriptions);
     this.registerSelectionChangeListener(subscriptions);
   }
 
   private onRegionsChange(): void {
-    this.refreshTree();
+    console.log("FullTreeViewProvider: onRegionsChange");
+    this.buildAndRefreshTree();
+  }
+
+  private onDocumentSymbolsChange(): void {
+    console.log("FullTreeViewProvider: onDocumentSymbolsChange");
+    this.buildAndRefreshTree();
   }
 
   private registerSelectionChangeListener(subscriptions: vscode.Disposable[]): void {
     vscode.window.onDidChangeTextEditorSelection(
-      (event) => this.onSelectionChange(event),
-      undefined,
+      debounce(this.onSelectionChange.bind(this), DEBOUNCE_DELAY_MS),
+      this,
       subscriptions
     );
   }
 
   private onSelectionChange(event: vscode.TextEditorSelectionChangeEvent): void {
     if (event.textEditor === vscode.window.activeTextEditor) {
-      const cursorPosition = event.textEditor.selection.active;
-      const activeFullTreeItem = getActiveFullTreeItem(this._topLevelFullTreeItems, cursorPosition);
-      if (activeFullTreeItem === this._activeFullTreeItem) {
-        // No need to update the tree if the active tree item hasn't changed.
-        return;
-      }
-      this._activeFullTreeItem = activeFullTreeItem;
+      this.refreshAndHighlightActiveTreeItem();
+    }
+  }
+
+  private refreshAndHighlightActiveTreeItem(): void {
+    const didActiveTreeItemChange = this.refreshActiveTreeItem();
+    if (didActiveTreeItemChange) {
       this.highlightActiveTreeItem();
     }
   }
 
+  /** Returns true if the active tree item changed, false otherwise. */
+  private refreshActiveTreeItem(): boolean {
+    const cursorPosition = vscode.window.activeTextEditor?.selection.active;
+    if (!cursorPosition) {
+      return false;
+    }
+    const oldActiveFullTreeItem = this._activeFullTreeItem;
+    this._activeFullTreeItem = getActiveFullTreeItem(this._topLevelFullTreeItems, cursorPosition);
+    return this._activeFullTreeItem !== oldActiveFullTreeItem;
+  }
+
   private highlightActiveTreeItem(): void {
     if (!this.treeView || !this._activeFullTreeItem) {
+      // Unfortunately VSCode's API doesn't provide a way to deselect a tree item
       return;
     }
+    console.log(
+      `FullTreeViewProvider: Highlighting active tree item ${this._activeFullTreeItem.label}`
+    );
     this.treeView.reveal(this._activeFullTreeItem, { select: true, focus: false });
   }
 
-  private async updateSymbols(document: vscode.TextDocument, attemptIdx = 0): Promise<void> {
-    if (attemptIdx >= MAX_NUM_DOCUMENT_SYMBOLS_FETCH_ATTEMPTS) {
-      // console.warn(`Failed to fetch document symbols after ${attemptIdx} attempts. Giving up.`);
-      return;
-    }
-    try {
-      const fetchedDocumentSymbols = await fetchDocumentSymbolsAfterDelay(
-        document,
-        DOCUMENT_SYMBOLS_FETCH_DELAY_MS
-      );
-      if (fetchedDocumentSymbols === undefined) {
-        void this.updateSymbols(document, attemptIdx + 1);
-        return;
-      }
-      this.buildTree(fetchedDocumentSymbols);
-      this.refreshTree();
-    } catch (_error) {
-      // console.error("Error fetching document symbols:", error);
-    }
+  private buildAndRefreshTree(): void {
+    this.buildTree();
+    this.refreshTree();
+    this.refreshAndHighlightActiveTreeItem();
   }
 
   private refreshTree(): void {
+    console.log("FullTreeViewProvider: Firing onDidChangeTreeData");
     this._onDidChangeTreeData.fire(undefined);
   }
 
@@ -120,18 +120,28 @@ export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeIte
     return this._topLevelFullTreeItems;
   }
 
-  private buildTree(documentSymbols: vscode.DocumentSymbol[]): void {
-    const regionItems = this.regionStore.topLevelRegions.map((region) =>
+  private buildTree(): void {
+    console.log("FullTreeViewProvider: Building tree...");
+    const startTime = performance.now();
+    const regionFullTreeItems = this.regionStore.topLevelRegions.map((region) =>
       getRegionFullTreeItem(region)
     );
-    const symbolItems = documentSymbols.map((symbol) => getSymbolFullTreeItem(symbol));
-    const flattenedRegionItems = flattenFullTreeItems(regionItems);
-    const flattenedSymbolItems = flattenFullTreeItems(symbolItems);
+    const symbolFullTreeItems =
+      this.documentSymbolStore.documentSymbols?.map((symbol) => getSymbolFullTreeItem(symbol)) ??
+      [];
+    const flattenedRegionItems = flattenFullTreeItems(regionFullTreeItems);
+    const flattenedSymbolItems = flattenFullTreeItems(symbolFullTreeItems);
     const topLevelFullTreeItems = generateTopLevelFullTreeItems({
       flattenedRegionItems,
       flattenedSymbolItems,
     });
     this._topLevelFullTreeItems = topLevelFullTreeItems;
+    const endTime = performance.now();
+    console.log(
+      `FullTreeViewProvider: Building tree with ${
+        topLevelFullTreeItems.length
+      } top-level items took ${endTime - startTime} ms.`
+    );
   }
 
   setTreeView(treeView: vscode.TreeView<FullTreeItem>): void {

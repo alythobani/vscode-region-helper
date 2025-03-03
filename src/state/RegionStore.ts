@@ -2,7 +2,10 @@ import * as vscode from "vscode";
 import { type FlattenedRegion, flattenRegions } from "../lib/flattenRegions";
 import { type InvalidMarker, parseAllRegions } from "../lib/parseAllRegions";
 import { type Region } from "../models/Region";
+import { debounce } from "../utils/debounce";
 import { getActiveRegion } from "../utils/getActiveRegion";
+
+const DEBOUNCE_DELAY_MS = 300;
 
 export class RegionStore {
   private static _instance: RegionStore | undefined = undefined;
@@ -48,7 +51,7 @@ export class RegionStore {
 
   private registerActiveTextEditorChangeListener(subscriptions: vscode.Disposable[]): void {
     vscode.window.onDidChangeActiveTextEditor(
-      () => this.refreshRegionsAndActiveRegion(),
+      debounce(this.refreshRegionsAndActiveRegion.bind(this), DEBOUNCE_DELAY_MS),
       undefined,
       subscriptions
     );
@@ -56,7 +59,7 @@ export class RegionStore {
 
   private registerDocumentChangeListener(subscriptions: vscode.Disposable[]): void {
     vscode.workspace.onDidChangeTextDocument(
-      (event) => this.onDocumentChange(event),
+      debounce(this.onDocumentChange.bind(this), DEBOUNCE_DELAY_MS),
       undefined,
       subscriptions
     );
@@ -70,7 +73,7 @@ export class RegionStore {
 
   private registerSelectionChangeListener(subscriptions: vscode.Disposable[]): void {
     vscode.window.onDidChangeTextEditorSelection(
-      (event) => this.onSelectionChange(event),
+      debounce(this.onSelectionChange.bind(this), DEBOUNCE_DELAY_MS),
       undefined,
       subscriptions
     );
@@ -88,15 +91,32 @@ export class RegionStore {
   }
 
   private refreshRegions(): void {
+    console.log("RegionStore: refreshRegions");
     const activeDocument = vscode.window.activeTextEditor?.document;
     if (!activeDocument) {
+      const oldFlattenedRegions = this._flattenedRegions;
+      if (oldFlattenedRegions.length > 0) {
+        this._onDidChangeRegions.fire();
+      }
       this._topLevelRegions = [];
       this._flattenedRegions = [];
       this._invalidMarkers = [];
     } else {
+      const startTime = performance.now();
       const { topLevelRegions, invalidMarkers } = parseAllRegions(activeDocument);
+      const endTime = performance.now();
+      console.log(
+        `RegionStore: Parsing ${topLevelRegions.length} top-level regions took ${
+          endTime - startTime
+        } ms. Regions: ${topLevelRegions.map((r) => r.name).join(", ")}`
+      );
       this._topLevelRegions = topLevelRegions;
-      this._flattenedRegions = flattenRegions(topLevelRegions);
+      const oldFlattenedRegions = this._flattenedRegions;
+      const newFlattenedRegions = flattenRegions(topLevelRegions);
+      this._flattenedRegions = newFlattenedRegions;
+      if (didFlattenedRegionsChange(oldFlattenedRegions, newFlattenedRegions)) {
+        this._onDidChangeRegions.fire();
+      }
       this._invalidMarkers = invalidMarkers;
     }
     this._onDidChangeRegions.fire();
@@ -107,6 +127,7 @@ export class RegionStore {
     const oldActiveRegion = this._activeRegion;
     this._activeRegion = getActiveRegion(this._topLevelRegions);
     if (this._activeRegion !== oldActiveRegion) {
+      console.log(`RegionStore: Active region changed to ${this._activeRegion?.name}`);
       this._onDidChangeActiveRegion.fire();
     }
   }
@@ -126,4 +147,36 @@ export class RegionStore {
   get invalidMarkers(): InvalidMarker[] {
     return this._invalidMarkers;
   }
+}
+
+function didFlattenedRegionsChange(
+  oldFlattenedRegions: FlattenedRegion[],
+  newFlattenedRegions: FlattenedRegion[]
+): boolean {
+  if (oldFlattenedRegions.length !== newFlattenedRegions.length) {
+    return true;
+  }
+  for (let i = 0; i < oldFlattenedRegions.length; i++) {
+    const oldFlattenedRegion = oldFlattenedRegions[i];
+    const newFlattenedRegion = newFlattenedRegions[i];
+    if (
+      oldFlattenedRegion &&
+      newFlattenedRegion &&
+      !areFlattenedRegionsEqual(oldFlattenedRegion, newFlattenedRegion)
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function areFlattenedRegionsEqual(region1: FlattenedRegion, region2: FlattenedRegion): boolean {
+  return (
+    region1.flatRegionIdx === region2.flatRegionIdx &&
+    region1.name === region2.name &&
+    region1.startLineIdx === region2.startLineIdx &&
+    region1.endLineIdx === region2.endLineIdx &&
+    region1.endLineCharacterIdx === region2.endLineCharacterIdx &&
+    region1.wasClosed === region2.wasClosed
+  );
 }

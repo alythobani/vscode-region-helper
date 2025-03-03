@@ -1,7 +1,10 @@
 import * as vscode from "vscode";
 import { type InvalidMarker } from "../lib/parseAllRegions";
 import { type RegionStore } from "../state/RegionStore";
+import { debounce } from "../utils/debounce";
 import { throwNever } from "../utils/errorUtils";
+
+const DEBOUNCE_DELAY_MS = 300;
 
 export class RegionDiagnosticsManager {
   private _diagnostics = vscode.languages.createDiagnosticCollection("region-helper");
@@ -12,7 +15,7 @@ export class RegionDiagnosticsManager {
 
   private registerInvalidMarkersChangeListener(subscriptions: vscode.Disposable[]): void {
     this.regionStore.onDidChangeInvalidMarkers(
-      () => this.updateDiagnostics(),
+      debounce(this.updateDiagnostics.bind(this), DEBOUNCE_DELAY_MS),
       undefined,
       subscriptions
     );
