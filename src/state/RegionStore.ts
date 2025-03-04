@@ -7,6 +7,7 @@ import { debounce } from "../utils/debounce";
 import { getActiveRegion } from "../utils/getActiveRegion";
 
 const DEBOUNCE_DELAY_MS = 300;
+const SELECTION_CHANGE_DEBOUNCE_DELAY_MS = 100;
 
 export class RegionStore {
   private static _instance: RegionStore | undefined = undefined;
@@ -29,9 +30,14 @@ export class RegionStore {
     return this._versionedDocumentId;
   }
 
+  private debouncedRefreshRegionsAndActiveRegion = debounce(
+    this.refreshRegionsAndActiveRegion.bind(this),
+    DEBOUNCE_DELAY_MS
+  );
+
   private constructor(subscriptions: vscode.Disposable[]) {
     this.registerListeners(subscriptions);
-    this.refreshRegionsAndActiveRegion();
+    this.debouncedRefreshRegionsAndActiveRegion();
   }
 
   static initialize(subscriptions: vscode.Disposable[]): RegionStore {
@@ -57,7 +63,7 @@ export class RegionStore {
 
   private registerActiveTextEditorChangeListener(subscriptions: vscode.Disposable[]): void {
     vscode.window.onDidChangeActiveTextEditor(
-      debounce(this.refreshRegionsAndActiveRegion.bind(this), DEBOUNCE_DELAY_MS),
+      this.debouncedRefreshRegionsAndActiveRegion.bind(this),
       undefined,
       subscriptions
     );
@@ -79,7 +85,7 @@ export class RegionStore {
 
   private registerSelectionChangeListener(subscriptions: vscode.Disposable[]): void {
     vscode.window.onDidChangeTextEditorSelection(
-      debounce(this.onSelectionChange.bind(this), DEBOUNCE_DELAY_MS),
+      debounce(this.onSelectionChange.bind(this), SELECTION_CHANGE_DEBOUNCE_DELAY_MS),
       undefined,
       subscriptions
     );

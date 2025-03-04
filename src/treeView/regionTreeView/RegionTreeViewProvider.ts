@@ -1,10 +1,7 @@
 import * as vscode from "vscode";
 import { type Region } from "../../models/Region";
 import { type RegionStore } from "../../state/RegionStore";
-import { debounce } from "../../utils/debounce";
 import { RegionTreeItem } from "./RegionTreeItem";
-
-const DEBOUNCE_DELAY_MS = 300;
 
 export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
   private _onDidChangeTreeData = new vscode.EventEmitter<undefined>();
@@ -22,16 +19,16 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
   }
 
   private registerRegionsChangeListener(subscriptions: vscode.Disposable[]): void {
-    this.regionStore.onDidChangeRegions(
-      debounce(this.onRegionsChange.bind(this), DEBOUNCE_DELAY_MS),
-      undefined,
-      subscriptions
-    );
+    // Note: no need to debounce here since `onDidChangeRegions` is already debounced by RegionStore
+    // (but if that ever changes, we should debounce here as well)
+    this.regionStore.onDidChangeRegions(this.onRegionsChange.bind(this), undefined, subscriptions);
   }
 
   private registerActiveRegionChangeListener(subscriptions: vscode.Disposable[]): void {
     this.regionStore.onDidChangeActiveRegion(
-      debounce(this.onActiveRegionChange.bind(this), DEBOUNCE_DELAY_MS),
+      // Note: no need to debounce here since `onDidChangeActiveRegion` is already debounced by
+      // RegionStore (but if that ever changes, we should debounce here as well)
+      this.onActiveRegionChange.bind(this),
       undefined,
       subscriptions
     );
