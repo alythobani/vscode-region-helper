@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { type FlattenedRegion, flattenRegions } from "../lib/flattenRegions";
+import { getVersionedDocumentId } from "../lib/getVersionedDocumentId";
 import { type InvalidMarker, parseAllRegions } from "../lib/parseAllRegions";
 import { type Region } from "../models/Region";
 import { debounce } from "../utils/debounce";
@@ -22,6 +23,11 @@ export class RegionStore {
   private _invalidMarkers: InvalidMarker[] = [];
   private _onDidChangeInvalidMarkers = new vscode.EventEmitter<void>();
   readonly onDidChangeInvalidMarkers = this._onDidChangeInvalidMarkers.event;
+
+  private _versionedDocumentId: string | undefined = undefined;
+  get versionedDocumentId(): string | undefined {
+    return this._versionedDocumentId;
+  }
 
   private constructor(subscriptions: vscode.Disposable[]) {
     this.registerListeners(subscriptions);
@@ -91,9 +97,9 @@ export class RegionStore {
   }
 
   private refreshRegions(): void {
-    console.log("RegionStore: refreshRegions");
     const activeDocument = vscode.window.activeTextEditor?.document;
     if (!activeDocument) {
+      this._versionedDocumentId = undefined;
       const oldFlattenedRegions = this._flattenedRegions;
       if (oldFlattenedRegions.length > 0) {
         this._onDidChangeRegions.fire();
@@ -102,21 +108,12 @@ export class RegionStore {
       this._flattenedRegions = [];
       this._invalidMarkers = [];
     } else {
-      const startTime = performance.now();
+      this._versionedDocumentId = getVersionedDocumentId(activeDocument);
       const { topLevelRegions, invalidMarkers } = parseAllRegions(activeDocument);
-      const endTime = performance.now();
-      console.log(
-        `RegionStore: Parsing ${topLevelRegions.length} top-level regions took ${
-          endTime - startTime
-        } ms. Regions: ${topLevelRegions.map((r) => r.name).join(", ")}`
-      );
       this._topLevelRegions = topLevelRegions;
-      const oldFlattenedRegions = this._flattenedRegions;
       const newFlattenedRegions = flattenRegions(topLevelRegions);
       this._flattenedRegions = newFlattenedRegions;
-      if (didFlattenedRegionsChange(oldFlattenedRegions, newFlattenedRegions)) {
-        this._onDidChangeRegions.fire();
-      }
+      this._onDidChangeRegions.fire();
       this._invalidMarkers = invalidMarkers;
     }
     this._onDidChangeRegions.fire();
@@ -127,7 +124,6 @@ export class RegionStore {
     const oldActiveRegion = this._activeRegion;
     this._activeRegion = getActiveRegion(this._topLevelRegions);
     if (this._activeRegion !== oldActiveRegion) {
-      console.log(`RegionStore: Active region changed to ${this._activeRegion?.name}`);
       this._onDidChangeActiveRegion.fire();
     }
   }
@@ -149,34 +145,34 @@ export class RegionStore {
   }
 }
 
-function didFlattenedRegionsChange(
-  oldFlattenedRegions: FlattenedRegion[],
-  newFlattenedRegions: FlattenedRegion[]
-): boolean {
-  if (oldFlattenedRegions.length !== newFlattenedRegions.length) {
-    return true;
-  }
-  for (let i = 0; i < oldFlattenedRegions.length; i++) {
-    const oldFlattenedRegion = oldFlattenedRegions[i];
-    const newFlattenedRegion = newFlattenedRegions[i];
-    if (
-      oldFlattenedRegion &&
-      newFlattenedRegion &&
-      !areFlattenedRegionsEqual(oldFlattenedRegion, newFlattenedRegion)
-    ) {
-      return true;
-    }
-  }
-  return false;
-}
+// function didFlattenedRegionsChange(
+//   oldFlattenedRegions: FlattenedRegion[],
+//   newFlattenedRegions: FlattenedRegion[]
+// ): boolean {
+//   if (oldFlattenedRegions.length !== newFlattenedRegions.length) {
+//     return true;
+//   }
+//   for (let i = 0; i < oldFlattenedRegions.length; i++) {
+//     const oldFlattenedRegion = oldFlattenedRegions[i];
+//     const newFlattenedRegion = newFlattenedRegions[i];
+//     if (
+//       oldFlattenedRegion &&
+//       newFlattenedRegion &&
+//       !areFlattenedRegionsEqual(oldFlattenedRegion, newFlattenedRegion)
+//     ) {
+//       return true;
+//     }
+//   }
+//   return false;
+// }
 
-function areFlattenedRegionsEqual(region1: FlattenedRegion, region2: FlattenedRegion): boolean {
-  return (
-    region1.flatRegionIdx === region2.flatRegionIdx &&
-    region1.name === region2.name &&
-    region1.startLineIdx === region2.startLineIdx &&
-    region1.endLineIdx === region2.endLineIdx &&
-    region1.endLineCharacterIdx === region2.endLineCharacterIdx &&
-    region1.wasClosed === region2.wasClosed
-  );
-}
+// function areFlattenedRegionsEqual(region1: FlattenedRegion, region2: FlattenedRegion): boolean {
+//   return (
+//     region1.flatRegionIdx === region2.flatRegionIdx &&
+//     region1.name === region2.name &&
+//     region1.startLineIdx === region2.startLineIdx &&
+//     region1.endLineIdx === region2.endLineIdx &&
+//     region1.endLineCharacterIdx === region2.endLineCharacterIdx &&
+//     region1.wasClosed === region2.wasClosed
+//   );
+// }

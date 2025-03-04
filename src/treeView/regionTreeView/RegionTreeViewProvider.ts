@@ -38,12 +38,10 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
   }
 
   private onRegionsChange(): void {
-    console.log("RegionTreeViewProvider: onRegionsChange");
     this._onDidChangeTreeData.fire(undefined);
   }
 
   private onActiveRegionChange(): void {
-    console.log("RegionTreeViewProvider: onActiveRegionChange");
     this.highlightActiveRegion();
   }
 

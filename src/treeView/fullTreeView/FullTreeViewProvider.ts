@@ -7,7 +7,8 @@ import { flattenFullTreeItems } from "./flattenFullTreeItems";
 import { generateTopLevelFullTreeItems } from "./generateTopLevelFullTreeItems";
 import { getActiveFullTreeItem } from "./getActiveFullTreeItem";
 
-const DEBOUNCE_DELAY_MS = 300;
+const BUILD_TREE_DEBOUNCE_DELAY_MS = 300;
+const SELECTION_CHANGE_DEBOUNCE_DELAY_MS = 100;
 
 export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeItem> {
   private _onDidChangeTreeData = new vscode.EventEmitter<FullTreeItem | undefined>();
@@ -18,42 +19,33 @@ export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeIte
   private _topLevelFullTreeItems: FullTreeItem[] = [];
   private _activeFullTreeItem: FullTreeItem | undefined = undefined;
 
+  private debouncedBuildAndRefreshTree = debounce(
+    this.buildAndRefreshTree.bind(this),
+    BUILD_TREE_DEBOUNCE_DELAY_MS
+  );
+
   constructor(
     private regionStore: RegionStore,
     private documentSymbolStore: DocumentSymbolStore,
     subscriptions: vscode.Disposable[]
   ) {
     this.registerListeners(subscriptions);
-    this.buildAndRefreshTree();
+    this.debouncedBuildAndRefreshTree();
   }
 
   private registerListeners(subscriptions: vscode.Disposable[]): void {
     this.regionStore.onDidChangeRegions(
-      debounce(this.onRegionsChange.bind(this), DEBOUNCE_DELAY_MS),
+      this.debouncedBuildAndRefreshTree.bind(this),
       this,
       subscriptions
     );
     this.documentSymbolStore.onDidChangeDocumentSymbols(
-      debounce(this.onDocumentSymbolsChange.bind(this), DEBOUNCE_DELAY_MS),
+      this.debouncedBuildAndRefreshTree.bind(this),
       this,
       subscriptions
     );
-    this.registerSelectionChangeListener(subscriptions);
-  }
-
-  private onRegionsChange(): void {
-    console.log("FullTreeViewProvider: onRegionsChange");
-    this.buildAndRefreshTree();
-  }
-
-  private onDocumentSymbolsChange(): void {
-    console.log("FullTreeViewProvider: onDocumentSymbolsChange");
-    this.buildAndRefreshTree();
-  }
-
-  private registerSelectionChangeListener(subscriptions: vscode.Disposable[]): void {
     vscode.window.onDidChangeTextEditorSelection(
-      debounce(this.onSelectionChange.bind(this), DEBOUNCE_DELAY_MS),
+      debounce(this.onSelectionChange.bind(this), SELECTION_CHANGE_DEBOUNCE_DELAY_MS),
       this,
       subscriptions
     );
@@ -88,20 +80,23 @@ export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeIte
       // Unfortunately VSCode's API doesn't provide a way to deselect a tree item
       return;
     }
-    console.log(
-      `FullTreeViewProvider: Highlighting active tree item ${this._activeFullTreeItem.label}`
-    );
     this.treeView.reveal(this._activeFullTreeItem, { select: true, focus: false });
   }
 
   private buildAndRefreshTree(): void {
+    const regionVersionedDocumentId = this.regionStore.versionedDocumentId;
+    const symbolVersionedDocumentId = this.documentSymbolStore.versionedDocumentId;
+    if (regionVersionedDocumentId !== symbolVersionedDocumentId) {
+      // Wait for both region and symbol data to be synced on the same document version
+      return;
+    }
     this.buildTree();
     this.refreshTree();
     this.refreshAndHighlightActiveTreeItem();
+    // setTimeout(this.refreshAndHighlightActiveTreeItem.bind(this), BUILD_TREE_DEBOUNCE_DELAY_MS);
   }
 
   private refreshTree(): void {
-    console.log("FullTreeViewProvider: Firing onDidChangeTreeData");
     this._onDidChangeTreeData.fire(undefined);
   }
 
@@ -121,8 +116,6 @@ export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeIte
   }
 
   private buildTree(): void {
-    console.log("FullTreeViewProvider: Building tree...");
-    const startTime = performance.now();
     const regionFullTreeItems = this.regionStore.topLevelRegions.map((region) =>
       getRegionFullTreeItem(region)
     );
@@ -136,12 +129,6 @@ export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeIte
       flattenedSymbolItems,
     });
     this._topLevelFullTreeItems = topLevelFullTreeItems;
-    const endTime = performance.now();
-    console.log(
-      `FullTreeViewProvider: Building tree with ${
-        topLevelFullTreeItems.length
-      } top-level items took ${endTime - startTime} ms.`
-    );
   }
 
   setTreeView(treeView: vscode.TreeView<FullTreeItem>): void {

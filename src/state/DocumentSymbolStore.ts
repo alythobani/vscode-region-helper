@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { fetchDocumentSymbolsAfterDelay } from "../lib/fetchDocumentSymbols";
+import { getVersionedDocumentId } from "../lib/getVersionedDocumentId";
 import { debounce } from "../utils/debounce";
 
 const MAX_NUM_DOCUMENT_SYMBOLS_FETCH_ATTEMPTS = 5;
@@ -14,6 +15,11 @@ export class DocumentSymbolStore {
 
   private _onDidChangeDocumentSymbols = new vscode.EventEmitter<void>();
   readonly onDidChangeDocumentSymbols = this._onDidChangeDocumentSymbols.event;
+
+  private _versionedDocumentId: string | undefined = undefined;
+  get versionedDocumentId(): string | undefined {
+    return this._versionedDocumentId;
+  }
 
   private constructor(subscriptions: vscode.Disposable[]) {
     this.registerListeners(subscriptions);
@@ -70,9 +76,8 @@ export class DocumentSymbolStore {
     document: vscode.TextDocument | undefined,
     attemptIdx = 0
   ): Promise<void> {
-    console.log(`DocumentSymbolStore: refreshDocumentSymbols attemptIdx: ${attemptIdx}`);
     if (!document) {
-      console.log("No document to fetch symbols for. Setting document symbols to undefined.");
+      this._versionedDocumentId = undefined;
       const oldDocumentSymbols = this._documentSymbols;
       this._documentSymbols = undefined;
       if (oldDocumentSymbols) {
@@ -85,35 +90,18 @@ export class DocumentSymbolStore {
       return;
     }
     try {
-      console.log("DocumentSymbolStore: Fetching symbols after a delay...");
-      const startTime = performance.now();
       const fetchedDocumentSymbols = await fetchDocumentSymbolsAfterDelay(
         document,
         DOCUMENT_SYMBOLS_FETCH_DELAY_MS
       );
       if (fetchedDocumentSymbols === undefined) {
-        const endTime = performance.now();
-        console.log(`Didn't fetch document symbols after ${endTime - startTime} ms. Trying again.`);
         void this.refreshDocumentSymbols(document, attemptIdx + 1);
         return;
       }
-      const endTime = performance.now();
-      console.log(
-        `DocumentSymbolStore: Fetched document symbols after ${
-          endTime - startTime
-        } ms! ${fetchedDocumentSymbols.map((symbol) => symbol.name).join(", ")}`
-      );
-      console.log("DocumentSymbolStore: Now going to recursively sort all children by position.");
-      const sortStartTimestamp = performance.now();
       sortSymbolsRecursively(fetchedDocumentSymbols);
-      const sortEndTimestamp = performance.now();
-      const sortingMs = sortEndTimestamp - sortStartTimestamp;
-      console.log(`DocumentSymbolStore: Sorting all children took ${sortingMs} ms.`);
-      const oldDocumentSymbols = this._documentSymbols;
+      this._versionedDocumentId = getVersionedDocumentId(document);
       this._documentSymbols = fetchedDocumentSymbols;
-      if (didDocumentSymbolsChange(oldDocumentSymbols, fetchedDocumentSymbols)) {
-        this._onDidChangeDocumentSymbols.fire();
-      }
+      this._onDidChangeDocumentSymbols.fire();
     } catch (_error) {
       // console.error("Error fetching document symbols:", error);
     }
@@ -139,38 +127,38 @@ function sortSymbolsRecursively(symbols: vscode.DocumentSymbol[]): void {
   }
 }
 
-function didDocumentSymbolsChange(
-  oldDocumentSymbols: vscode.DocumentSymbol[] | undefined,
-  newDocumentSymbols: vscode.DocumentSymbol[] | undefined
-): boolean {
-  if (!oldDocumentSymbols || !newDocumentSymbols) {
-    return oldDocumentSymbols !== newDocumentSymbols;
-  }
-  if (oldDocumentSymbols.length !== newDocumentSymbols.length) {
-    return true;
-  }
-  for (let i = 0; i < oldDocumentSymbols.length; i++) {
-    const oldDocumentSymbol = oldDocumentSymbols[i];
-    const newDocumentSymbol = newDocumentSymbols[i];
-    if (
-      oldDocumentSymbol &&
-      newDocumentSymbol &&
-      !areDocumentSymbolsEqual(oldDocumentSymbol, newDocumentSymbol)
-    ) {
-      return true;
-    }
-  }
-  return false;
-}
+// function didDocumentSymbolsChange(
+//   oldDocumentSymbols: vscode.DocumentSymbol[] | undefined,
+//   newDocumentSymbols: vscode.DocumentSymbol[] | undefined
+// ): boolean {
+//   if (!oldDocumentSymbols || !newDocumentSymbols) {
+//     return oldDocumentSymbols !== newDocumentSymbols;
+//   }
+//   if (oldDocumentSymbols.length !== newDocumentSymbols.length) {
+//     return true;
+//   }
+//   for (let i = 0; i < oldDocumentSymbols.length; i++) {
+//     const oldDocumentSymbol = oldDocumentSymbols[i];
+//     const newDocumentSymbol = newDocumentSymbols[i];
+//     if (
+//       oldDocumentSymbol &&
+//       newDocumentSymbol &&
+//       !areDocumentSymbolsEqual(oldDocumentSymbol, newDocumentSymbol)
+//     ) {
+//       return true;
+//     }
+//   }
+//   return false;
+// }
 
-function areDocumentSymbolsEqual(
-  symbol1: vscode.DocumentSymbol,
-  symbol2: vscode.DocumentSymbol
-): boolean {
-  return (
-    symbol1.name === symbol2.name &&
-    symbol1.kind === symbol2.kind &&
-    symbol1.range.isEqual(symbol2.range) &&
-    symbol1.selectionRange.isEqual(symbol2.selectionRange)
-  );
-}
+// function areDocumentSymbolsEqual(
+//   symbol1: vscode.DocumentSymbol,
+//   symbol2: vscode.DocumentSymbol
+// ): boolean {
+//   return (
+//     symbol1.name === symbol2.name &&
+//     symbol1.kind === symbol2.kind &&
+//     symbol1.range.isEqual(symbol2.range) &&
+//     symbol1.selectionRange.isEqual(symbol2.selectionRange)
+//   );
+// }
