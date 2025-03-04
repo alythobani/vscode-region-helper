@@ -16,6 +16,6 @@ export function selectCurrentRegion(regionStore: RegionStore): void {
   if (!currentActiveRegion) {
     return;
   }
-  const { startLineIdx, endLineIdx } = currentActiveRegion;
-  selectLines({ activeTextEditor, startLineIdx, endLineIdx });
+  const { startLineIdx, endLineIdx, endLineCharacterIdx } = currentActiveRegion;
+  selectLines({ activeTextEditor, startLineIdx, endLineIdx, endLineCharacterIdx });
 }

@@ -4,14 +4,17 @@ export function selectLines({
   activeTextEditor,
   startLineIdx,
   endLineIdx,
+  endLineCharacterIdx,
 }: {
   activeTextEditor: vscode.TextEditor;
   startLineIdx: number;
   endLineIdx: number;
+  endLineCharacterIdx: number;
 }): void {
-  activeTextEditor.selection = new vscode.Selection(startLineIdx, 0, endLineIdx + 1, 0);
+  const selectionRange = new vscode.Selection(startLineIdx, 0, endLineIdx, endLineCharacterIdx);
+  activeTextEditor.selection = selectionRange;
   activeTextEditor.revealRange(
-    new vscode.Range(startLineIdx, 0, endLineIdx + 1, 0),
+    selectionRange,
     vscode.TextEditorRevealType.InCenterIfOutsideViewport
   );
 }
