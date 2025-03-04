@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { fetchDocumentSymbolsAfterDelay } from "../lib/fetchDocumentSymbols";
+import { fetchDocumentSymbols, fetchDocumentSymbolsAfterDelay } from "../lib/fetchDocumentSymbols";
 import { getVersionedDocumentId } from "../lib/getVersionedDocumentId";
 import { debounce } from "../utils/debounce";
 
@@ -90,10 +90,10 @@ export class DocumentSymbolStore {
       return;
     }
     try {
-      const fetchedDocumentSymbols = await fetchDocumentSymbolsAfterDelay(
-        document,
-        DOCUMENT_SYMBOLS_FETCH_DELAY_MS
-      );
+      const fetchedDocumentSymbols =
+        attemptIdx === 0
+          ? await fetchDocumentSymbols(document)
+          : await fetchDocumentSymbolsAfterDelay(document, DOCUMENT_SYMBOLS_FETCH_DELAY_MS);
       if (fetchedDocumentSymbols === undefined) {
         void this.refreshDocumentSymbols(document, attemptIdx + 1);
         return;
