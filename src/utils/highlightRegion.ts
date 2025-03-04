@@ -9,13 +9,15 @@ export function highlightAndScrollRegionIntoView({
   activeTextEditor,
   startLineIdx,
   endLineIdx,
+  revealType,
 }: {
   activeTextEditor: vscode.TextEditor;
   startLineIdx: number;
   endLineIdx: number;
+  revealType: vscode.TextEditorRevealType;
 }): void {
   highlightRegion({ activeTextEditor, startLineIdx, endLineIdx });
-  scrollLineIntoView(activeTextEditor, startLineIdx);
+  scrollLineIntoView({ editor: activeTextEditor, lineIdx: startLineIdx, revealType });
 }
 
 export function highlightRegion({

@@ -9,6 +9,10 @@ export function goToRegionTreeItem(startLineIdx: number): void {
   if (!activeTextEditor) {
     return;
   }
-  moveCursorToFirstNonWhitespaceCharOfLine(activeTextEditor, startLineIdx);
+  moveCursorToFirstNonWhitespaceCharOfLine({
+    activeTextEditor,
+    lineIdx: startLineIdx,
+    revealType: vscode.TextEditorRevealType.InCenterIfOutsideViewport,
+  });
   focusEditor(activeTextEditor);
 }

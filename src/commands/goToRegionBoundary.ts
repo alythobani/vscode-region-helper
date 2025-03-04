@@ -16,11 +16,20 @@ export function goToRegionBoundary(regionStore: RegionStore): void {
   const { topLevelRegions, activeRegion } = regionStore;
   if (!activeRegion) {
     // If there is a next region to jump to, it will be a top-level region.
-    goToNextTopLevelRegionBoundary({ activeTextEditor, topLevelRegions, cursorLine });
+    goToNextTopLevelRegionBoundary({
+      activeTextEditor,
+      topLevelRegions,
+      cursorLine,
+      revealType: vscode.TextEditorRevealType.Default,
+    });
     return;
   }
-  const regionBoundaryLine = getRegionBoundaryLineForJump(activeRegion, cursorLine);
-  moveCursorToFirstNonWhitespaceCharOfLine(activeTextEditor, regionBoundaryLine);
+  const regionBoundaryLineIdx = getRegionBoundaryLineForJump(activeRegion, cursorLine);
+  moveCursorToFirstNonWhitespaceCharOfLine({
+    activeTextEditor,
+    lineIdx: regionBoundaryLineIdx,
+    revealType: vscode.TextEditorRevealType.Default,
+  });
 }
 
 function getRegionBoundaryLineForJump(activeRegion: Region, cursorLine: number): number {

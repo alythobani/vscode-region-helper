@@ -32,7 +32,7 @@ export function goToRegionFromQuickPick(regionStore: RegionStore): void {
   });
   regionQuickPick.show();
   if (initialActiveItem) {
-    highlightAndScrollItemIntoView(initialActiveItem, activeTextEditor);
+    highlightAndScrollItemIntoView({ regionQuickPickItem: initialActiveItem, activeTextEditor });
   }
 }
 
@@ -86,7 +86,7 @@ function initializeRegionQuickPick({
   regionQuickPick.matchOnDescription = true;
   regionQuickPick.canSelectMany = false;
   regionQuickPick.activeItems = initialActiveItem ? [initialActiveItem] : [];
-  regionQuickPick.onDidHide(() => onDidHideQuickPick(regionQuickPick, activeTextEditor));
+  regionQuickPick.onDidHide(() => onDidHideQuickPick({ regionQuickPick, activeTextEditor }));
   regionQuickPick.onDidChangeActive((items) =>
     onDidChangeActiveQuickPickItems(items, activeTextEditor)
   );
@@ -99,13 +99,19 @@ function getRegionQuickPickPlaceholder(regionQuickPickItems: RegionQuickPickItem
     : "No regions available";
 }
 
-function onDidHideQuickPick(
-  regionQuickPick: vscode.QuickPick<RegionQuickPickItem>,
-  activeTextEditor: vscode.TextEditor
-): void {
+function onDidHideQuickPick({
+  regionQuickPick,
+  activeTextEditor,
+}: {
+  regionQuickPick: vscode.QuickPick<RegionQuickPickItem>;
+  activeTextEditor: vscode.TextEditor;
+}): void {
   regionQuickPick.dispose();
   clearHighlightedRegions(activeTextEditor);
-  scrollCurrentLineIntoView(activeTextEditor);
+  scrollCurrentLineIntoView({
+    editor: activeTextEditor,
+    revealType: vscode.TextEditorRevealType.InCenter,
+  });
 }
 
 function onDidChangeActiveQuickPickItems(
@@ -116,7 +122,7 @@ function onDidChangeActiveQuickPickItems(
   if (!activeItem) {
     return;
   }
-  highlightAndScrollItemIntoView(activeItem, activeTextEditor);
+  highlightAndScrollItemIntoView({ regionQuickPickItem: activeItem, activeTextEditor });
 }
 
 function onDidAcceptQuickPickItem(
@@ -127,16 +133,31 @@ function onDidAcceptQuickPickItem(
   regionQuickPick.dispose();
   clearHighlightedRegions(activeTextEditor);
   if (!acceptedItem) {
-    scrollCurrentLineIntoView(activeTextEditor);
+    scrollCurrentLineIntoView({
+      editor: activeTextEditor,
+      revealType: vscode.TextEditorRevealType.InCenter,
+    });
     return;
   }
-  moveCursorToFirstNonWhitespaceCharOfLine(activeTextEditor, acceptedItem.startLineIdx);
+  moveCursorToFirstNonWhitespaceCharOfLine({
+    activeTextEditor,
+    lineIdx: acceptedItem.startLineIdx,
+    revealType: vscode.TextEditorRevealType.InCenter,
+  });
 }
 
-function highlightAndScrollItemIntoView(
-  regionQuickPickItem: RegionQuickPickItem,
-  activeTextEditor: vscode.TextEditor
-): void {
+function highlightAndScrollItemIntoView({
+  regionQuickPickItem,
+  activeTextEditor,
+}: {
+  regionQuickPickItem: RegionQuickPickItem;
+  activeTextEditor: vscode.TextEditor;
+}): void {
   const { startLineIdx, endLineIdx } = regionQuickPickItem;
-  highlightAndScrollRegionIntoView({ activeTextEditor, startLineIdx, endLineIdx });
+  highlightAndScrollRegionIntoView({
+    activeTextEditor,
+    startLineIdx,
+    endLineIdx,
+    revealType: vscode.TextEditorRevealType.InCenter,
+  });
 }

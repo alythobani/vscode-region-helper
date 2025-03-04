@@ -1,12 +1,18 @@
 import * as vscode from "vscode";
 
-export function moveCursorToPosition(
-  textEditor: vscode.TextEditor,
-  lineIdx: number,
-  character: number
-): void {
+export function moveCursorToPosition({
+  activeTextEditor,
+  lineIdx,
+  character,
+  revealType,
+}: {
+  activeTextEditor: vscode.TextEditor;
+  lineIdx: number;
+  character: number;
+  revealType: vscode.TextEditorRevealType;
+}): void {
   const position = new vscode.Position(lineIdx, character);
   const selection = new vscode.Selection(position, position);
-  textEditor.selection = selection;
-  textEditor.revealRange(selection, vscode.TextEditorRevealType.InCenter);
+  activeTextEditor.selection = selection;
+  activeTextEditor.revealRange(selection, revealType);
 }

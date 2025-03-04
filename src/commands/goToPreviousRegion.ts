@@ -18,5 +18,9 @@ export function goToPreviousRegion({
   if (!maybePreviousRegion) {
     return;
   }
-  moveCursorToRegion(activeTextEditor, maybePreviousRegion);
+  moveCursorToRegion({
+    activeTextEditor,
+    region: maybePreviousRegion,
+    revealType: vscode.TextEditorRevealType.Default,
+  });
 }

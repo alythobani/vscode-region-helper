@@ -11,9 +11,18 @@ export function goToFullTreeItem(startLineIdx: number, startCharacter: number | 
     return;
   }
   if (startCharacter === undefined) {
-    moveCursorToFirstNonWhitespaceCharOfLine(activeTextEditor, startLineIdx);
+    moveCursorToFirstNonWhitespaceCharOfLine({
+      activeTextEditor,
+      lineIdx: startLineIdx,
+      revealType: vscode.TextEditorRevealType.InCenterIfOutsideViewport,
+    });
   } else {
-    moveCursorToPosition(activeTextEditor, startLineIdx, startCharacter);
+    moveCursorToPosition({
+      activeTextEditor,
+      lineIdx: startLineIdx,
+      character: startCharacter,
+      revealType: vscode.TextEditorRevealType.InCenterIfOutsideViewport,
+    });
   }
   focusEditor(activeTextEditor);
 }

@@ -16,5 +16,9 @@ export function goToNextRegion({ flattenedRegions }: Pick<RegionStore, "flattene
   if (!maybeNextRegion) {
     return;
   }
-  moveCursorToRegion(activeTextEditor, maybeNextRegion);
+  moveCursorToRegion({
+    activeTextEditor,
+    region: maybeNextRegion,
+    revealType: vscode.TextEditorRevealType.Default,
+  });
 }
