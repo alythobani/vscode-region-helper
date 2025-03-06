@@ -63,7 +63,7 @@ export class RegionStore {
 
   private registerActiveTextEditorChangeListener(subscriptions: vscode.Disposable[]): void {
     vscode.window.onDidChangeActiveTextEditor(
-      this.debouncedRefreshRegionsAndActiveRegion.bind(this),
+      this.debouncedRefreshRegionsAndActiveRegion,
       undefined,
       subscriptions
     );
@@ -119,7 +119,6 @@ export class RegionStore {
       this._topLevelRegions = topLevelRegions;
       const newFlattenedRegions = flattenRegions(topLevelRegions);
       this._flattenedRegions = newFlattenedRegions;
-      this._onDidChangeRegions.fire();
       this._invalidMarkers = invalidMarkers;
     }
     this._onDidChangeRegions.fire();

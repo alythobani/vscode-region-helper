@@ -34,13 +34,9 @@ export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeIte
   }
 
   private registerListeners(subscriptions: vscode.Disposable[]): void {
-    this.regionStore.onDidChangeRegions(
-      this.debouncedBuildAndRefreshTree.bind(this),
-      this,
-      subscriptions
-    );
+    this.regionStore.onDidChangeRegions(this.debouncedBuildAndRefreshTree, this, subscriptions);
     this.documentSymbolStore.onDidChangeDocumentSymbols(
-      this.debouncedBuildAndRefreshTree.bind(this),
+      this.debouncedBuildAndRefreshTree,
       this,
       subscriptions
     );

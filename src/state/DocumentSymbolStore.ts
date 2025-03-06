@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
 import { fetchDocumentSymbols, fetchDocumentSymbolsAfterDelay } from "../lib/fetchDocumentSymbols";
-import { getVersionedDocumentId } from "../lib/getVersionedDocumentId";
 import { debounce } from "../utils/debounce";
 
 const MAX_NUM_DOCUMENT_SYMBOLS_FETCH_ATTEMPTS = 5;
@@ -90,17 +89,17 @@ export class DocumentSymbolStore {
       return;
     }
     try {
-      const fetchedDocumentSymbols =
+      const { documentSymbols, versionedDocumentId } =
         attemptIdx === 0
           ? await fetchDocumentSymbols(document)
           : await fetchDocumentSymbolsAfterDelay(document, DOCUMENT_SYMBOLS_FETCH_DELAY_MS);
-      if (fetchedDocumentSymbols === undefined) {
+      if (documentSymbols === undefined) {
         void this.refreshDocumentSymbols(document, attemptIdx + 1);
         return;
       }
-      sortSymbolsRecursively(fetchedDocumentSymbols);
-      this._versionedDocumentId = getVersionedDocumentId(document);
-      this._documentSymbols = fetchedDocumentSymbols;
+      sortSymbolsRecursively(documentSymbols);
+      this._versionedDocumentId = versionedDocumentId;
+      this._documentSymbols = documentSymbols;
       this._onDidChangeDocumentSymbols.fire();
     } catch (_error) {
       // console.error("Error fetching document symbols:", error);
