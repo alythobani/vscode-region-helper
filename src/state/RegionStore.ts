@@ -16,14 +16,26 @@ export class RegionStore {
   private _flattenedRegions: FlattenedRegion[] = [];
   private _onDidChangeRegions = new vscode.EventEmitter<void>();
   readonly onDidChangeRegions = this._onDidChangeRegions.event;
+  get topLevelRegions(): Region[] {
+    return this._topLevelRegions;
+  }
+  get flattenedRegions(): FlattenedRegion[] {
+    return this._flattenedRegions;
+  }
 
   private _activeRegion: Region | undefined = undefined;
   private _onDidChangeActiveRegion = new vscode.EventEmitter<void>();
   readonly onDidChangeActiveRegion = this._onDidChangeActiveRegion.event;
+  get activeRegion(): Region | undefined {
+    return this._activeRegion;
+  }
 
   private _invalidMarkers: InvalidMarker[] = [];
   private _onDidChangeInvalidMarkers = new vscode.EventEmitter<void>();
   readonly onDidChangeInvalidMarkers = this._onDidChangeInvalidMarkers.event;
+  get invalidMarkers(): InvalidMarker[] {
+    return this._invalidMarkers;
+  }
 
   private _versionedDocumentId: string | undefined = undefined;
   get versionedDocumentId(): string | undefined {
@@ -58,22 +70,18 @@ export class RegionStore {
   }
 
   private registerListeners(subscriptions: vscode.Disposable[]): void {
-    this.registerActiveTextEditorChangeListener(subscriptions);
-    this.registerDocumentChangeListener(subscriptions);
-    this.registerSelectionChangeListener(subscriptions);
-  }
-
-  private registerActiveTextEditorChangeListener(subscriptions: vscode.Disposable[]): void {
     vscode.window.onDidChangeActiveTextEditor(
       this.debouncedRefreshRegionsAndActiveRegion,
       undefined,
       subscriptions
     );
-  }
-
-  private registerDocumentChangeListener(subscriptions: vscode.Disposable[]): void {
     vscode.workspace.onDidChangeTextDocument(
       this.onDocumentChange.bind(this),
+      undefined,
+      subscriptions
+    );
+    vscode.window.onDidChangeTextEditorSelection(
+      this.onSelectionChange.bind(this),
       undefined,
       subscriptions
     );
@@ -86,32 +94,9 @@ export class RegionStore {
     }
   }
 
-  private registerSelectionChangeListener(subscriptions: vscode.Disposable[]): void {
-    vscode.window.onDidChangeTextEditorSelection(
-      this.onSelectionChange.bind(this),
-      undefined,
-      subscriptions
-    );
-  }
-
   private onSelectionChange(event: vscode.TextEditorSelectionChangeEvent): void {
     if (event.textEditor === vscode.window.activeTextEditor) {
       this.debouncedRefreshActiveRegion();
-    }
-  }
-
-  private debouncedRefreshActiveRegion(): void {
-    this.clearRefreshActiveRegionTimeoutIfExists();
-    this.refreshActiveRegionTimeout = setTimeout(
-      this.refreshActiveRegion.bind(this),
-      REFRESH_ACTIVE_REGION_DEBOUNCE_DELAY_MS
-    );
-  }
-
-  private clearRefreshActiveRegionTimeoutIfExists(): void {
-    if (this.refreshActiveRegionTimeout) {
-      clearTimeout(this.refreshActiveRegionTimeout);
-      this.refreshActiveRegionTimeout = undefined;
     }
   }
 
@@ -144,6 +129,21 @@ export class RegionStore {
     this._versionedDocumentId = versionedDocumentId;
   }
 
+  private debouncedRefreshActiveRegion(): void {
+    this.clearRefreshActiveRegionTimeoutIfExists();
+    this.refreshActiveRegionTimeout = setTimeout(
+      this.refreshActiveRegion.bind(this),
+      REFRESH_ACTIVE_REGION_DEBOUNCE_DELAY_MS
+    );
+  }
+
+  private clearRefreshActiveRegionTimeoutIfExists(): void {
+    if (this.refreshActiveRegionTimeout) {
+      clearTimeout(this.refreshActiveRegionTimeout);
+      this.refreshActiveRegionTimeout = undefined;
+    }
+  }
+
   private refreshActiveRegion(): void {
     this.clearRefreshActiveRegionTimeoutIfExists();
     const oldActiveRegion = this._activeRegion;
@@ -151,22 +151,6 @@ export class RegionStore {
     if (this._activeRegion !== oldActiveRegion) {
       this._onDidChangeActiveRegion.fire();
     }
-  }
-
-  get topLevelRegions(): Region[] {
-    return this._topLevelRegions;
-  }
-
-  get flattenedRegions(): FlattenedRegion[] {
-    return this._flattenedRegions;
-  }
-
-  get activeRegion(): Region | undefined {
-    return this._activeRegion;
-  }
-
-  get invalidMarkers(): InvalidMarker[] {
-    return this._invalidMarkers;
   }
 }
 
