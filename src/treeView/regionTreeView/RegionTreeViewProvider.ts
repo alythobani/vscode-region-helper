@@ -16,6 +16,7 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
 
   constructor(private regionStore: RegionStore, subscriptions: vscode.Disposable[]) {
     this.registerListeners(subscriptions);
+    this.debouncedHighlightActiveRegion();
   }
 
   private registerListeners(subscriptions: vscode.Disposable[]): void {
