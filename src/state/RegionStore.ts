@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { type FlattenedRegion, flattenRegions } from "../lib/flattenRegions";
-import { getVersionedDocumentId } from "../lib/getVersionedDocumentId";
+import { getCurrentActiveVersionedDocumentId } from "../lib/getVersionedDocumentId";
 import { type InvalidMarker, parseAllRegions } from "../lib/parseAllRegions";
 import { type Region } from "../models/Region";
 import { debounce } from "../utils/debounce";
@@ -122,25 +122,26 @@ export class RegionStore {
 
   private refreshRegions(): void {
     const activeDocument = vscode.window.activeTextEditor?.document;
+    const versionedDocumentId = getCurrentActiveVersionedDocumentId();
     if (!activeDocument) {
-      this._versionedDocumentId = undefined;
       const oldFlattenedRegions = this._flattenedRegions;
-      if (oldFlattenedRegions.length > 0) {
-        this._onDidChangeRegions.fire();
-      }
       this._topLevelRegions = [];
       this._flattenedRegions = [];
       this._invalidMarkers = [];
+      if (oldFlattenedRegions.length > 0) {
+        this._onDidChangeRegions.fire();
+        this._onDidChangeInvalidMarkers.fire();
+      }
     } else {
-      this._versionedDocumentId = getVersionedDocumentId(activeDocument);
       const { topLevelRegions, invalidMarkers } = parseAllRegions(activeDocument);
       this._topLevelRegions = topLevelRegions;
       const newFlattenedRegions = flattenRegions(topLevelRegions);
       this._flattenedRegions = newFlattenedRegions;
       this._invalidMarkers = invalidMarkers;
+      this._onDidChangeRegions.fire();
+      this._onDidChangeInvalidMarkers.fire();
     }
-    this._onDidChangeRegions.fire();
-    this._onDidChangeInvalidMarkers.fire(); // Notify diagnostics manager of invalid markers
+    this._versionedDocumentId = versionedDocumentId;
   }
 
   private refreshActiveRegion(): void {

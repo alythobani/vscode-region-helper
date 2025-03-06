@@ -7,7 +7,7 @@ export function isCurrentActiveVersionedDocumentId(
   return currentActiveDocumentId === versionedDocumentId;
 }
 
-function getCurrentActiveVersionedDocumentId(): string | undefined {
+export function getCurrentActiveVersionedDocumentId(): string | undefined {
   const activeTextEditor = vscode.window.activeTextEditor;
   if (!activeTextEditor) {
     return undefined;
