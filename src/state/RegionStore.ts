@@ -6,8 +6,8 @@ import { type Region } from "../models/Region";
 import { debounce } from "../utils/debounce";
 import { getActiveRegion } from "../utils/getActiveRegion";
 
-const DEBOUNCE_DELAY_MS = 300;
-const SELECTION_CHANGE_DEBOUNCE_DELAY_MS = 100;
+const REFRESH_REGIONS_DEBOUNCE_DELAY_MS = 300;
+const REFRESH_ACTIVE_REGION_DEBOUNCE_DELAY_MS = 100;
 
 export class RegionStore {
   private static _instance: RegionStore | undefined = undefined;
@@ -32,8 +32,10 @@ export class RegionStore {
 
   private debouncedRefreshRegionsAndActiveRegion = debounce(
     this.refreshRegionsAndActiveRegion.bind(this),
-    DEBOUNCE_DELAY_MS
+    REFRESH_REGIONS_DEBOUNCE_DELAY_MS
   );
+
+  private refreshActiveRegionTimeout: NodeJS.Timeout | undefined;
 
   private constructor(subscriptions: vscode.Disposable[]) {
     this.registerListeners(subscriptions);
@@ -71,7 +73,7 @@ export class RegionStore {
 
   private registerDocumentChangeListener(subscriptions: vscode.Disposable[]): void {
     vscode.workspace.onDidChangeTextDocument(
-      debounce(this.onDocumentChange.bind(this), DEBOUNCE_DELAY_MS),
+      this.onDocumentChange.bind(this),
       undefined,
       subscriptions
     );
@@ -79,13 +81,14 @@ export class RegionStore {
 
   private onDocumentChange(event: vscode.TextDocumentChangeEvent): void {
     if (vscode.window.activeTextEditor?.document === event.document) {
-      this.refreshRegionsAndActiveRegion();
+      this.clearRefreshActiveRegionTimeoutIfExists();
+      this.debouncedRefreshRegionsAndActiveRegion();
     }
   }
 
   private registerSelectionChangeListener(subscriptions: vscode.Disposable[]): void {
     vscode.window.onDidChangeTextEditorSelection(
-      debounce(this.onSelectionChange.bind(this), SELECTION_CHANGE_DEBOUNCE_DELAY_MS),
+      this.onSelectionChange.bind(this),
       undefined,
       subscriptions
     );
@@ -93,7 +96,22 @@ export class RegionStore {
 
   private onSelectionChange(event: vscode.TextEditorSelectionChangeEvent): void {
     if (event.textEditor === vscode.window.activeTextEditor) {
-      this.refreshActiveRegion();
+      this.debouncedRefreshActiveRegion();
+    }
+  }
+
+  private debouncedRefreshActiveRegion(): void {
+    this.clearRefreshActiveRegionTimeoutIfExists();
+    this.refreshActiveRegionTimeout = setTimeout(
+      this.refreshActiveRegion.bind(this),
+      REFRESH_ACTIVE_REGION_DEBOUNCE_DELAY_MS
+    );
+  }
+
+  private clearRefreshActiveRegionTimeoutIfExists(): void {
+    if (this.refreshActiveRegionTimeout) {
+      clearTimeout(this.refreshActiveRegionTimeout);
+      this.refreshActiveRegionTimeout = undefined;
     }
   }
 
@@ -126,6 +144,7 @@ export class RegionStore {
   }
 
   private refreshActiveRegion(): void {
+    this.clearRefreshActiveRegionTimeoutIfExists();
     const oldActiveRegion = this._activeRegion;
     this._activeRegion = getActiveRegion(this._topLevelRegions);
     if (this._activeRegion !== oldActiveRegion) {

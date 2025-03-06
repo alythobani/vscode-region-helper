@@ -1,9 +1,10 @@
 import * as vscode from "vscode";
+import { isCurrentActiveVersionedDocumentId } from "../../lib/getVersionedDocumentId";
 import { type Region } from "../../models/Region";
 import { type RegionStore } from "../../state/RegionStore";
 import { RegionTreeItem } from "./RegionTreeItem";
 
-const HIGHLIGHT_ACTIVE_REGION_DELAY_MS = 100;
+const HIGHLIGHT_ACTIVE_REGION_DEBOUNCE_DELAY_MS = 1;
 
 export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
   private _onDidChangeTreeData = new vscode.EventEmitter<undefined>();
@@ -27,12 +28,14 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
     vscode.workspace.onDidChangeTextDocument(this.onDocumentChange.bind(this), this, subscriptions);
   }
 
-  private onDocumentChange(): void {
+  private onDocumentChange(event: vscode.TextDocumentChangeEvent): void {
     // Cancel any existing timeout to highlight the active region. Now that the document has changed,
     // the existing highlight call may no longer be valid for the current document region tree.
     // RegionStore will soon refresh the regions and active region, at which point we'll highlight
     // the new active region if needed.
-    this.clearHighlightActiveRegionTimeoutIfExists();
+    if (event.document === vscode.window.activeTextEditor?.document) {
+      this.clearHighlightActiveRegionTimeoutIfExists();
+    }
   }
 
   private registerRegionsChangeListener(subscriptions: vscode.Disposable[]): void {
@@ -63,7 +66,7 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
     this.clearHighlightActiveRegionTimeoutIfExists();
     this.highlightActiveRegionTimeout = setTimeout(
       this.highlightActiveRegion.bind(this),
-      HIGHLIGHT_ACTIVE_REGION_DELAY_MS
+      HIGHLIGHT_ACTIVE_REGION_DEBOUNCE_DELAY_MS
     );
   }
 
@@ -75,8 +78,14 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
   }
 
   private highlightActiveRegion(): void {
-    const { activeRegion } = this.regionStore;
+    this.clearHighlightActiveRegionTimeoutIfExists();
+    const { activeRegion, versionedDocumentId } = this.regionStore;
     if (!this.treeView || !activeRegion) {
+      return;
+    }
+    if (!isCurrentActiveVersionedDocumentId(versionedDocumentId)) {
+      // The active region is from an old document version. We'll highlight the active region once
+      // RegionStore fires events for the new document version.
       return;
     }
     this.treeView.reveal(activeRegion, { select: true, focus: false });
