@@ -2,28 +2,35 @@ import * as vscode from "vscode";
 import { fetchDocumentSymbols, fetchDocumentSymbolsAfterDelay } from "../lib/fetchDocumentSymbols";
 import { debounce } from "../utils/debounce";
 
+const REFRESH_SYMBOLS_DEBOUNCE_DELAY_MS = 300;
+
 const MAX_NUM_DOCUMENT_SYMBOLS_FETCH_ATTEMPTS = 5;
 const DOCUMENT_SYMBOLS_FETCH_DELAY_MS = 300;
-
-const DEBOUNCE_DELAY_MS = 300;
 
 export class DocumentSymbolStore {
   private static _instance: DocumentSymbolStore | undefined = undefined;
 
   private _documentSymbols: vscode.DocumentSymbol[] | undefined = undefined;
-
   private _onDidChangeDocumentSymbols = new vscode.EventEmitter<void>();
   readonly onDidChangeDocumentSymbols = this._onDidChangeDocumentSymbols.event;
+  get documentSymbols(): vscode.DocumentSymbol[] | undefined {
+    return this._documentSymbols;
+  }
 
   private _versionedDocumentId: string | undefined = undefined;
   get versionedDocumentId(): string | undefined {
     return this._versionedDocumentId;
   }
 
+  private debouncedRefreshDocumentSymbols = debounce(
+    this.refreshDocumentSymbols.bind(this),
+    REFRESH_SYMBOLS_DEBOUNCE_DELAY_MS
+  );
+
   private constructor(subscriptions: vscode.Disposable[]) {
     this.registerListeners(subscriptions);
     if (vscode.window.activeTextEditor?.document) {
-      void this.refreshDocumentSymbols(vscode.window.activeTextEditor.document);
+      void this.debouncedRefreshDocumentSymbols(vscode.window.activeTextEditor.document);
     }
   }
 
@@ -43,32 +50,16 @@ export class DocumentSymbolStore {
   }
 
   private registerListeners(subscriptions: vscode.Disposable[]): void {
-    this.registerActiveTextEditorChangeListener(subscriptions);
-    this.registerDocumentChangeListener(subscriptions);
-  }
-
-  private registerActiveTextEditorChangeListener(subscriptions: vscode.Disposable[]): void {
     vscode.window.onDidChangeActiveTextEditor(
-      debounce(this.onActiveTextEditorChange.bind(this), DEBOUNCE_DELAY_MS),
+      (editor) => void this.debouncedRefreshDocumentSymbols(editor?.document),
       undefined,
       subscriptions
     );
-  }
-
-  private onActiveTextEditorChange(editor: vscode.TextEditor | undefined): void {
-    void this.refreshDocumentSymbols(editor?.document);
-  }
-
-  private registerDocumentChangeListener(subscriptions: vscode.Disposable[]): void {
     vscode.workspace.onDidChangeTextDocument(
-      debounce(this.onDocumentChange.bind(this), DEBOUNCE_DELAY_MS),
+      (event) => void this.debouncedRefreshDocumentSymbols(event.document),
       undefined,
       subscriptions
     );
-  }
-
-  private onDocumentChange(event: vscode.TextDocumentChangeEvent): void {
-    void this.refreshDocumentSymbols(event.document);
   }
 
   private async refreshDocumentSymbols(
@@ -94,7 +85,7 @@ export class DocumentSymbolStore {
           ? await fetchDocumentSymbols(document)
           : await fetchDocumentSymbolsAfterDelay(document, DOCUMENT_SYMBOLS_FETCH_DELAY_MS);
       if (documentSymbols === undefined) {
-        void this.refreshDocumentSymbols(document, attemptIdx + 1);
+        void this.debouncedRefreshDocumentSymbols(document, attemptIdx + 1);
         return;
       }
       sortSymbolsRecursively(documentSymbols);
@@ -104,10 +95,6 @@ export class DocumentSymbolStore {
     } catch (_error) {
       // console.error("Error fetching document symbols:", error);
     }
-  }
-
-  get documentSymbols(): vscode.DocumentSymbol[] | undefined {
-    return this._documentSymbols;
   }
 }
 
