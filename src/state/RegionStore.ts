@@ -94,12 +94,6 @@ export class RegionStore {
     }
   }
 
-  private onSelectionChange(event: vscode.TextEditorSelectionChangeEvent): void {
-    if (event.textEditor === vscode.window.activeTextEditor) {
-      this.debouncedRefreshActiveRegion();
-    }
-  }
-
   private refreshRegionsAndActiveRegion(): void {
     this.refreshRegions();
     this.refreshActiveRegion();
@@ -129,6 +123,12 @@ export class RegionStore {
     this._versionedDocumentId = versionedDocumentId;
   }
 
+  private onSelectionChange(event: vscode.TextEditorSelectionChangeEvent): void {
+    if (event.textEditor === vscode.window.activeTextEditor) {
+      this.debouncedRefreshActiveRegion();
+    }
+  }
+
   private debouncedRefreshActiveRegion(): void {
     this.clearRefreshActiveRegionTimeoutIfExists();
     this.refreshActiveRegionTimeout = setTimeout(
@@ -137,19 +137,19 @@ export class RegionStore {
     );
   }
 
-  private clearRefreshActiveRegionTimeoutIfExists(): void {
-    if (this.refreshActiveRegionTimeout) {
-      clearTimeout(this.refreshActiveRegionTimeout);
-      this.refreshActiveRegionTimeout = undefined;
-    }
-  }
-
   private refreshActiveRegion(): void {
     this.clearRefreshActiveRegionTimeoutIfExists();
     const oldActiveRegion = this._activeRegion;
     this._activeRegion = getActiveRegion(this._topLevelRegions);
     if (this._activeRegion !== oldActiveRegion) {
       this._onDidChangeActiveRegion.fire();
+    }
+  }
+
+  private clearRefreshActiveRegionTimeoutIfExists(): void {
+    if (this.refreshActiveRegionTimeout) {
+      clearTimeout(this.refreshActiveRegionTimeout);
+      this.refreshActiveRegionTimeout = undefined;
     }
   }
 }
