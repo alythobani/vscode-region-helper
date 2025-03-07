@@ -10,6 +10,21 @@ const DOCUMENT_SYMBOLS_FETCH_DELAY_MS = 300;
 export class DocumentSymbolStore {
   private static _instance: DocumentSymbolStore | undefined = undefined;
 
+  static initialize(subscriptions: vscode.Disposable[]): DocumentSymbolStore {
+    if (this._instance) {
+      throw new Error("DocumentSymbolStore is already initialized! Only one instance is allowed.");
+    }
+    this._instance = new DocumentSymbolStore(subscriptions);
+    return this._instance;
+  }
+
+  static getInstance(): DocumentSymbolStore {
+    if (!this._instance) {
+      throw new Error("DocumentSymbolStore is not initialized! Call `initialize()` first.");
+    }
+    return this._instance;
+  }
+
   private _documentSymbols: vscode.DocumentSymbol[] | undefined = undefined;
   private _onDidChangeDocumentSymbols = new vscode.EventEmitter<void>();
   readonly onDidChangeDocumentSymbols = this._onDidChangeDocumentSymbols.event;
@@ -32,21 +47,6 @@ export class DocumentSymbolStore {
     if (vscode.window.activeTextEditor?.document) {
       void this.debouncedRefreshDocumentSymbols(vscode.window.activeTextEditor.document);
     }
-  }
-
-  static initialize(subscriptions: vscode.Disposable[]): DocumentSymbolStore {
-    if (this._instance) {
-      throw new Error("DocumentSymbolStore is already initialized! Only one instance is allowed.");
-    }
-    this._instance = new DocumentSymbolStore(subscriptions);
-    return this._instance;
-  }
-
-  static getInstance(): DocumentSymbolStore {
-    if (!this._instance) {
-      throw new Error("DocumentSymbolStore is not initialized! Call `initialize()` first.");
-    }
-    return this._instance;
   }
 
   private registerListeners(subscriptions: vscode.Disposable[]): void {

@@ -12,6 +12,21 @@ const REFRESH_ACTIVE_REGION_DEBOUNCE_DELAY_MS = 100;
 export class RegionStore {
   private static _instance: RegionStore | undefined = undefined;
 
+  static initialize(subscriptions: vscode.Disposable[]): RegionStore {
+    if (this._instance) {
+      throw new Error("RegionStore is already initialized! Only one instance is allowed.");
+    }
+    this._instance = new RegionStore(subscriptions);
+    return this._instance;
+  }
+
+  static getInstance(): RegionStore {
+    if (!this._instance) {
+      throw new Error("RegionStore is not initialized! Call `initialize()` first.");
+    }
+    return this._instance;
+  }
+
   private _topLevelRegions: Region[] = [];
   private _flattenedRegions: FlattenedRegion[] = [];
   private _onDidChangeRegions = new vscode.EventEmitter<void>();
@@ -52,21 +67,6 @@ export class RegionStore {
   private constructor(subscriptions: vscode.Disposable[]) {
     this.registerListeners(subscriptions);
     this.debouncedRefreshRegionsAndActiveRegion();
-  }
-
-  static initialize(subscriptions: vscode.Disposable[]): RegionStore {
-    if (this._instance) {
-      throw new Error("RegionStore is already initialized! Only one instance is allowed.");
-    }
-    this._instance = new RegionStore(subscriptions);
-    return this._instance;
-  }
-
-  static getInstance(): RegionStore {
-    if (!this._instance) {
-      throw new Error("RegionStore is not initialized! Call `initialize()` first.");
-    }
-    return this._instance;
   }
 
   private registerListeners(subscriptions: vscode.Disposable[]): void {
