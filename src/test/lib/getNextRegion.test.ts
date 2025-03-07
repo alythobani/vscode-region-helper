@@ -19,6 +19,12 @@ suite("getNextRegion", () => {
     regionHelperAPI = regionHelperExtension.exports as RegionHelperAPI;
 
     await openAndShowSampleDocument("sampleRegionsDocument.ts");
+    await new Promise<void>((resolve) => {
+      const disposable = regionHelperAPI.onDidChangeRegions(() => {
+        disposable.dispose();
+        resolve();
+      });
+    });
   });
 
   async function openAndShowSampleDocument(sampleFileName: string): Promise<void> {
@@ -110,6 +116,12 @@ suite("getNextRegion", () => {
 
   test("No next region if document is empty", async () => {
     await openAndShowSampleDocument("emptyDocument.ts");
+    await new Promise<void>((resolve) => {
+      const disposable = regionHelperAPI.onDidChangeRegions(() => {
+        disposable.dispose();
+        resolve();
+      });
+    });
     const nextRegion = _getNextRegion();
     assert.strictEqual(nextRegion, undefined);
   });
