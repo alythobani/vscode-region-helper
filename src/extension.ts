@@ -12,6 +12,7 @@ import { type FlattenedRegion } from "./lib/flattenRegions";
 import { type InvalidMarker } from "./lib/parseAllRegions";
 import { type Region } from "./models/Region";
 import { DocumentSymbolStore } from "./state/DocumentSymbolStore";
+import { FullOutlineStore } from "./state/FullOutlineStore";
 import { RegionStore } from "./state/RegionStore";
 import { FullTreeViewProvider } from "./treeView/fullTreeView/FullTreeViewProvider";
 import {
@@ -51,6 +52,11 @@ export function activate(context: vscode.ExtensionContext): RegionHelperAPI {
   const { subscriptions } = context;
   const regionStore = RegionStore.initialize(subscriptions);
   const documentSymbolStore = DocumentSymbolStore.initialize(subscriptions);
+  const fullOutlineStore = FullOutlineStore.initialize(
+    regionStore,
+    documentSymbolStore,
+    subscriptions
+  );
 
   const regionTreeViewProvider = new RegionTreeViewProvider(regionStore, subscriptions);
   const treeView = vscode.window.createTreeView("regionHelperTreeView", {
@@ -59,11 +65,7 @@ export function activate(context: vscode.ExtensionContext): RegionHelperAPI {
   regionTreeViewProvider.setTreeView(treeView);
   subscriptions.push(treeView);
 
-  const fullTreeViewProvider = new FullTreeViewProvider(
-    regionStore,
-    documentSymbolStore,
-    subscriptions
-  );
+  const fullTreeViewProvider = new FullTreeViewProvider(fullOutlineStore, subscriptions);
   const fullTreeView = vscode.window.createTreeView("regionHelperFullTreeView", {
     treeDataProvider: fullTreeViewProvider,
   });

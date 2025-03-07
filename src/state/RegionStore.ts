@@ -102,25 +102,26 @@ export class RegionStore {
   private refreshRegions(): void {
     const activeDocument = vscode.window.activeTextEditor?.document;
     const versionedDocumentId = getCurrentActiveVersionedDocumentId();
+    let shouldFireChangeEvents: boolean;
     if (!activeDocument) {
       const oldFlattenedRegions = this._flattenedRegions;
       this._topLevelRegions = [];
       this._flattenedRegions = [];
       this._invalidMarkers = [];
-      if (oldFlattenedRegions.length > 0) {
-        this._onDidChangeRegions.fire();
-        this._onDidChangeInvalidMarkers.fire();
-      }
+      shouldFireChangeEvents = oldFlattenedRegions.length > 0;
     } else {
       const { topLevelRegions, invalidMarkers } = parseAllRegions(activeDocument);
       this._topLevelRegions = topLevelRegions;
       const newFlattenedRegions = flattenRegions(topLevelRegions);
       this._flattenedRegions = newFlattenedRegions;
       this._invalidMarkers = invalidMarkers;
+      shouldFireChangeEvents = true; // TODO - can make this more precise if desired
+    }
+    this._versionedDocumentId = versionedDocumentId;
+    if (shouldFireChangeEvents) {
       this._onDidChangeRegions.fire();
       this._onDidChangeInvalidMarkers.fire();
     }
-    this._versionedDocumentId = versionedDocumentId;
   }
 
   private onSelectionChange(event: vscode.TextEditorSelectionChangeEvent): void {

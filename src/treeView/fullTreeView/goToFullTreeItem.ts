@@ -1,7 +1,9 @@
 import * as vscode from "vscode";
+import { throwNever } from "../../utils/errorUtils";
 import { focusEditor } from "../../utils/focusEditor";
 import { moveCursorToFirstNonWhitespaceCharOfLine } from "../../utils/moveCursorToFirstNonWhitespaceOfLine";
 import { moveCursorToPosition } from "../../utils/moveCursorToPosition";
+import { type FullTreeItemType } from "./FullTreeItem";
 
 export const goToFullTreeItemCommandId = "region-helper.goToFullTreeItem";
 
@@ -25,4 +27,27 @@ export function goToFullTreeItem(startLineIdx: number, startCharacter: number | 
     });
   }
   focusEditor(activeTextEditor);
+}
+
+export function makeGoToFullTreeItemCommand(
+  itemType: FullTreeItemType,
+  range: vscode.Range
+): vscode.Command {
+  return {
+    command: goToFullTreeItemCommandId,
+    title: "Go to Item",
+    arguments: [range.start.line, getTargetCharacter(itemType, range)],
+  };
+}
+
+function getTargetCharacter(itemType: FullTreeItemType, range: vscode.Range): number | undefined {
+  switch (itemType) {
+    case "region":
+      // Just go to the first non-whitespace character of the line
+      return undefined;
+    case "symbol":
+      return range.start.character;
+    default:
+      throwNever(itemType);
+  }
 }

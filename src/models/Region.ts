@@ -1,5 +1,6 @@
 export type Region = {
   name?: string | undefined;
+  // TODO: refactor the next 3 into just a `vscode.Range` field
   startLineIdx: number;
   endLineIdx: number;
   endLineCharacterIdx: number;

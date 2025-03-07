@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { fetchDocumentSymbols, fetchDocumentSymbolsAfterDelay } from "../lib/fetchDocumentSymbols";
+import { flattenDocumentSymbols } from "../lib/flattenDocumentSymbols";
 import { debounce } from "../utils/debounce";
 
 const REFRESH_SYMBOLS_DEBOUNCE_DELAY_MS = 300;
@@ -25,11 +26,15 @@ export class DocumentSymbolStore {
     return this._instance;
   }
 
-  private _documentSymbols: vscode.DocumentSymbol[] | undefined = undefined;
+  private _documentSymbols: vscode.DocumentSymbol[] = [];
+  private _flattenedDocumentSymbols: vscode.DocumentSymbol[] = [];
   private _onDidChangeDocumentSymbols = new vscode.EventEmitter<void>();
   readonly onDidChangeDocumentSymbols = this._onDidChangeDocumentSymbols.event;
-  get documentSymbols(): vscode.DocumentSymbol[] | undefined {
+  get documentSymbols(): vscode.DocumentSymbol[] {
     return this._documentSymbols;
+  }
+  get flattenedDocumentSymbols(): vscode.DocumentSymbol[] {
+    return this._flattenedDocumentSymbols;
   }
 
   private _versionedDocumentId: string | undefined = undefined;
@@ -69,8 +74,9 @@ export class DocumentSymbolStore {
     if (!document) {
       this._versionedDocumentId = undefined;
       const oldDocumentSymbols = this._documentSymbols;
-      this._documentSymbols = undefined;
-      if (oldDocumentSymbols) {
+      this._documentSymbols = [];
+      this._flattenedDocumentSymbols = [];
+      if (oldDocumentSymbols.length > 0) {
         this._onDidChangeDocumentSymbols.fire();
       }
       return;
@@ -88,28 +94,21 @@ export class DocumentSymbolStore {
         void this.debouncedRefreshDocumentSymbols(document, attemptIdx + 1);
         return;
       }
-      sortSymbolsRecursively(documentSymbols);
+      sortSymbolsRecursivelyByStart(documentSymbols); // By default, `executeDocumentSymbolProvider` returns symbols ordered by name
       this._versionedDocumentId = versionedDocumentId;
       this._documentSymbols = documentSymbols;
-      this._onDidChangeDocumentSymbols.fire();
+      this._flattenedDocumentSymbols = flattenDocumentSymbols(documentSymbols);
+      this._onDidChangeDocumentSymbols.fire(); // TODO - can make this more precise if desired
     } catch (_error) {
       // console.error("Error fetching document symbols:", error);
     }
   }
 }
 
-function sortSymbolsRecursively(symbols: vscode.DocumentSymbol[]): void {
-  symbols.sort((symbol1, symbol2) => {
-    if (symbol1.range.start.isBefore(symbol2.range.start)) {
-      return -1;
-    } else if (symbol1.range.start.isAfter(symbol2.range.start)) {
-      return 1;
-    } else {
-      return 0;
-    }
-  });
+function sortSymbolsRecursivelyByStart(symbols: vscode.DocumentSymbol[]): void {
+  symbols.sort((symbol1, symbol2) => symbol1.range.start.compareTo(symbol2.range.start));
   for (const symbol of symbols) {
-    sortSymbolsRecursively(symbol.children);
+    sortSymbolsRecursivelyByStart(symbol.children);
   }
 }
 

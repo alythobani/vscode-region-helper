@@ -5,7 +5,7 @@ export type FlattenedRegion = Region & {
 };
 
 /**
- * Flattens a tree of regions into a flat array of regions.
+ * Flattens a tree of regions, with a `flatRegionIdx` field on each resulting flattened item.
  *
  * Note: This function takes O(numRegions) time to run, and is run on `topLevelRegions` at every
  * document change.  Normally, this would be a performance concern, but relatively speaking, a file
