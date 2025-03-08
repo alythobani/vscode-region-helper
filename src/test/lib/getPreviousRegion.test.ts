@@ -46,12 +46,14 @@ suite("getPreviousRegion", () => {
     regionHelperAPI = regionHelperExtension.exports as RegionHelperAPI;
 
     await openAndShowSampleDocument("sampleRegionsDocument.ts");
-    await new Promise<void>((resolve) => {
-      const disposable = regionHelperAPI.onDidChangeRegions(() => {
-        disposable.dispose();
-        resolve();
+    if (regionHelperAPI.getTopLevelRegions().length === 0) {
+      await new Promise<void>((resolve) => {
+        const disposable = regionHelperAPI.onDidChangeRegions(() => {
+          disposable.dispose();
+          resolve();
+        });
       });
-    });
+    }
   });
 
   async function openAndShowSampleDocument(sampleFileName: string): Promise<void> {
