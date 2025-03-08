@@ -3,10 +3,10 @@ import { fetchDocumentSymbols, fetchDocumentSymbolsAfterDelay } from "../lib/fet
 import { flattenDocumentSymbols } from "../lib/flattenDocumentSymbols";
 import { debounce } from "../utils/debounce";
 
-const REFRESH_SYMBOLS_DEBOUNCE_DELAY_MS = 300;
+const REFRESH_SYMBOLS_DEBOUNCE_DELAY_MS = 100;
 
 const MAX_NUM_DOCUMENT_SYMBOLS_FETCH_ATTEMPTS = 5;
-const DOCUMENT_SYMBOLS_FETCH_DELAY_MS = 300;
+const DOCUMENT_SYMBOLS_FETCH_REATTEMPT_DELAY_MS = 300;
 
 export class DocumentSymbolStore {
   private static _instance: DocumentSymbolStore | undefined = undefined;
@@ -89,7 +89,10 @@ export class DocumentSymbolStore {
       const { documentSymbols, versionedDocumentId } =
         attemptIdx === 0
           ? await fetchDocumentSymbols(document)
-          : await fetchDocumentSymbolsAfterDelay(document, DOCUMENT_SYMBOLS_FETCH_DELAY_MS);
+          : await fetchDocumentSymbolsAfterDelay(
+              document,
+              DOCUMENT_SYMBOLS_FETCH_REATTEMPT_DELAY_MS
+            );
       if (documentSymbols === undefined) {
         void this.debouncedRefreshDocumentSymbols(document, attemptIdx + 1);
         return;

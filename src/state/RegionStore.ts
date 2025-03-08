@@ -6,7 +6,7 @@ import { type Region } from "../models/Region";
 import { debounce } from "../utils/debounce";
 import { getActiveRegion } from "../utils/getActiveRegion";
 
-const REFRESH_REGIONS_DEBOUNCE_DELAY_MS = 300;
+const REFRESH_REGIONS_DEBOUNCE_DELAY_MS = 100;
 const REFRESH_ACTIVE_REGION_DEBOUNCE_DELAY_MS = 100;
 
 export class RegionStore {
@@ -61,6 +61,7 @@ export class RegionStore {
     this.refreshRegionsAndActiveRegion.bind(this),
     REFRESH_REGIONS_DEBOUNCE_DELAY_MS
   );
+  private isRefreshingRegions = false;
 
   private refreshActiveRegionTimeout: NodeJS.Timeout | undefined;
 
@@ -100,6 +101,7 @@ export class RegionStore {
   }
 
   private refreshRegions(): void {
+    this.isRefreshingRegions = true;
     const activeDocument = vscode.window.activeTextEditor?.document;
     const versionedDocumentId = getCurrentActiveVersionedDocumentId();
     let shouldFireChangeEvents: boolean;
@@ -122,9 +124,13 @@ export class RegionStore {
       this._onDidChangeRegions.fire();
       this._onDidChangeInvalidMarkers.fire();
     }
+    this.isRefreshingRegions = false;
   }
 
   private onSelectionChange(event: vscode.TextEditorSelectionChangeEvent): void {
+    if (this.isRefreshingRegions) {
+      return;
+    }
     if (event.textEditor === vscode.window.activeTextEditor) {
       this.debouncedRefreshActiveRegion();
     }

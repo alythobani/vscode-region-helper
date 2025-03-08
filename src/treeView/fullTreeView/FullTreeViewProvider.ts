@@ -1,15 +1,22 @@
 import * as vscode from "vscode";
 import { isCurrentActiveVersionedDocumentId } from "../../lib/getVersionedDocumentId";
 import { type FullOutlineStore } from "../../state/FullOutlineStore";
+import { debounce } from "../../utils/debounce";
 import { type FullTreeItem } from "./FullTreeItem";
 
-const HIGHLIGHT_ACTIVE_ITEM_DEBOUNCE_DELAY_MS = 1;
+const REFRESH_TREE_DEBOUNCE_DELAY_MS = 100;
+const HIGHLIGHT_ACTIVE_ITEM_DEBOUNCE_DELAY_MS = 100;
 
 export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeItem> {
   private _onDidChangeTreeData = new vscode.EventEmitter<FullTreeItem | undefined>();
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
   private treeView: vscode.TreeView<FullTreeItem> | undefined;
+
+  private debouncedRefreshTree = debounce(
+    this.refreshTree.bind(this),
+    REFRESH_TREE_DEBOUNCE_DELAY_MS
+  );
 
   private highlightActiveItemTimeout: NodeJS.Timeout | undefined;
 
@@ -19,9 +26,14 @@ export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeIte
   }
 
   private registerListeners(subscriptions: vscode.Disposable[]): void {
+    vscode.window.onDidChangeActiveTextEditor(
+      this.clearHighlightActiveItemTimeoutIfExists.bind(this),
+      this,
+      subscriptions
+    );
     vscode.workspace.onDidChangeTextDocument(this.onDocumentChange.bind(this), this, subscriptions);
     this.fullOutlineStore.onDidChangeFullOutlineItems(
-      this.onFullOutlineItemsChange.bind(this),
+      this.debouncedRefreshTree,
       this,
       subscriptions
     );
@@ -40,7 +52,7 @@ export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeIte
     }
   }
 
-  private onFullOutlineItemsChange(): void {
+  private refreshTree(): void {
     this._onDidChangeTreeData.fire(undefined);
   }
 
@@ -70,8 +82,8 @@ export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeIte
       return;
     }
     if (!isCurrentActiveVersionedDocumentId(versionedDocumentId)) {
-      // The active region is from an old document version. We'll highlight the active region once
-      // RegionStore fires events for the new document version.
+      // The active item is from an old document version. We'll highlight the active item once
+      // FullOutlineStore fires events for the new document version.
       return;
     }
     this.treeView.reveal(activeFullOutlineItem, { select: true, focus: false });

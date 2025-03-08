@@ -2,15 +2,22 @@ import * as vscode from "vscode";
 import { isCurrentActiveVersionedDocumentId } from "../../lib/getVersionedDocumentId";
 import { type Region } from "../../models/Region";
 import { type RegionStore } from "../../state/RegionStore";
+import { debounce } from "../../utils/debounce";
 import { RegionTreeItem } from "./RegionTreeItem";
 
-const HIGHLIGHT_ACTIVE_REGION_DEBOUNCE_DELAY_MS = 1;
+const REFRESH_TREE_DEBOUNCE_DELAY_MS = 100;
+const HIGHLIGHT_ACTIVE_REGION_DEBOUNCE_DELAY_MS = 100;
 
 export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
   private _onDidChangeTreeData = new vscode.EventEmitter<undefined>();
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
   private treeView: vscode.TreeView<Region> | undefined;
+
+  private debouncedRefreshTree = debounce(
+    this.refreshTree.bind(this),
+    REFRESH_TREE_DEBOUNCE_DELAY_MS
+  );
 
   private highlightActiveRegionTimeout: NodeJS.Timeout | undefined;
 
@@ -20,47 +27,30 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
   }
 
   private registerListeners(subscriptions: vscode.Disposable[]): void {
-    this.registerDocumentChangeListener(subscriptions);
-    this.registerRegionsChangeListener(subscriptions);
-    this.registerActiveRegionChangeListener(subscriptions);
-  }
-
-  private registerDocumentChangeListener(subscriptions: vscode.Disposable[]): void {
+    vscode.window.onDidChangeActiveTextEditor(
+      this.clearHighlightActiveRegionTimeoutIfExists.bind(this),
+      this,
+      subscriptions
+    );
     vscode.workspace.onDidChangeTextDocument(this.onDocumentChange.bind(this), this, subscriptions);
-  }
-
-  private onDocumentChange(event: vscode.TextDocumentChangeEvent): void {
-    // Cancel any existing timeout to highlight the active region. Now that the document has changed,
-    // the existing highlight call may no longer be valid for the current document region tree.
-    // RegionStore will soon refresh the regions and active region, at which point we'll highlight
-    // the new active region if needed.
-    if (event.document === vscode.window.activeTextEditor?.document) {
-      this.clearHighlightActiveRegionTimeoutIfExists();
-    }
-  }
-
-  private registerRegionsChangeListener(subscriptions: vscode.Disposable[]): void {
-    // Note: no need to debounce here since `onDidChangeRegions` is already debounced by RegionStore
-    // (but if that ever changes, we should debounce here as well)
-    this.regionStore.onDidChangeRegions(this.onRegionsChange.bind(this), undefined, subscriptions);
-  }
-
-  private registerActiveRegionChangeListener(subscriptions: vscode.Disposable[]): void {
+    this.regionStore.onDidChangeRegions(this.debouncedRefreshTree, this, subscriptions);
     this.regionStore.onDidChangeActiveRegion(
-      // Note: no need to debounce here since `onDidChangeActiveRegion` is already debounced by
-      // RegionStore (but if that ever changes, we should debounce here as well)
-      this.onActiveRegionChange.bind(this),
+      this.debouncedHighlightActiveRegion.bind(this),
       undefined,
       subscriptions
     );
   }
 
-  private onRegionsChange(): void {
-    this._onDidChangeTreeData.fire(undefined);
+  private onDocumentChange(event: vscode.TextDocumentChangeEvent): void {
+    // Cancel any existing timeout to highlight the active region; we can wait for the upcoming
+    // update from RegionStore to refresh the up-to-date active region.
+    if (event.document === vscode.window.activeTextEditor?.document) {
+      this.clearHighlightActiveRegionTimeoutIfExists();
+    }
   }
 
-  private onActiveRegionChange(): void {
-    this.debouncedHighlightActiveRegion();
+  private refreshTree(): void {
+    this._onDidChangeTreeData.fire(undefined);
   }
 
   private debouncedHighlightActiveRegion(): void {

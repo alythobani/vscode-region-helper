@@ -10,7 +10,7 @@ import { debounce } from "../utils/debounce";
 import { type DocumentSymbolStore } from "./DocumentSymbolStore";
 import { type RegionStore } from "./RegionStore";
 
-const REFRESH_FULL_OUTLINE_DEBOUNCE_DELAY_MS = 300;
+const REFRESH_FULL_OUTLINE_DEBOUNCE_DELAY_MS = 100;
 const REFRESH_ACTIVE_ITEM_DEBOUNCE_DELAY_MS = 100;
 
 export class FullOutlineStore {
@@ -58,6 +58,7 @@ export class FullOutlineStore {
     this.refreshFullOutline.bind(this),
     REFRESH_FULL_OUTLINE_DEBOUNCE_DELAY_MS
   );
+  private isRefreshingItems = false;
 
   private refreshActiveItemTimeout: NodeJS.Timeout | undefined;
 
@@ -101,11 +102,12 @@ export class FullOutlineStore {
       return;
     }
     this._versionedDocumentId = regionStoreVersionedDocumentId;
-    this.refreshTopLevelItems();
+    this.refreshItems();
     this.refreshActiveItem();
   }
 
-  private refreshTopLevelItems(): void {
+  private refreshItems(): void {
+    this.isRefreshingItems = true;
     const { flattenedRegions } = this.regionStore;
     const flattenedRegionItems = flattenedRegions.map(getFlattenedRegionFullTreeItem);
     const { flattenedDocumentSymbols } = this.documentSymbolStore;
@@ -116,9 +118,13 @@ export class FullOutlineStore {
     });
     this._topLevelItems = topLevelItems;
     this._onDidChangeFullOutlineItems.fire();
+    this.isRefreshingItems = false;
   }
 
   private onSelectionChange(event: vscode.TextEditorSelectionChangeEvent): void {
+    if (this.isRefreshingItems) {
+      return;
+    }
     if (event.textEditor === vscode.window.activeTextEditor) {
       this.debouncedRefreshActiveItem();
     }
