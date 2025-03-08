@@ -23,5 +23,6 @@
     },
     // TypeScript
     "typescript.preferences.importModuleSpecifier": "relative"
-  }
+  },
+  "markdown.extension.toc.updateOnSave": false
 }
