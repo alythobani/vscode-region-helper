@@ -47,11 +47,41 @@
       {
         "command": "region-helper.goToPreviousRegion",
         "title": "Region Helper: Go to Previous Region"
+      },
+      {
+        "command": "region-helper.hideRegionsView",
+        "title": "Region Helper: Hide Regions View",
+        "when": "config.region-helper.shouldShowRegionsView"
+      },
+      {
+        "command": "region-helper.showRegionsView",
+        "title": "Region Helper: Show Regions View",
+        "when": "!config.region-helper.shouldShowRegionsView"
+      },
+      {
+        "command": "region-helper.hideFullOutlineView",
+        "title": "Region Helper: Hide Full Outline View",
+        "when": "config.region-helper.shouldShowFullOutlineView"
+      },
+      {
+        "command": "region-helper.showFullOutlineView",
+        "title": "Region Helper: Show Full Outline View",
+        "when": "!config.region-helper.shouldShowFullOutlineView"
       }
     ],
     "configuration": {
       "title": "Region Helper",
       "properties": {
+        "region-helper.shouldShowRegionsView": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the Regions view in the Explorer panel."
+        },
+        "region-helper.shouldShowFullOutlineView": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the Full Outline view in the Explorer panel."
+        },
         "region-helper.regionBoundaryPatternByLanguageId": {
           "type": "object",
           "description": "Regular expression strings to match region boundaries for different languages.",
@@ -347,11 +377,13 @@
       "explorer": [
         {
           "id": "regionHelperTreeView",
-          "name": "Regions"
+          "name": "Regions",
+          "when": "config.region-helper.shouldShowRegionsView"
         },
         {
           "id": "regionHelperFullTreeView",
-          "name": "Full Outline"
+          "name": "Full Outline",
+          "when": "config.region-helper.shouldShowFullOutlineView"
         }
       ]
     }

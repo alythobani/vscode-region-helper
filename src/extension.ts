@@ -7,6 +7,18 @@ import {
   goToRegionFromQuickPickCommandId,
 } from "./commands/goToRegionFromQuickPick";
 import { selectCurrentRegion, selectCurrentRegionCommandId } from "./commands/selectCurrentRegion";
+import {
+  hideFullOutlineView,
+  hideFullOutlineViewCommandId,
+  showFullOutlineView,
+  showFullOutlineViewCommandId,
+} from "./commands/toggleFullOutlineView";
+import {
+  hideRegionsView,
+  hideRegionsViewCommandId,
+  showRegionsView,
+  showRegionsViewCommandId,
+} from "./commands/toggleRegionsView";
 import { RegionDiagnosticsManager } from "./diagnostics/RegionDiagnosticsManager";
 import { type FlattenedRegion } from "./lib/flattenRegions";
 import { type InvalidMarker } from "./lib/parseAllRegions";
@@ -82,6 +94,10 @@ export function activate(context: vscode.ExtensionContext): RegionHelperAPI {
   registerCommand(goToRegionFromQuickPickCommandId, () => goToRegionFromQuickPick(regionStore));
   registerCommand(goToNextRegionCommandId, () => goToNextRegion(regionStore));
   registerCommand(goToPreviousRegionCommandId, () => goToPreviousRegion(regionStore));
+  registerCommand(hideRegionsViewCommandId, hideRegionsView);
+  registerCommand(showRegionsViewCommandId, showRegionsView);
+  registerCommand(hideFullOutlineViewCommandId, hideFullOutlineView);
+  registerCommand(showFullOutlineViewCommandId, showFullOutlineView);
 
   function registerCommand(
     commandId: string,
