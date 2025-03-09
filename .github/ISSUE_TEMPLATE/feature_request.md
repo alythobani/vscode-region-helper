@@ -9,17 +9,17 @@ assignees: ''
 
 ## ✨ Feature Request
 
-### Is your feature request related to a problem? If so, please describe.
+### Is your feature request related to a problem?
 
 A clear and concise description of the problem.
 (e.g., "I find it frustrating when...")
 
-### Describe the solution you'd like.
+### Describe the solution you'd like
 
 A clear and concise description of what you want to happen.
 (e.g., "It would be great if the extension could...")
 
-### Describe alternatives you've considered.
+### Describe alternatives you've considered
 
 A clear and concise description of any alternative solutions or features you've considered.
 (e.g., "I tried X, but it didn't fully solve the issue because...")
