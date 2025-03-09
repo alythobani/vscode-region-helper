@@ -4,7 +4,9 @@
 
 // #region Setup
 
+// @ts-expect-error
 import { initDatabase } from "./db";
+// @ts-expect-error
 import { startServer } from "./server";
 
 // #endregion
