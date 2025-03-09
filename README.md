@@ -9,7 +9,7 @@ A [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=AlyTh
 <h2 id="-features-at-a-glance">⚡️ Features at a glance</h2>
 
 - 📁 **Regions View** – Interactive tree for navigating regions.
-- 🏛 **Full Outline View** – Unified tree of regions and language symbols.
+- 🏛 **Full Outline View** – Unified interactive tree for regions and language symbols.
 - ⚠ **Diagnostics** – Detects unmatched region boundaries.
 - 🐇 **Quick Navigation** – Jump, search, and select regions with commands.
 
@@ -85,7 +85,7 @@ A [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=AlyTh
 
 <h3 id="-select-current-region">🎯 Select Current Region</h3>
 
-- Selects the **entire active region** that the cursor is inside.
+- Selects the **entire active region** containing the cursor.
 - 📌 **Default Keybinding**: `Alt + Shift + M`
 
 ![Select Current Region Demo](./assets/readme-gifs/6-select.gif)
