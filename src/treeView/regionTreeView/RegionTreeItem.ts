@@ -18,5 +18,6 @@ export class RegionTreeItem extends vscode.TreeItem {
       title: "Go to Region",
       arguments: [region.startLineIdx],
     };
+    this.iconPath = new vscode.ThemeIcon("symbol-namespace");
   }
 }
