@@ -22,7 +22,7 @@ A [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=AlyTh
 3. [🔬 Detailed Features](#-detailed-features)
    1. [📂 Regions View](#regions-view)
    2. [🏛 Full Outline View](#-full-outline-view)
-   3. [⚠ Region Diagnostics](#-region-diagnostics)
+   3. [⚠️ Region Diagnostics](#-region-diagnostics)
    4. [🔍 Go to Region...](#-go-to-region)
    5. [🐇 Go to Region Boundary](#-go-to-region-boundary)
    6. [⏭ Go to Next / Previous Region](#-go-to-next--previous-region)
@@ -51,7 +51,7 @@ A [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=AlyTh
 
 ![Full Outline View Demo](./assets/readme-gifs/2-full-outline-view.gif)
 
-<h3 id="-region-diagnostics">⚠ Region Diagnostics</h3>
+<h3 id="-region-diagnostics">⚠️ Region Diagnostics</h3>
 
 - Detects **unmatched region boundaries** and adds warnings in both the editor (blue squiggles) and the Problems panel, helping you **catch incomplete or misplaced** regions quickly.
 
@@ -118,7 +118,7 @@ To quickly show or hide the **Regions** or **Full Outline** views, you can use t
 2. ???
 3. **Profit!**
 
-(Things should work out of the box. [Let me know](https://github.com/alythobani/vscode-region-helper/issues/new/choose) if they don't!)
+(Really, things should work out of the box. [Let me know](https://github.com/alythobani/vscode-region-helper/issues/new/choose) if they don't!)
 
 <h2 id="-known-limitations">🚧 Known Limitations</h2>
 
