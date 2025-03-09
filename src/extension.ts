@@ -26,6 +26,7 @@ import { type Region } from "./models/Region";
 import { DocumentSymbolStore } from "./state/DocumentSymbolStore";
 import { FullOutlineStore } from "./state/FullOutlineStore";
 import { RegionStore } from "./state/RegionStore";
+import { type FullTreeItem } from "./treeView/fullTreeView/FullTreeItem";
 import { FullTreeViewProvider } from "./treeView/fullTreeView/FullTreeViewProvider";
 import {
   goToFullTreeItem,
@@ -38,6 +39,8 @@ import {
 import { RegionTreeViewProvider } from "./treeView/regionTreeView/RegionTreeViewProvider";
 
 export type RegionHelperAPI = {
+  // #region Region Store API
+  // #region Getters
   /** Returns an up-to-date list of top-level regions in the current active editor. This is used to
    * render the tree view, for example. The list will be empty if no editor is active. */
   getTopLevelRegions(): Region[];
@@ -50,12 +53,26 @@ export type RegionHelperAPI = {
   /** Returns an up-to-date list of invalid markers (unmatched boundaries) in the current active
    * editor. The list will be empty if no editor is active. */
   getInvalidMarkers(): InvalidMarker[];
+  // #endregion
+  // #region Events
   /** An event that fires when the list of regions in the current active editor changes. */
   onDidChangeRegions: vscode.Event<void>;
   /** An event that fires when the active region in the current active editor changes. */
   onDidChangeActiveRegion: vscode.Event<void>;
   /** An event that fires when the list of invalid markers in the current active editor changes. */
   onDidChangeInvalidMarkers: vscode.Event<void>;
+  // #endregion
+  // #endregion
+  // #region Full Outline Store API
+  // #region Getters
+  getTopLevelFullOutlineItems(): FullTreeItem[];
+  getActiveFullOutlineItem(): FullTreeItem | undefined;
+  // #endregion
+  // #region Events
+  onDidChangeFullOutlineItems: vscode.Event<void>;
+  onDidChangeActiveFullOutlineItem: vscode.Event<void>;
+  // #endregion
+  // #endregion
 };
 
 export function activate(context: vscode.ExtensionContext): RegionHelperAPI {
@@ -108,6 +125,8 @@ export function activate(context: vscode.ExtensionContext): RegionHelperAPI {
   }
 
   return {
+    // #region Region Store API
+    // #region Getters
     getTopLevelRegions(): Region[] {
       return regionStore.topLevelRegions;
     },
@@ -120,9 +139,27 @@ export function activate(context: vscode.ExtensionContext): RegionHelperAPI {
     getInvalidMarkers(): InvalidMarker[] {
       return regionStore.invalidMarkers;
     },
+    // #endregion
+    // #region Events
     onDidChangeRegions: regionStore.onDidChangeRegions,
     onDidChangeActiveRegion: regionStore.onDidChangeActiveRegion,
     onDidChangeInvalidMarkers: regionStore.onDidChangeInvalidMarkers,
+    // #endregion
+    // #endregion
+    // #region Full Outline Store API
+    // #region Getters
+    getTopLevelFullOutlineItems(): FullTreeItem[] {
+      return fullOutlineStore.topLevelFullOutlineItems;
+    },
+    getActiveFullOutlineItem(): FullTreeItem | undefined {
+      return fullOutlineStore.activeFullOutlineItem;
+    },
+    // #endregion
+    // #region Events
+    onDidChangeFullOutlineItems: fullOutlineStore.onDidChangeFullOutlineItems,
+    onDidChangeActiveFullOutlineItem: fullOutlineStore.onDidChangeActiveFullOutlineItem,
+    // #endregion
+    // #endregion
   };
 }
 
