@@ -30,9 +30,10 @@ A [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=AlyTh
 4. [⚙️ Settings](#-settings)
    1. [🙈 Show/Hide Views](#-showhide-views)
    2. [🔧 Custom Region Patterns](#-custom-region-patterns)
-5. [🚀 Installation](#-installation)
-6. [🚧 Known Limitations](#-known-limitations)
-7. [❤️ Contributing \& Feedback](#-contributing--feedback)
+5. [📡 Extension API](#-extension-api)
+6. [🚀 Installation](#-installation)
+7. [🚧 Known Limitations](#-known-limitations)
+8. [❤️ Contributing & Feedback](#-contributing--feedback)
 
 <h2 id="-detailed-features">🔬 Detailed Features</h2>
 
@@ -111,6 +112,10 @@ To quickly show or hide the **Regions** or **Full Outline** views, you can use t
   - **C, C++, C#, Java, Python, JavaScript, JSX, TypeScript, TSX, PHP, Ruby, Swift, Go, Rust, HTML, XML, Markdown, JSON/JSONC, YAML, SQL, and more**.
 - Define your own **custom region patterns**, or adjust the **existing default patterns**, to customize how regions are parsed.
   - Setting: `region-helper.regionBoundaryPatternByLanguageId`
+
+<h2 id="-extension-api">📡 Extension API</h2>
+
+Region Helper exposes an API for other extensions to access **code regions** and **full outline symbols** programmatically, so you don't have to re-implement file parsing yourself when building your own region-related tools. **See the full [API documentation](./docs/API.md) for details and usage examples.**
 
 <h2 id="-installation">🚀 Installation</h2>
 
