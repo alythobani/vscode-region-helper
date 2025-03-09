@@ -31,7 +31,7 @@ If applicable, add screenshots or GIFs.
 
 ### Error logs (if any)
 
-- Open the **VSCode Developer Console** (`Help > Toggle Developer Tools > Console`).  
+- Open the **VSCode Developer Console** (`Help > Toggle Developer Tools > Console`).
 - Copy and paste any **related error messages** here with any potentially relevant context you see.
 
 ### Additional context (optional)
