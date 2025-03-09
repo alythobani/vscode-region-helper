@@ -6,7 +6,7 @@
 
 A [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=AlyThobani.region-helper) extension for **navigating, visualizing, and managing code regions**.
 
-<h2 id="-features-at-a-glance">⚡️ Features at a glance</h2>
+<h2 id="-features-provided">⚡️ Features provided</h2>
 
 - 📁 **Regions View** – Interactive tree for navigating regions.
 - 🏛 **Full Outline View** – Unified interactive tree for regions and language symbols.
@@ -17,9 +17,9 @@ A [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=AlyTh
 
 <h2 id="-table-of-contents">📖 Table of Contents</h2>
 
-1. [⚡️ Features at a glance](#-features-at-a-glance)
+1. [⚡️ Features provided](#-features-provided)
 2. [📖 Table of Contents](#-table-of-contents)
-3. [🔬 Features in detail](#-features-in-detail)
+3. [🔬 Feature details](#-feature-details)
    1. [📂 Regions View](#regions-view)
    2. [🏛 Full Outline View](#-full-outline-view)
    3. [⚠ Region Diagnostics](#-region-diagnostics)
@@ -34,7 +34,7 @@ A [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=AlyTh
 6. [🚧 Known Limitations](#-known-limitations)
 7. [❤️ Contributing \& Feedback](#-contributing--feedback)
 
-<h2 id="-features-in-detail">🔬 Features in detail</h2>
+<h2 id="-feature-details">🔬 Feature details</h2>
 
 <h3 id="regions-view">📂 Regions View</h3>
 
@@ -127,8 +127,8 @@ I may have limited availability, but **bug reports, suggestions, and contributio
 
 - **[File an issue](https://github.com/alythobani/vscode-region-helper/issues/new/choose)** for bugs or feature requests.
 - **[Browse issues open to PRs](https://github.com/alythobani/vscode-region-helper/issues?q=state%3Aopen%20label%3A%22accepting%20PRs%22)** and submit one if you'd like to help.
-- **[Leave a review](https://marketplace.visualstudio.com/items?itemName=alythobani.region-helper&ssr=false#review-details)** to share your thoughts. Be honest, but do be kind too—I'm just one person trying to make a free and useful tool for myself and others. 😸
+- **[Leave a review](https://marketplace.visualstudio.com/items?itemName=alythobani.region-helper&ssr=false#review-details)** to share your thoughts or overall feedback.
 
 ---
 
-Hope you enjoy using **Region Helper**! Have a great day, and try to make someone else's day great too. 😊
+Hope you enjoy using this extension! Have a great day, and try to make someone else's day great too. 😊
