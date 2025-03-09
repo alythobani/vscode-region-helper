@@ -42,18 +42,20 @@ A [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=AlyTh
 - **Automatically highlights** the cursor’s active region.
 - Click a region to **instantly navigate** to it.
 
-![Regions View Demo](./assets/readme-gifs/1-tree-view.gif)
+![Regions View Demo](./assets/readme-gifs/1-regions-view.gif)
 
 <h3 id="-full-outline-view">🏛 Full Outline View</h3>
 
 - Combines all **regions and language symbols** (classes, methods, variables, etc) into a **unified tree view** for the current file.
 - Just like the Regions View, the cursor's active region/symbol is **automatically highlighted**, and you can **click to navigate** to any item.
 
+![Full Outline View Demo](./assets/readme-gifs/2-full-outline-view.gif)
+
 <h3 id="-region-diagnostics">⚠ Region Diagnostics</h3>
 
 - Detects **unmatched region boundaries** and adds warnings in both the editor (blue squiggles) and the Problems panel, helping you **catch incomplete or misplaced** regions quickly.
 
-![Region Diagnostics Demo](./assets/readme-gifs/2-diagnostics.gif)
+![Region Diagnostics Demo](./assets/readme-gifs/3-diagnostics.gif)
 
 <h3 id="-go-to-region">🔍 Go to Region...</h3>
 
@@ -63,7 +65,7 @@ A [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=AlyTh
   - **Windows/Linux**: `Ctrl + Shift + R`
   - **Mac**: `Cmd + Shift + R`
 
-![Go to Region Demo](./assets/readme-gifs/3-go-to-region.gif)
+![Go to Region Demo](./assets/readme-gifs/4-go-to-region.gif)
 
 <h3 id="-go-to-region-boundary">🐇 Go to Region Boundary</h3>
 
@@ -72,7 +74,7 @@ A [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=AlyTh
   - Jumps to the **next region** if the cursor is not already inside a region.
 - 📌 **Default Keybinding**: `Alt + M`
 
-![Go to Region Boundary Demo](./assets/readme-gifs/4-boundary.gif)
+![Go to Region Boundary Demo](./assets/readme-gifs/5-go-to-boundary.gif)
 
 <h3 id="-go-to-next--previous-region">⏭ Go to Next / Previous Region</h3>
 
@@ -81,14 +83,14 @@ A [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=AlyTh
   - **Next Region**: `Ctrl + Alt + N`
   - **Previous Region**: `Ctrl + Alt + P`
 
-![Go to Next / Previous Region Demo](./assets/readme-gifs/5-prev-next.gif)
+![Go to Next / Previous Region Demo](./assets/readme-gifs/6-go-to-next-previous-region.gif)
 
 <h3 id="-select-current-region">🎯 Select Current Region</h3>
 
 - Selects the **entire active region** containing the cursor.
 - 📌 **Default Keybinding**: `Alt + Shift + M`
 
-![Select Current Region Demo](./assets/readme-gifs/6-select.gif)
+![Select Current Region Demo](./assets/readme-gifs/7-select-region.gif)
 
 <h2 id="-settings">⚙️ Settings</h2>
 
