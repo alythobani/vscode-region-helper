@@ -1,6 +1,6 @@
 import * as assert from "assert";
 import * as vscode from "vscode";
-import { type RegionHelperAPI } from "../../extension";
+import { type RegionHelperAPI } from "../../api/regionHelperAPI";
 import { getPreviousRegion } from "../../lib/getPreviousRegion";
 import { type Region } from "../../models/Region";
 import { assertExists } from "../../utils/assertUtils";
