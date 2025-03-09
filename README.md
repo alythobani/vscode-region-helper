@@ -118,6 +118,8 @@ To quickly show or hide the **Regions** or **Full Outline** views, you can use t
 2. ???
 3. **Profit!**
 
+(Things should work out of the box. [Let me know](https://github.com/alythobani/vscode-region-helper/issues/new/choose) if they don't!)
+
 <h2 id="-known-limitations">🚧 Known Limitations</h2>
 
 - 🔍 **Go to Region...** only supports **camelCase matching** (not full fuzzy search) due to a [VSCode API limitation](https://github.com/microsoft/vscode/issues/34088#issuecomment-328734452).
