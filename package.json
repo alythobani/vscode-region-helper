@@ -382,12 +382,14 @@
         {
           "id": "regionHelperTreeView",
           "name": "Regions",
+          "contextualTitle": "Regions",
           "when": "config.region-helper.shouldShowRegionsView",
           "icon": "./assets/regions-view-icon.svg"
         },
         {
           "id": "regionHelperFullTreeView",
           "name": "Full Outline",
+          "contextualTitle": "Full Outline",
           "when": "config.region-helper.shouldShowFullOutlineView",
           "icon": "./assets/full-outline-view-icon.svg"
         }
