@@ -7,7 +7,7 @@
   "publisher": "AlyThobani",
   "name": "region-helper",
   "displayName": "Region Helper",
-  "description": "Easily visualize and navigate code regions in your files.",
+  "description": "Visualize and navigate code regions in your files.",
   "repository": {
     "type": "git",
     "url": "https://github.com/alythobani/vscode-region-helper.git"
