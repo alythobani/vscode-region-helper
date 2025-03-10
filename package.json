@@ -380,7 +380,7 @@
     "views": {
       "explorer": [
         {
-          "id": "regionHelperTreeView",
+          "id": "regionHelperRegionsView",
           "name": "Regions",
           "contextualTitle": "Regions",
           "when": "config.region-helper.shouldShowRegionsView",

@@ -52,7 +52,7 @@ export function activate(context: vscode.ExtensionContext): RegionHelperAPI {
   );
 
   const regionTreeViewProvider = new RegionTreeViewProvider(regionStore, subscriptions);
-  const treeView = vscode.window.createTreeView("regionHelperTreeView", {
+  const treeView = vscode.window.createTreeView("regionHelperRegionsView", {
     treeDataProvider: regionTreeViewProvider,
   });
   regionTreeViewProvider.setTreeView(treeView);
