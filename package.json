@@ -12,6 +12,10 @@
     "type": "git",
     "url": "https://github.com/alythobani/vscode-region-helper.git"
   },
+  "galleryBanner": {
+    "color": "#00002e",
+    "theme": "dark"
+  },
   "icon": "./assets/icon.png",
   "license": "GPL-3.0-only",
   "version": "1.1.0",
