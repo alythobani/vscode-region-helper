@@ -58,5 +58,6 @@ async function logRegions() {
 
 - The **API is only available when the extension is activated**.
 - **Events are per-file** and will fire when the active document changes and is parsed.
-- Events do not pass any arguments; they're meant to signal that the data has changed and should be re-fetched.
+- **Events do not pass any arguments**. They act as update signals, notifying you when the data changes.
+  - When an event fires, you should call the relevant `get...` method again to fetch the latest snapshot.
 - The `get...` methods work in constant time, returning snapshots of the data at the time of the call.
