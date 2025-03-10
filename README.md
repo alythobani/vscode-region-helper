@@ -115,7 +115,7 @@ To quickly show or hide the **Regions** or **Full Outline** views, you can use t
 
 <h2 id="-extension-api">📡 Extension API</h2>
 
-Region Helper exposes an API for other extensions to access **code regions** and **full outline symbols** programmatically, so you don't have to re-implement file parsing yourself when building your own region-related tools. **See the full [API documentation](./docs/API.md) for details and usage examples.**
+Region Helper exposes an API for other extensions to access **code regions** and **full outline symbols** programmatically. This allows you to build **region-aware tools** without re-implementing file parsing. **See the full [API documentation](./docs/API.md) for details and examples.**
 
 <h2 id="-installation">🚀 Installation</h2>
 
