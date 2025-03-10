@@ -61,3 +61,8 @@ async function logRegions() {
 - **Events do not pass any arguments**. They act as update signals, notifying you when the data changes.
   - When an event fires, you should call the relevant `get...` method again to fetch the latest snapshot.
 - The `get...` methods work in constant time, returning snapshots of the data at the time of the call.
+
+## Additional References
+
+- [VS Code API docs: `extensions` namespace](https://code.visualstudio.com/api/references/vscode-api#extensions)
+- [VS Code API docs: `Extension.exports` field](https://code.visualstudio.com/api/references/vscode-api#Extension.exports)
