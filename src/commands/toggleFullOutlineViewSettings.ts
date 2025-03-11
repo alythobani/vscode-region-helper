@@ -18,23 +18,23 @@ const showFullOutlineViewCommand: RegionHelperCommand = {
   needsRegionStore: false,
 };
 
-const stopFollowingActiveItemCommand: RegionHelperCommand = {
-  id: "regionHelper.fullOutlineView.stopFollowingActiveItem",
-  callback: stopFollowingActiveItem,
+const stopAutoHighlightingActiveItemCommand: RegionHelperCommand = {
+  id: "regionHelper.fullOutlineView.stopAutoHighlightingActiveItem",
+  callback: stopAutoHighlightingActiveItem,
   needsRegionStore: false,
 };
 
-const startFollowingActiveItemCommand: RegionHelperCommand = {
-  id: "regionHelper.fullOutlineView.startFollowingActiveItem",
-  callback: startFollowingActiveItem,
+const startAutoHighlightingActiveItemCommand: RegionHelperCommand = {
+  id: "regionHelper.fullOutlineView.startAutoHighlightingActiveItem",
+  callback: startAutoHighlightingActiveItem,
   needsRegionStore: false,
 };
 
 export const allFullOutlineViewConfigCommands = [
   hideFullOutlineViewCommand,
   showFullOutlineViewCommand,
-  stopFollowingActiveItemCommand,
-  startFollowingActiveItemCommand,
+  stopAutoHighlightingActiveItemCommand,
+  startAutoHighlightingActiveItemCommand,
 ];
 
 function hideFullOutlineView(): void {
@@ -55,26 +55,28 @@ function showFullOutlineView(): void {
   setGlobalFullOutlineViewConfigValue("isVisible", true);
 }
 
-function stopFollowingActiveItem(): void {
-  const isAlreadyFollowingActiveItem =
-    getGlobalFullOutlineViewConfigValue("shouldFollowActiveItem");
-  if (!isAlreadyFollowingActiveItem) {
+function stopAutoHighlightingActiveItem(): void {
+  const isAlreadyAutoHighlightingActiveItem = getGlobalFullOutlineViewConfigValue(
+    "shouldAutoHighlightActiveItem"
+  );
+  if (!isAlreadyAutoHighlightingActiveItem) {
     vscode.window.showInformationMessage(
-      "Region Helper: Full Outline view is already not following the active item."
+      "Region Helper: Full Outline view is already not auto-highlighting the active item."
     );
     return;
   }
-  setGlobalFullOutlineViewConfigValue("shouldFollowActiveItem", false);
+  setGlobalFullOutlineViewConfigValue("shouldAutoHighlightActiveItem", false);
 }
 
-function startFollowingActiveItem(): void {
-  const isAlreadyFollowingActiveItem =
-    getGlobalFullOutlineViewConfigValue("shouldFollowActiveItem");
-  if (isAlreadyFollowingActiveItem) {
+function startAutoHighlightingActiveItem(): void {
+  const isAlreadyAutoHighlightingActiveItem = getGlobalFullOutlineViewConfigValue(
+    "shouldAutoHighlightActiveItem"
+  );
+  if (isAlreadyAutoHighlightingActiveItem) {
     vscode.window.showInformationMessage(
-      "Region Helper: Full Outline view is already following the active item."
+      "Region Helper: Full Outline view is already auto-highlighting the active item."
     );
     return;
   }
-  setGlobalFullOutlineViewConfigValue("shouldFollowActiveItem", true);
+  setGlobalFullOutlineViewConfigValue("shouldAutoHighlightActiveItem", true);
 }

@@ -73,27 +73,27 @@
         "when": "!config.regionHelper.fullOutlineView.isVisible"
       },
       {
-        "command": "regionHelper.regionsView.stopFollowingActiveRegion",
-        "title": "Region Helper: Regions View: Stop Following Active Region",
-        "when": "config.regionHelper.regionsView.shouldFollowActiveRegion",
+        "command": "regionHelper.regionsView.stopAutoHighlightingActiveRegion",
+        "title": "Region Helper: Regions View: Stop Auto-Highlighting Active Region",
+        "when": "config.regionHelper.regionsView.shouldAutoHighlightActiveRegion",
         "icon": "$(sync)"
       },
       {
-        "command": "regionHelper.regionsView.startFollowingActiveRegion",
-        "title": "Region Helper: Regions View: Follow Active Region",
-        "when": "!config.regionHelper.regionsView.shouldFollowActiveRegion",
+        "command": "regionHelper.regionsView.startAutoHighlightingActiveRegion",
+        "title": "Region Helper: Regions View: Start Auto-Highlighting Active Region",
+        "when": "!config.regionHelper.regionsView.shouldAutoHighlightActiveRegion",
         "icon": "$(sync-ignored)"
       },
       {
-        "command": "regionHelper.fullOutlineView.stopFollowingActiveItem",
-        "title": "Region Helper: Full Outline View: Stop Following Active Item",
-        "when": "config.regionHelper.fullOutlineView.shouldFollowActiveItem",
+        "command": "regionHelper.fullOutlineView.stopAutoHighlightingActiveItem",
+        "title": "Region Helper: Full Outline View: Stop Auto-Highlighting Active Item",
+        "when": "config.regionHelper.fullOutlineView.shouldAutoHighlightActiveItem",
         "icon": "$(sync)"
       },
       {
-        "command": "regionHelper.fullOutlineView.startFollowingActiveItem",
-        "title": "Region Helper: Full Outline View: Follow Active Item",
-        "when": "!config.regionHelper.fullOutlineView.shouldFollowActiveItem",
+        "command": "regionHelper.fullOutlineView.startAutoHighlightingActiveItem",
+        "title": "Region Helper: Full Outline View: Start Auto-Highlighting Active Item",
+        "when": "!config.regionHelper.fullOutlineView.shouldAutoHighlightActiveItem",
         "icon": "$(sync-ignored)"
       }
     ],
@@ -374,7 +374,7 @@
             "default": true,
             "description": "Show the Regions view."
           },
-          "regionHelper.regionsView.shouldFollowActiveRegion": {
+          "regionHelper.regionsView.shouldAutoHighlightActiveRegion": {
             "type": "boolean",
             "default": true,
             "description": "Automatically reveal and highlight the cursor's active region in the Regions view."
@@ -390,7 +390,7 @@
             "default": true,
             "description": "Show the Full Outline view."
           },
-          "regionHelper.fullOutlineView.shouldFollowActiveItem": {
+          "regionHelper.fullOutlineView.shouldAutoHighlightActiveItem": {
             "type": "boolean",
             "default": true,
             "description": "Automatically reveal and highlight the cursor's active region/symbol in the Full Outline view."
@@ -429,23 +429,23 @@
     "menus": {
       "view/title": [
         {
-          "command": "regionHelper.regionsView.stopFollowingActiveRegion",
-          "when": "view == regionHelperRegionsView && config.regionHelper.regionsView.shouldFollowActiveRegion",
+          "command": "regionHelper.regionsView.stopAutoHighlightingActiveRegion",
+          "when": "view == regionHelperRegionsView && config.regionHelper.regionsView.shouldAutoHighlightActiveRegion",
           "group": "navigation"
         },
         {
-          "command": "regionHelper.regionsView.startFollowingActiveRegion",
-          "when": "view == regionHelperRegionsView && !config.regionHelper.regionsView.shouldFollowActiveRegion",
+          "command": "regionHelper.regionsView.startAutoHighlightingActiveRegion",
+          "when": "view == regionHelperRegionsView && !config.regionHelper.regionsView.shouldAutoHighlightActiveRegion",
           "group": "navigation"
         },
         {
-          "command": "regionHelper.fullOutlineView.stopFollowingActiveItem",
-          "when": "view == regionHelperFullTreeView && config.regionHelper.fullOutlineView.shouldFollowActiveItem",
+          "command": "regionHelper.fullOutlineView.stopAutoHighlightingActiveItem",
+          "when": "view == regionHelperFullTreeView && config.regionHelper.fullOutlineView.shouldAutoHighlightActiveItem",
           "group": "navigation"
         },
         {
-          "command": "regionHelper.fullOutlineView.startFollowingActiveItem",
-          "when": "view == regionHelperFullTreeView && !config.regionHelper.fullOutlineView.shouldFollowActiveItem",
+          "command": "regionHelper.fullOutlineView.startAutoHighlightingActiveItem",
+          "when": "view == regionHelperFullTreeView && !config.regionHelper.fullOutlineView.shouldAutoHighlightActiveItem",
           "group": "navigation"
         }
       ]

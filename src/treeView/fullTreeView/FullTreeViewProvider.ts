@@ -78,7 +78,9 @@ export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeIte
 
   private highlightActiveItem(): void {
     this.clearHighlightActiveItemTimeoutIfExists();
-    const shouldHighlightActiveItem = getGlobalFullOutlineViewConfigValue("shouldFollowActiveItem");
+    const shouldHighlightActiveItem = getGlobalFullOutlineViewConfigValue(
+      "shouldAutoHighlightActiveItem"
+    );
     if (!shouldHighlightActiveItem) {
       return;
     }

@@ -18,23 +18,23 @@ const showRegionsViewCommand: RegionHelperCommand = {
   needsRegionStore: false,
 };
 
-const stopFollowingActiveRegionCommand: RegionHelperCommand = {
-  id: "regionHelper.regionsView.stopFollowingActiveRegion",
-  callback: stopFollowingActiveRegion,
+const stopAutoHighlightingActiveRegionCommand: RegionHelperCommand = {
+  id: "regionHelper.regionsView.stopAutoHighlightingActiveRegion",
+  callback: stopAutoHighlightingActiveRegion,
   needsRegionStore: false,
 };
 
-const startFollowingActiveRegionCommand: RegionHelperCommand = {
-  id: "regionHelper.regionsView.startFollowingActiveRegion",
-  callback: startFollowingActiveRegion,
+const startAutoHighlightingActiveRegionCommand: RegionHelperCommand = {
+  id: "regionHelper.regionsView.startAutoHighlightingActiveRegion",
+  callback: startAutoHighlightingActiveRegion,
   needsRegionStore: false,
 };
 
 export const allRegionsViewConfigCommands: RegionHelperCommand[] = [
   hideRegionsViewCommand,
   showRegionsViewCommand,
-  stopFollowingActiveRegionCommand,
-  startFollowingActiveRegionCommand,
+  stopAutoHighlightingActiveRegionCommand,
+  startAutoHighlightingActiveRegionCommand,
 ];
 
 function hideRegionsView(): void {
@@ -55,10 +55,10 @@ function showRegionsView(): void {
   setRegionsViewVisibility(true);
 }
 
-function stopFollowingActiveRegion(): void {
-  setGlobalRegionsViewConfigValue("shouldFollowActiveRegion", false);
+function stopAutoHighlightingActiveRegion(): void {
+  setGlobalRegionsViewConfigValue("shouldAutoHighlightActiveRegion", false);
 }
 
-function startFollowingActiveRegion(): void {
-  setGlobalRegionsViewConfigValue("shouldFollowActiveRegion", true);
+function startAutoHighlightingActiveRegion(): void {
+  setGlobalRegionsViewConfigValue("shouldAutoHighlightActiveRegion", true);
 }

@@ -71,7 +71,9 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
 
   private highlightActiveRegion(): void {
     this.clearHighlightActiveRegionTimeoutIfExists();
-    const shouldHighlightActiveRegion = getGlobalRegionsViewConfigValue("shouldFollowActiveRegion");
+    const shouldHighlightActiveRegion = getGlobalRegionsViewConfigValue(
+      "shouldAutoHighlightActiveRegion"
+    );
     if (!shouldHighlightActiveRegion) {
       return;
     }

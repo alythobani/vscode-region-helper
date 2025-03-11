@@ -6,14 +6,14 @@ import {
 
 export type FullOutlineViewConfig = Readonly<{
   isVisible: boolean;
-  shouldFollowActiveItem: boolean;
+  shouldAutoHighlightActiveItem: boolean;
 }>;
 
 type RawFullOutlineViewConfigKey = keyof FullOutlineViewConfig;
 
 const defaultFullOutlineViewConfig = {
   isVisible: true,
-  shouldFollowActiveItem: true,
+  shouldAutoHighlightActiveItem: true,
 } as const satisfies FullOutlineViewConfig;
 
 export function setGlobalFullOutlineViewConfigValue<K extends RawFullOutlineViewConfigKey>(
