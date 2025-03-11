@@ -54,22 +54,22 @@
       },
       {
         "command": "regionHelper.regionsView.hide",
-        "title": "Region Helper: Regions View: Hide",
+        "title": "Region Helper: Hide Regions View",
         "when": "config.regionHelper.regionsView.isVisible"
       },
       {
         "command": "regionHelper.regionsView.show",
-        "title": "Region Helper: Regions View: Show",
+        "title": "Region Helper: Show Regions View",
         "when": "!config.regionHelper.regionsView.isVisible"
       },
       {
         "command": "regionHelper.fullOutlineView.hide",
-        "title": "Region Helper: Full Outline View: Hide",
+        "title": "Region Helper: Hide Full Outline View",
         "when": "config.regionHelper.fullOutlineView.isVisible"
       },
       {
         "command": "regionHelper.fullOutlineView.show",
-        "title": "Region Helper: Full Outline View: Show",
+        "title": "Region Helper: Show Full Outline View",
         "when": "!config.regionHelper.fullOutlineView.isVisible"
       },
       {
