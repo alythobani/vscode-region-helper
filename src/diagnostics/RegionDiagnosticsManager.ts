@@ -53,7 +53,9 @@ function createDiagnostic(
   const line = activeTextEditor.document.lineAt(lineIdx);
   const range = new vscode.Range(lineIdx, 0, lineIdx, line.text.length);
   const errorMsg = getErrorMessage(invalidMarker);
-  return new vscode.Diagnostic(range, errorMsg, vscode.DiagnosticSeverity.Warning);
+  const diagnostic = new vscode.Diagnostic(range, errorMsg, vscode.DiagnosticSeverity.Warning);
+  diagnostic.source = "region-helper";
+  return diagnostic;
 }
 
 function getErrorMessage(invalidMarker: InvalidMarker): string {
