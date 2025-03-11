@@ -16,5 +16,6 @@ vsc-extension-quickstart.md
 dist-tests/**
 **/eslint.config.mjs
 assets/readme-gifs/**
+assets/readme-pics/**
 docs/**
 .github/**
