@@ -29,7 +29,8 @@ A [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=AlyTh
    7. [🎯 Select Current Region](#-select-current-region)
 4. [⚙️ Settings](#-settings)
    1. [🙈 Show/Hide Views](#-showhide-views)
-   2. [🔧 Custom Region Patterns](#-custom-region-patterns)
+   2. [🔄 Toggling Auto-Highlighting in Views](#-toggling-auto-highlighting-in-views)
+   3. [🔧 Custom Region Patterns](#-custom-region-patterns)
 5. [📡 Extension API](#-extension-api)
 6. [🚀 Installation](#-installation)
 7. [🚧 Known Limitations](#-known-limitations)
@@ -40,7 +41,7 @@ A [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=AlyTh
 <h3 id="regions-view">📂 Regions View</h3>
 
 - Displays a **structured tree view** of all regions in the current file.
-- **Automatically highlights** the cursor’s active region.
+- **Automatically reveals and highlights** the cursor’s active region (this can be toggled on/off with commands/settings).
 - Click a region to **instantly navigate** to it.
 
 ![Regions View Demo](./assets/readme-gifs/1-regions-view.gif)
@@ -48,7 +49,8 @@ A [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=AlyTh
 <h3 id="-full-outline-view">🏛 Full Outline View</h3>
 
 - Combines all **regions and language symbols** (classes, methods, variables, etc) into a **unified tree view** for the current file.
-- Just like the Regions View, the cursor's active region/symbol is **automatically highlighted**, and you can **click to navigate** to any item.
+- Just like the Regions View, the cursor's active region/symbol is **automatically revealed and highlighted**, and this behavior can be toggled on/off.
+- Click any item to **instantly navigate** to it.
 
 ![Full Outline View Demo](./assets/readme-gifs/2-full-outline-view.gif)
 
@@ -105,6 +107,20 @@ To quickly show or hide the **Regions** or **Full Outline** views, you can use t
 - **Show/Hide Full Outline View**
   - Commands: `Show Full Outline View` / `Hide Full Outline View`
   - Setting: `regionHelper.shouldShowFullOutlineView`
+
+<h3 id="-toggling-auto-highlighting-in-views">🔄 Toggling Auto-Highlighting in Views</h3>
+
+- Sometimes you might want to keep the Regions View or Full Outline View collapsed, but the auto-highlighting of the active region/item will annoyingly re-open the view.
+- To avoid this, you can use the following commands/settings to **toggle this auto-revealing / auto-highlighting behavior**:
+  - **Regions View**:
+    - Commands: `Regions View: Stop Auto-Highlighting Active Region` / `Regions View: Start Auto-Highlighting Active Region`
+    - Setting: `regionHelper.regionsView.shouldAutoHighlight`
+  - **Full Outline View**:
+    - Commands: `Full Outline View: Stop Auto-Highlighting Active Item` / `Full Outline View: Start Auto-Highlighting Active Item`
+    - Setting: `regionHelper.fullOutlineView.shouldAutoHighlight`
+  - Each view also has a **title bar action** to toggle this setting:
+
+![Toggle Full Outline Auto-Highlighting Title Action](./assets/readme-pics/8-auto-highlight-view-title-action.png)
 
 <h3 id="-custom-region-patterns">🔧 Custom Region Patterns</h3>
 
