@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { getGlobalRegionsViewConfigValue } from "../../config/regionsViewConfig";
 import { isCurrentActiveVersionedDocumentId } from "../../lib/getVersionedDocumentId";
 import { type Region } from "../../models/Region";
 import { type RegionStore } from "../../state/RegionStore";
@@ -70,6 +71,10 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
 
   private highlightActiveRegion(): void {
     this.clearHighlightActiveRegionTimeoutIfExists();
+    const shouldHighlightActiveRegion = getGlobalRegionsViewConfigValue("shouldFollowActiveRegion");
+    if (!shouldHighlightActiveRegion) {
+      return;
+    }
     const { activeRegion, versionedDocumentId } = this.regionStore;
     if (!this.treeView || !activeRegion) {
       return;

@@ -1,13 +1,18 @@
 import * as vscode from "vscode";
+import { type RegionHelperCommand } from "../../commands/registerCommand";
 import { throwNever } from "../../utils/errorUtils";
 import { focusEditor } from "../../utils/focusEditor";
 import { moveCursorToFirstNonWhitespaceCharOfLine } from "../../utils/moveCursorToFirstNonWhitespaceOfLine";
 import { moveCursorToPosition } from "../../utils/moveCursorToPosition";
 import { type FullTreeItemType } from "./FullTreeItem";
 
-export const goToFullTreeItemCommandId = "region-helper.goToFullTreeItem";
+export const goToFullTreeItemCommand: RegionHelperCommand = {
+  id: "regionHelper.goToFullTreeItem",
+  callback: goToFullTreeItem,
+  needsRegionStore: false,
+};
 
-export function goToFullTreeItem(startLineIdx: number, startCharacter: number | undefined): void {
+function goToFullTreeItem(startLineIdx: number, startCharacter: number | undefined): void {
   const { activeTextEditor } = vscode.window;
   if (!activeTextEditor) {
     return;
@@ -34,7 +39,7 @@ export function makeGoToFullTreeItemCommand(
   range: vscode.Range
 ): vscode.Command {
   return {
-    command: goToFullTreeItemCommandId,
+    command: goToFullTreeItemCommand.id,
     title: "Go to Item",
     arguments: [range.start.line, getTargetCharacter(itemType, range)],
   };

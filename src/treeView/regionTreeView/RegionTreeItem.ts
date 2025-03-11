@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { getRegionDisplayName, getRegionRangeText } from "../../lib/getRegionDisplayInfo";
 import { type Region } from "../../models/Region";
-import { goToRegionTreeItemCommandId } from "./goToRegionTreeItem";
+import { goToRegionTreeItemCommand } from "./goToRegionTreeItem";
 
 export class RegionTreeItem extends vscode.TreeItem {
   constructor(public readonly region: Region) {
@@ -14,7 +14,7 @@ export class RegionTreeItem extends vscode.TreeItem {
     );
     this.tooltip = `${displayName}: ${getRegionRangeText(region)}`;
     this.command = {
-      command: goToRegionTreeItemCommandId,
+      command: goToRegionTreeItemCommand.id,
       title: "Go to Region",
       arguments: [region.startLineIdx],
     };

@@ -4,10 +4,15 @@ import { type Region } from "../models/Region";
 import { type RegionStore } from "../state/RegionStore";
 import { getActiveCursorLineIdx } from "../utils/getActiveCursorLineIdx";
 import { moveCursorToFirstNonWhitespaceCharOfLine } from "../utils/moveCursorToFirstNonWhitespaceOfLine";
+import { type RegionHelperCommand } from "./registerCommand";
 
-export const goToRegionBoundaryCommandId = "region-helper.goToRegionBoundary";
+export const goToRegionBoundaryCommand: RegionHelperCommand = {
+  id: "regionHelper.goToRegionBoundary",
+  callback: goToRegionBoundary,
+  needsRegionStore: true,
+};
 
-export function goToRegionBoundary(regionStore: RegionStore): void {
+function goToRegionBoundary(regionStore: RegionStore): void {
   const { activeTextEditor } = vscode.window;
   if (!activeTextEditor) {
     return;

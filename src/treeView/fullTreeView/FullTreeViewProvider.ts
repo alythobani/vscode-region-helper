@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { getGlobalFullOutlineViewConfigValue } from "../../config/fullOutlineViewConfig";
 import { isCurrentActiveVersionedDocumentId } from "../../lib/getVersionedDocumentId";
 import { type FullOutlineStore } from "../../state/FullOutlineStore";
 import { debounce } from "../../utils/debounce";
@@ -77,6 +78,10 @@ export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeIte
 
   private highlightActiveItem(): void {
     this.clearHighlightActiveItemTimeoutIfExists();
+    const shouldHighlightActiveItem = getGlobalFullOutlineViewConfigValue("shouldFollowActiveItem");
+    if (!shouldHighlightActiveItem) {
+      return;
+    }
     const { activeFullOutlineItem, versionedDocumentId } = this.fullOutlineStore;
     if (!this.treeView || !activeFullOutlineItem) {
       return;

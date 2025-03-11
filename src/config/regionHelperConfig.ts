@@ -1,33 +1,36 @@
 import * as vscode from "vscode";
+import { type FullOutlineViewConfig } from "./fullOutlineViewConfig";
+import { type RegionsViewConfig } from "./regionsViewConfig";
 
-type RegionHelperConfiguration = {
-  shouldShowRegionsView: boolean;
-  shouldShowFullOutlineView: boolean;
+type RegionHelperConfig = {
+  regionsView: RegionsViewConfig;
+  fullOutlineView: FullOutlineViewConfig;
 };
 
-type RegionHelperConfigurationKey = keyof RegionHelperConfiguration;
+type ConfigKeyLevel1 = keyof RegionHelperConfig;
 
-export function setShouldShowRegionsView(shouldShow: boolean): void {
-  setGlobalRegionHelperConfigValue("shouldShowRegionsView", shouldShow);
-}
+export type GetLevel2Keys<
+  K1 extends ConfigKeyLevel1,
+  K2 extends keyof RegionHelperConfig[K1] = K1 extends K1 ? keyof RegionHelperConfig[K1] : never
+> = K2 extends string ? `${K1}.${K2}` : never;
 
-export function setShouldShowFullOutlineView(shouldShow: boolean): void {
-  setGlobalRegionHelperConfigValue("shouldShowFullOutlineView", shouldShow);
-}
+type ConfigKeyLevel2<K1 extends keyof RegionHelperConfig = keyof RegionHelperConfig> =
+  K1 extends string ? GetLevel2Keys<K1> : never;
 
-export function setGlobalRegionHelperConfigValue(
-  key: RegionHelperConfigurationKey,
-  value: unknown
+type RegionHelperConfigKey = ConfigKeyLevel1 | ConfigKeyLevel2;
+
+export function setGlobalRegionHelperConfigValue<K extends RegionHelperConfigKey>(
+  key: K,
+  value: K extends ConfigKeyLevel1
+    ? RegionHelperConfig[K]
+    : K extends GetLevel2Keys<infer K1, infer K2>
+    ? RegionHelperConfig[K1][K2]
+    : never
 ): Thenable<void> {
-  const config = getRegionHelperConfiguration();
+  const config = getRegionHelperConfig();
   return config.update(key, value, vscode.ConfigurationTarget.Global);
 }
 
-export function getGlobalRegionHelperConfigValue(key: RegionHelperConfigurationKey): unknown {
-  const config = getRegionHelperConfiguration();
-  return config.get(key);
-}
-
-export function getRegionHelperConfiguration(): vscode.WorkspaceConfiguration {
-  return vscode.workspace.getConfiguration("region-helper");
+export function getRegionHelperConfig(): vscode.WorkspaceConfiguration {
+  return vscode.workspace.getConfiguration("regionHelper");
 }

@@ -101,17 +101,17 @@ To quickly show or hide the **Regions** or **Full Outline** views, you can use t
 
 - **Show/Hide Region View**
   - Commands: `Show Regions View` / `Hide Regions View`
-  - Setting: `region-helper.shouldShowRegionsView`
+  - Setting: `regionHelper.shouldShowRegionsView`
 - **Show/Hide Full Outline View**
   - Commands: `Show Full Outline View` / `Hide Full Outline View`
-  - Setting: `region-helper.shouldShowFullOutlineView`
+  - Setting: `regionHelper.shouldShowFullOutlineView`
 
 <h3 id="-custom-region-patterns">🔧 Custom Region Patterns</h3>
 
 - **Supports nearly 50 languages** out of the box, including:
   - **C, C++, C#, Java, Python, JavaScript, JSX, TypeScript, TSX, PHP, Ruby, Swift, Go, Rust, HTML, XML, Markdown, JSON/JSONC, YAML, SQL, and more**.
 - Define your own **custom region patterns**, or adjust the **existing default patterns**, to customize how regions are parsed.
-  - Setting: `region-helper.regionBoundaryPatternByLanguageId`
+  - Setting: `regionHelper.regionBoundaryPatternByLanguageId`
 
 <h2 id="-extension-api">📡 Extension API</h2>
 

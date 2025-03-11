@@ -1,4 +1,4 @@
-import * as vscode from "vscode";
+import { getRegionHelperConfig } from "../config/regionHelperConfig";
 
 type LanguageId = string;
 
@@ -26,7 +26,7 @@ export function getRegionBoundaryPatternMap(): RegionBoundaryPatternMap {
 }
 
 function getRegionBoundaryPatternsConfig(): RegionBoundaryPatternsConfig {
-  const config = vscode.workspace.getConfiguration("region-helper");
+  const config = getRegionHelperConfig();
   return config.get("regionBoundaryPatternByLanguageId", {});
 }
 
