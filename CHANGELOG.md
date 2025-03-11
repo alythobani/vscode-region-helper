@@ -4,6 +4,12 @@ All notable changes to the "region-helper" extension will be documented in this 
 
 This changelog adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) and is structured for clarity and readability, inspired by [Common Changelog](https://common-changelog.org/) and [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.2.0] - 2025-03-10
+
+- **Add Auto-Highlight toggling for views**:
+  - New settings to enable/disable automatic region/item highlighting in **Regions View** and **Full Outline View**.
+  - New commands and view title bar actions to quickly toggle auto-highlight.
+
 ## [1.1.0] - 2025-03-09
 
 - **Add Full Outline View**: A new tree view combining **regions and language symbols**.
