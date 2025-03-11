@@ -114,10 +114,10 @@ To quickly show or hide the **Regions** or **Full Outline** views, you can use t
 - To avoid this, you can use the following commands/settings to **toggle this auto-revealing / auto-highlighting behavior**:
   - **Regions View**:
     - Commands: `Regions View: Stop Auto-Highlighting Active Region` / `Regions View: Start Auto-Highlighting Active Region`
-    - Setting: `regionHelper.regionsView.shouldAutoHighlight`
+    - Setting: `regionHelper.regionsView.shouldAutoHighlightActiveRegion`
   - **Full Outline View**:
     - Commands: `Full Outline View: Stop Auto-Highlighting Active Item` / `Full Outline View: Start Auto-Highlighting Active Item`
-    - Setting: `regionHelper.fullOutlineView.shouldAutoHighlight`
+    - Setting: `regionHelper.fullOutlineView.shouldAutoHighlightActiveItem`
   - Each view also has a **title bar action** to toggle this setting:
 
 ![Toggle Full Outline Auto-Highlighting Title Action](./assets/readme-pics/8-auto-highlight-view-title-action.png)
