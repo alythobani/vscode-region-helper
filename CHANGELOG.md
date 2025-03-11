@@ -6,9 +6,7 @@ This changelog adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ## [1.2.0] - 2025-03-10
 
-- **Add Auto-Highlight toggling for views**:
-  - New settings to enable/disable automatic region/item highlighting in **Regions View** and **Full Outline View**.
-  - New commands and view title bar actions to quickly toggle auto-highlight.
+- **Add Auto-Highlight toggling for views**: New settings, commands, and view title bar actions to **enable/disable automatic region/item highlighting** in Regions View and Full Outline View.
 
 ## [1.1.0] - 2025-03-09
 
