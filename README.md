@@ -10,7 +10,7 @@ A [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=AlyTh
 
 - 📁 **Regions View** – Interactive tree for navigating regions.
 - 🏛 **Full Outline View** – Unified interactive tree for regions and language symbols.
-- ⚠ **Diagnostics** – Detects unmatched region boundaries.
+- ⚠️ **Diagnostics** – Detects unmatched region boundaries.
 - 🐇 **Quick Navigation** – Jump, search, and select regions with commands.
 
 ![Region Helper Demo](./assets/readme-gifs/0-main-demo.gif)
