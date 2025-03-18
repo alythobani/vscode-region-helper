@@ -5,6 +5,7 @@ export default defineConfig({
   installExtensions: [
     "alefragnani.pascal",
     "chee.vscode-perl6-atom-grammar",
+    "cpylua.language-postcss",
     "haskell.haskell",
     "jakebecker.elixir-ls",
     "mathiasfrohlich.kotlin",

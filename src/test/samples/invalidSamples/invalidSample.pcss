@@ -1,0 +1,20 @@
+/*#region FirstRegion*/
+body {
+  background-color: #f0f0f0;
+}
+/*#endregion*/
+
+/* #endregion Invalid end boundary */
+/* #region Invalid start boundary */
+
+/*   #region Second Region */
+.container {
+  /*  #region    InnerRegion   */
+  display: flex;
+  /*  #endregion   ends InnerRegion   */
+
+  /* #region */
+  padding: 20px;
+  /* #endregion */
+}
+/* #endregion */

@@ -285,6 +285,10 @@
                 "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
                 "endRegex": "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
               },
+              "postcss": {
+                "startRegex": "^\\s*\\/\\*\\s*#region(?:\\s+(.*?)\\s*)?\\*\\/",
+                "endRegex": "^\\s*\\/\\*\\s*#endregion(?:\\s.*)?\\*\\/"
+              },
               "python": {
                 "startRegex": "^\\s*#\\s*region(?:\\s+(.*?)\\s*)?$",
                 "endRegex": "^\\s*#\\s*endregion(?:\\s.*)?"
