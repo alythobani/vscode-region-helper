@@ -4,6 +4,14 @@ All notable changes to the "region-helper" extension will be documented in this 
 
 This changelog adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) and is structured for clarity and readability, inspired by [Common Changelog](https://common-changelog.org/) and [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.3.0] - 2025-03-18
+
+- Add PostCSS language support
+
+## [1.2.2] - 2025-03-12
+
+- Lower the minimum supported VS Code version from 1.97.0 to 1.94.0 (can now install extension in Cursor)
+
 ## [1.2.1] - 2025-03-11
 
 - Remove readme screenshot from the published package
