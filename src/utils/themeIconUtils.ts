@@ -47,8 +47,7 @@ const validSymbolThemeIconIds = new Set([
   "symbol-variable",
 ]);
 
-export function getSymbolThemeIcon(symbolKind: vscode.SymbolKind): vscode.ThemeIcon | undefined {
-  const symbolThemeIconId = getSymbolThemeIconId(symbolKind);
+export function getSymbolThemeIcon(symbolThemeIconId: string): vscode.ThemeIcon | undefined {
   if (!validSymbolThemeIconIds.has(symbolThemeIconId)) {
     // console.warn(
     //   `Couldn't find a valid theme icon for symbol kind '${vscode.SymbolKind[symbolKind]}'`
@@ -58,7 +57,11 @@ export function getSymbolThemeIcon(symbolKind: vscode.SymbolKind): vscode.ThemeI
   return new vscode.ThemeIcon(symbolThemeIconId);
 }
 
-function getSymbolThemeIconId(symbolKind: vscode.SymbolKind): string {
+/**
+ * Converts a SymbolKind enum value to a kebab-case string that can be used as a valid theme icon
+ * ID. For example, `SymbolKind.TypeParameter` becomes "symbol-type-parameter".
+ */
+export function getSymbolThemeIconId(symbolKind: vscode.SymbolKind): string {
   const pascalCaseSymbolKindName = vscode.SymbolKind[symbolKind];
   const kebabCaseSymbolKindName = toKebabCase(pascalCaseSymbolKindName);
   return `symbol-${kebabCaseSymbolKindName}`;

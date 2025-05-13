@@ -1,17 +1,17 @@
 import * as vscode from "vscode";
 import { getPreviousRegion } from "../lib/getPreviousRegion";
 import { moveCursorToRegion } from "../lib/moveCursorToRegion";
-import { type RegionStore } from "../state/RegionStore";
 import { getActiveCursorLineIdx } from "../utils/getActiveCursorLineIdx";
-import { type RegionHelperCommand } from "./registerCommand";
+import { type RegionHelperStoreParams, type RegionHelperStoresCommand } from "./registerCommand";
 
-export const goToPreviousRegionCommand: RegionHelperCommand = {
+export const goToPreviousRegionCommand: RegionHelperStoresCommand = {
   id: "regionHelper.goToPreviousRegion",
   callback: goToPreviousRegion,
-  needsRegionStore: true,
+  needsStoreParams: true,
 };
 
-function goToPreviousRegion({ flattenedRegions }: Pick<RegionStore, "flattenedRegions">): void {
+function goToPreviousRegion({ regionStore }: RegionHelperStoreParams): void {
+  const { flattenedRegions } = regionStore;
   const { activeTextEditor } = vscode.window;
   if (!activeTextEditor) {
     return;

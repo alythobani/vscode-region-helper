@@ -110,5 +110,9 @@ export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeIte
 
   setTreeView(treeView: vscode.TreeView<FullTreeItem>): void {
     this.treeView = treeView;
+    treeView.onDidCollapseElement((event) =>
+      this.fullOutlineStore.onCollapseTreeItem(event.element)
+    );
+    treeView.onDidExpandElement((event) => this.fullOutlineStore.onExpandTreeItem(event.element));
   }
 }

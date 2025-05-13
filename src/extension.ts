@@ -41,7 +41,7 @@ export function activate(context: vscode.ExtensionContext): RegionHelperAPI {
   const regionDiagnosticsManager = new RegionDiagnosticsManager(regionStore, subscriptions);
   subscriptions.push(regionDiagnosticsManager.diagnostics);
 
-  registerAllCommands(subscriptions, regionStore);
+  registerAllCommands(subscriptions, { regionStore });
 
   return {
     // #region Region Store API

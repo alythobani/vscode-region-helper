@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { type RegionStore } from "../state/RegionStore";
 import { goToFullTreeItemCommand } from "../treeView/fullTreeView/goToFullTreeItem";
 import { goToRegionTreeItemCommand } from "../treeView/regionTreeView/goToRegionTreeItem";
+import { allExpandAndCollapseAllCommands } from "./expandAndCollapseAll";
 import { goToNextRegionCommand } from "./goToNextRegion";
 import { goToPreviousRegionCommand } from "./goToPreviousRegion";
 import { goToRegionBoundaryCommand } from "./goToRegionBoundary";
@@ -14,23 +15,38 @@ type RegionHelperExtensionId = "regionHelper";
 
 type RegionHelperCommandId = `${RegionHelperExtensionId}.${string}`;
 
-export type RegionHelperCommand = {
+export type RegionHelperStoreParams = {
+  regionStore: RegionStore;
+};
+
+export type RegionHelperClosuredCommandCallback = (params: RegionHelperStoreParams) => void;
+
+/** A command suitable for the command palette, thus needs a closure for access to store params. */
+export type RegionHelperStoresCommand = {
+  id: RegionHelperCommandId;
+  callback: RegionHelperClosuredCommandCallback;
+  needsStoreParams: true;
+};
+
+/** A command that needs args passed in when called (thus not suitable for e.g. the Command Palette). */
+export type RegionHelperNonStoresCommand = {
   id: RegionHelperCommandId;
   callback: Parameters<typeof vscode.commands.registerCommand>[1];
-  // TODO: better type safety for this (make sure needsRegionStore is true if and only if callback needs it)
-  needsRegionStore: boolean;
+  needsStoreParams: false;
 };
+
+type RegionHelperCommand = RegionHelperStoresCommand | RegionHelperNonStoresCommand;
 
 export function registerAllCommands(
   subscriptions: vscode.Disposable[],
-  regionStore: RegionStore
+  callbackParams: RegionHelperStoreParams
 ): void {
   for (const command of commandsToRegister) {
-    registerRegionHelperCommand(command, subscriptions, regionStore);
+    registerRegionHelperCommand(command, subscriptions, callbackParams);
   }
 }
 
-const commandsToRegister = [
+const commandsToRegister: RegionHelperCommand[] = [
   goToRegionTreeItemCommand,
   goToFullTreeItemCommand,
   goToRegionBoundaryCommand,
@@ -40,24 +56,18 @@ const commandsToRegister = [
   goToPreviousRegionCommand,
   ...allRegionsViewConfigCommands,
   ...allFullOutlineViewConfigCommands,
+  ...allExpandAndCollapseAllCommands,
 ];
 
 function registerRegionHelperCommand(
   command: RegionHelperCommand,
   subscriptions: vscode.Disposable[],
-  regionStore: RegionStore
+  callbackParams: RegionHelperStoreParams
 ): void {
-  const { id, callback, needsRegionStore } = command;
+  const { id, callback, needsStoreParams } = command;
   const commandDisposable = vscode.commands.registerCommand(
     id,
-    needsRegionStore ? makeRegionStoreCallback(regionStore, callback) : callback
+    needsStoreParams ? (): void => callback(callbackParams) : callback
   );
   subscriptions.push(commandDisposable);
-}
-
-function makeRegionStoreCallback(
-  regionStore: RegionStore,
-  callback: (regionStore: RegionStore) => void
-): () => void {
-  return () => callback(regionStore);
 }

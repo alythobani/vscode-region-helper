@@ -4,33 +4,33 @@ import {
   setGlobalRegionsViewConfigValue,
   setRegionsViewVisibility,
 } from "../config/regionsViewConfig";
-import { type RegionHelperCommand } from "./registerCommand";
+import { type RegionHelperNonStoresCommand } from "./registerCommand";
 
-const hideRegionsViewCommand: RegionHelperCommand = {
+const hideRegionsViewCommand: RegionHelperNonStoresCommand = {
   id: "regionHelper.regionsView.hide",
   callback: hideRegionsView,
-  needsRegionStore: false,
+  needsStoreParams: false,
 };
 
-const showRegionsViewCommand: RegionHelperCommand = {
+const showRegionsViewCommand: RegionHelperNonStoresCommand = {
   id: "regionHelper.regionsView.show",
   callback: showRegionsView,
-  needsRegionStore: false,
+  needsStoreParams: false,
 };
 
-const stopAutoHighlightingActiveRegionCommand: RegionHelperCommand = {
+const stopAutoHighlightingActiveRegionCommand: RegionHelperNonStoresCommand = {
   id: "regionHelper.regionsView.stopAutoHighlightingActiveRegion",
   callback: stopAutoHighlightingActiveRegion,
-  needsRegionStore: false,
+  needsStoreParams: false,
 };
 
-const startAutoHighlightingActiveRegionCommand: RegionHelperCommand = {
+const startAutoHighlightingActiveRegionCommand: RegionHelperNonStoresCommand = {
   id: "regionHelper.regionsView.startAutoHighlightingActiveRegion",
   callback: startAutoHighlightingActiveRegion,
-  needsRegionStore: false,
+  needsStoreParams: false,
 };
 
-export const allRegionsViewConfigCommands: RegionHelperCommand[] = [
+export const allRegionsViewConfigCommands: RegionHelperNonStoresCommand[] = [
   hideRegionsViewCommand,
   showRegionsViewCommand,
   stopAutoHighlightingActiveRegionCommand,

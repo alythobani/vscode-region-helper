@@ -1,11 +1,11 @@
 import * as vscode from "vscode";
-import {
-  type FullTreeItem,
-  getFlattenedRegionFullTreeItem,
-  getFlattenedSymbolFullTreeItem,
-} from "../treeView/fullTreeView/FullTreeItem";
+import { type FullTreeItem } from "../treeView/fullTreeView/FullTreeItem";
 import { generateTopLevelFullTreeItems } from "../treeView/fullTreeView/generateTopLevelFullTreeItems";
 import { getActiveFullTreeItem } from "../treeView/fullTreeView/getActiveFullTreeItem";
+import {
+  getFlattenedRegionFullTreeItems,
+  getFlattenedSymbolFullTreeItems,
+} from "../treeView/fullTreeView/getFlattenedFullTreeItems";
 import { debounce } from "../utils/debounce";
 import { type DocumentSymbolStore } from "./DocumentSymbolStore";
 import { type RegionStore } from "./RegionStore";
@@ -14,6 +14,7 @@ const REFRESH_FULL_OUTLINE_DEBOUNCE_DELAY_MS = 100;
 const REFRESH_ACTIVE_ITEM_DEBOUNCE_DELAY_MS = 100;
 
 export class FullOutlineStore {
+  // #region Singleton initialization
   private static _instance: FullOutlineStore | undefined = undefined;
 
   static initialize(
@@ -34,7 +35,9 @@ export class FullOutlineStore {
     }
     return this._instance;
   }
+  // #endregion
 
+  // #region Properties
   private _topLevelItems: FullTreeItem[] = [];
   private _onDidChangeFullOutlineItems = new vscode.EventEmitter<void>();
   readonly onDidChangeFullOutlineItems = this._onDidChangeFullOutlineItems.event;
@@ -53,6 +56,8 @@ export class FullOutlineStore {
   get versionedDocumentId(): string | undefined {
     return this._versionedDocumentId;
   }
+
+  // #endregion
 
   private debouncedRefreshFullOutline = debounce(
     this.refreshFullOutline.bind(this),
@@ -108,10 +113,10 @@ export class FullOutlineStore {
 
   private refreshItems(): void {
     this.isRefreshingItems = true;
-    const { flattenedRegions } = this.regionStore;
-    const flattenedRegionItems = flattenedRegions.map(getFlattenedRegionFullTreeItem);
-    const { flattenedDocumentSymbols } = this.documentSymbolStore;
-    const flattenedSymbolItems = flattenedDocumentSymbols.map(getFlattenedSymbolFullTreeItem);
+    const flattenedRegionItems = getFlattenedRegionFullTreeItems(this.regionStore.flattenedRegions);
+    const flattenedSymbolItems = getFlattenedSymbolFullTreeItems(
+      this.documentSymbolStore.flattenedDocumentSymbols
+    );
     const topLevelItems = generateTopLevelFullTreeItems({
       flattenedRegionItems,
       flattenedSymbolItems,
@@ -156,5 +161,15 @@ export class FullOutlineStore {
       clearTimeout(this.refreshActiveItemTimeout);
       this.refreshActiveItemTimeout = undefined;
     }
+  }
+
+  onCollapseTreeItem(fullTreeItem: FullTreeItem): void {
+    const itemId = fullTreeItem.id;
+    console.log(`Collapsing item with ID: ${itemId}`);
+  }
+
+  onExpandTreeItem(fullTreeItem: FullTreeItem): void {
+    const itemId = fullTreeItem.id;
+    console.log(`Expanding item with ID: ${itemId}`);
   }
 }

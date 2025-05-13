@@ -95,6 +95,16 @@
         "title": "Region Helper: Full Outline View: Start Auto-Highlighting Active Item",
         "when": "!config.regionHelper.fullOutlineView.shouldAutoHighlightActiveItem",
         "icon": "$(sync-ignored)"
+      },
+      {
+        "command": "regionHelper.fullOutlineView.collapseAll",
+        "title": "Region Helper: Full Outline View: Collapse All",
+        "icon": "$(collapse-all)"
+      },
+      {
+        "command": "regionHelper.fullOutlineView.expandAll",
+        "title": "Region Helper: Full Outline View: Expand All",
+        "icon": "$(expand-all)"
       }
     ],
     "configuration": [
@@ -450,6 +460,16 @@
         {
           "command": "regionHelper.fullOutlineView.startAutoHighlightingActiveItem",
           "when": "view == regionHelperFullTreeView && !config.regionHelper.fullOutlineView.shouldAutoHighlightActiveItem",
+          "group": "navigation"
+        },
+        {
+          "command": "regionHelper.fullOutlineView.collapseAll",
+          "when": "view == regionHelperFullTreeView",
+          "group": "navigation"
+        },
+        {
+          "command": "regionHelper.fullOutlineView.expandAll",
+          "when": "view == regionHelperFullTreeView",
           "group": "navigation"
         }
       ]

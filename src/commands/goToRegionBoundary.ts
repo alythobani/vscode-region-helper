@@ -1,18 +1,17 @@
 import * as vscode from "vscode";
 import { goToNextTopLevelRegionBoundary } from "../lib/goToNextTopLevelRegionBoundary";
 import { type Region } from "../models/Region";
-import { type RegionStore } from "../state/RegionStore";
 import { getActiveCursorLineIdx } from "../utils/getActiveCursorLineIdx";
 import { moveCursorToFirstNonWhitespaceCharOfLine } from "../utils/moveCursorToFirstNonWhitespaceOfLine";
-import { type RegionHelperCommand } from "./registerCommand";
+import { type RegionHelperStoreParams, type RegionHelperStoresCommand } from "./registerCommand";
 
-export const goToRegionBoundaryCommand: RegionHelperCommand = {
+export const goToRegionBoundaryCommand: RegionHelperStoresCommand = {
   id: "regionHelper.goToRegionBoundary",
   callback: goToRegionBoundary,
-  needsRegionStore: true,
+  needsStoreParams: true,
 };
 
-function goToRegionBoundary(regionStore: RegionStore): void {
+function goToRegionBoundary({ regionStore }: RegionHelperStoreParams): void {
   const { activeTextEditor } = vscode.window;
   if (!activeTextEditor) {
     return;

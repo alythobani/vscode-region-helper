@@ -1,15 +1,15 @@
 import * as vscode from "vscode";
-import { type RegionHelperCommand } from "../../commands/registerCommand";
+import { type RegionHelperNonStoresCommand } from "../../commands/registerCommand";
 import { throwNever } from "../../utils/errorUtils";
 import { focusEditor } from "../../utils/focusEditor";
 import { moveCursorToFirstNonWhitespaceCharOfLine } from "../../utils/moveCursorToFirstNonWhitespaceOfLine";
 import { moveCursorToPosition } from "../../utils/moveCursorToPosition";
 import { type FullTreeItemType } from "./FullTreeItem";
 
-export const goToFullTreeItemCommand: RegionHelperCommand = {
+export const goToFullTreeItemCommand: RegionHelperNonStoresCommand = {
   id: "regionHelper.goToFullTreeItem",
   callback: goToFullTreeItem,
-  needsRegionStore: false,
+  needsStoreParams: false,
 };
 
 function goToFullTreeItem(startLineIdx: number, startCharacter: number | undefined): void {

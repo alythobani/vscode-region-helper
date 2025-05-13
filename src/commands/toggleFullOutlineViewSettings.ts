@@ -4,30 +4,30 @@ import {
   getGlobalFullOutlineViewConfigValue,
   setGlobalFullOutlineViewConfigValue,
 } from "../config/fullOutlineViewConfig";
-import { type RegionHelperCommand } from "./registerCommand";
+import { type RegionHelperNonStoresCommand } from "./registerCommand";
 
-const hideFullOutlineViewCommand: RegionHelperCommand = {
+const hideFullOutlineViewCommand: RegionHelperNonStoresCommand = {
   id: "regionHelper.fullOutlineView.hide",
   callback: hideFullOutlineView,
-  needsRegionStore: false,
+  needsStoreParams: false,
 };
 
-const showFullOutlineViewCommand: RegionHelperCommand = {
+const showFullOutlineViewCommand: RegionHelperNonStoresCommand = {
   id: "regionHelper.fullOutlineView.show",
   callback: showFullOutlineView,
-  needsRegionStore: false,
+  needsStoreParams: false,
 };
 
-const stopAutoHighlightingActiveItemCommand: RegionHelperCommand = {
+const stopAutoHighlightingActiveItemCommand: RegionHelperNonStoresCommand = {
   id: "regionHelper.fullOutlineView.stopAutoHighlightingActiveItem",
   callback: stopAutoHighlightingActiveItem,
-  needsRegionStore: false,
+  needsStoreParams: false,
 };
 
-const startAutoHighlightingActiveItemCommand: RegionHelperCommand = {
+const startAutoHighlightingActiveItemCommand: RegionHelperNonStoresCommand = {
   id: "regionHelper.fullOutlineView.startAutoHighlightingActiveItem",
   callback: startAutoHighlightingActiveItem,
-  needsRegionStore: false,
+  needsStoreParams: false,
 };
 
 export const allFullOutlineViewConfigCommands = [
