@@ -23,11 +23,12 @@ export function activate(context: vscode.ExtensionContext): RegionHelperAPI {
   );
 
   const regionTreeViewProvider = new RegionTreeViewProvider(regionStore, subscriptions);
-  const treeView = vscode.window.createTreeView("regionHelperRegionsView", {
+  const regionTreeView = vscode.window.createTreeView("regionHelperRegionsView", {
     treeDataProvider: regionTreeViewProvider,
+    showCollapseAll: true,
   });
-  regionTreeViewProvider.setTreeView(treeView);
-  subscriptions.push(treeView);
+  regionTreeViewProvider.setTreeView(regionTreeView);
+  subscriptions.push(regionTreeView);
 
   const fullTreeViewProvider = new FullTreeViewProvider(fullOutlineStore, subscriptions);
   const fullTreeView = vscode.window.createTreeView("regionHelperFullTreeView", {
@@ -40,7 +41,7 @@ export function activate(context: vscode.ExtensionContext): RegionHelperAPI {
   const regionDiagnosticsManager = new RegionDiagnosticsManager(regionStore, subscriptions);
   subscriptions.push(regionDiagnosticsManager.diagnostics);
 
-  registerAllCommands(subscriptions, { regionStore, fullTreeViewProvider });
+  registerAllCommands(subscriptions, { regionStore, regionTreeViewProvider, fullTreeViewProvider });
 
   return {
     // #region Region Store API

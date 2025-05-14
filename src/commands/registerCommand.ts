@@ -3,6 +3,7 @@ import { type RegionStore } from "../state/RegionStore";
 import { type FullTreeViewProvider } from "../treeView/fullTreeView/FullTreeViewProvider";
 import { goToFullTreeItemCommand } from "../treeView/fullTreeView/goToFullTreeItem";
 import { goToRegionTreeItemCommand } from "../treeView/regionTreeView/goToRegionTreeItem";
+import { type RegionTreeViewProvider } from "../treeView/regionTreeView/RegionTreeViewProvider";
 import { allExpandAllCommands } from "./expandAndCollapseAll";
 import { goToNextRegionCommand } from "./goToNextRegion";
 import { goToPreviousRegionCommand } from "./goToPreviousRegion";
@@ -18,6 +19,7 @@ type RegionHelperCommandId = `${RegionHelperExtensionId}.${string}`;
 
 export type RegionHelperClosuredParams = {
   regionStore: RegionStore;
+  regionTreeViewProvider: RegionTreeViewProvider;
   fullTreeViewProvider: FullTreeViewProvider;
 };
 

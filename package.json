@@ -97,6 +97,11 @@
         "icon": "$(sync-ignored)"
       },
       {
+        "command": "regionHelper.regionsView.expandAll",
+        "title": "Region Helper: Regions View: Expand All",
+        "icon": "$(expand-all)"
+      },
+      {
         "command": "regionHelper.fullOutlineView.expandAll",
         "title": "Region Helper: Full Outline View: Expand All",
         "icon": "$(expand-all)"
@@ -440,22 +445,27 @@
         {
           "command": "regionHelper.regionsView.stopAutoHighlightingActiveRegion",
           "when": "view == regionHelperRegionsView && config.regionHelper.regionsView.shouldAutoHighlightActiveRegion",
-          "group": "navigation"
+          "group": "navigation@1"
         },
         {
           "command": "regionHelper.regionsView.startAutoHighlightingActiveRegion",
           "when": "view == regionHelperRegionsView && !config.regionHelper.regionsView.shouldAutoHighlightActiveRegion",
-          "group": "navigation"
+          "group": "navigation@1"
         },
         {
           "command": "regionHelper.fullOutlineView.stopAutoHighlightingActiveItem",
           "when": "view == regionHelperFullTreeView && config.regionHelper.fullOutlineView.shouldAutoHighlightActiveItem",
-          "group": "navigation"
+          "group": "navigation@1"
         },
         {
           "command": "regionHelper.fullOutlineView.startAutoHighlightingActiveItem",
           "when": "view == regionHelperFullTreeView && !config.regionHelper.fullOutlineView.shouldAutoHighlightActiveItem",
-          "group": "navigation"
+          "group": "navigation@1"
+        },
+        {
+          "command": "regionHelper.regionsView.expandAll",
+          "when": "view == regionHelperRegionsView",
+          "group": "navigation@2"
         },
         {
           "command": "regionHelper.fullOutlineView.expandAll",

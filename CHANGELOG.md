@@ -6,8 +6,9 @@ This changelog adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ## [1.4.0] - 2025-05-14
 
-- **Add Collapse/Expand All actions to Full Outline**: Buttons added to the view title bar of the Full Outline view for collapsing and expanding all items
-  - Note: "Expand All" is limited to a depth of 3 by VSCode's API
+- **Add Collapse/Expand All actions to tree views**: Action buttons added to the Regions and Full Outline tree views' title bars to collapse or expand all tree items
+  - *Bonus:* The cursor's tree item will be auto-highlighted after "Expand All" to help re-orient, regardless of the view's `shouldAutoHighlight` setting
+  - *Limitation:* The "Expand All" actions are limited to an expansion depth of 3 by VSCode's API
 
 ## [1.3.0] - 2025-03-18
 

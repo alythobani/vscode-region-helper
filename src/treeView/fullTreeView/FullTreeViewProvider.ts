@@ -86,7 +86,7 @@ export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeIte
       return;
     }
     if (!isCurrentActiveVersionedDocumentId(this.fullOutlineStore.versionedDocumentId)) {
-      // The active item is from an old document version. We'll highlight the active item once
+      // The active item is from an old document version. We'll auto-highlight the active item once
       // FullOutlineStore fires events for the new document version.
       return;
     }
@@ -140,7 +140,10 @@ export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeIte
         expand: 3, // Max depth
       });
     }
-    // Finish by highlighting the cursor's active item
+    // Finish by highlighting the cursor's active item. We do this regardless of the
+    // `shouldAutoHighlightActiveItem` setting, since the view is open anyway when/after calling
+    // Expand All, so there's no harm in revealing. This helps re-orient instead of scroll position
+    // being reset to the top of the tree view.
     this.highlightActiveItem();
   }
 }
