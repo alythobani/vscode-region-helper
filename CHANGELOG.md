@@ -4,6 +4,11 @@ All notable changes to the "region-helper" extension will be documented in this 
 
 This changelog adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) and is structured for clarity and readability, inspired by [Common Changelog](https://common-changelog.org/) and [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.4.0] - 2025-05-14
+
+- **Add Collapse/Expand All actions to Full Outline**: Buttons added to the view title bar of the Full Outline view for collapsing and expanding all items
+  - Note: "Expand All" is limited to a depth of 3 by VSCode's API
+
 ## [1.3.0] - 2025-03-18
 
 - Add PostCSS language support
