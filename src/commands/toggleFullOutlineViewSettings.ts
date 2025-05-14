@@ -4,30 +4,32 @@ import {
   getGlobalFullOutlineViewConfigValue,
   setGlobalFullOutlineViewConfigValue,
 } from "../config/fullOutlineViewConfig";
-import { type RegionHelperNonStoresCommand } from "./registerCommand";
+import { type RegionHelperNonClosuredCommand } from "./registerCommand";
 
-const hideFullOutlineViewCommand: RegionHelperNonStoresCommand = {
+// #region Exported commands
+
+const hideFullOutlineViewCommand: RegionHelperNonClosuredCommand = {
   id: "regionHelper.fullOutlineView.hide",
   callback: hideFullOutlineView,
-  needsStoreParams: false,
+  needsRegionHelperParams: false,
 };
 
-const showFullOutlineViewCommand: RegionHelperNonStoresCommand = {
+const showFullOutlineViewCommand: RegionHelperNonClosuredCommand = {
   id: "regionHelper.fullOutlineView.show",
   callback: showFullOutlineView,
-  needsStoreParams: false,
+  needsRegionHelperParams: false,
 };
 
-const stopAutoHighlightingActiveItemCommand: RegionHelperNonStoresCommand = {
+const stopAutoHighlightingActiveItemCommand: RegionHelperNonClosuredCommand = {
   id: "regionHelper.fullOutlineView.stopAutoHighlightingActiveItem",
   callback: stopAutoHighlightingActiveItem,
-  needsStoreParams: false,
+  needsRegionHelperParams: false,
 };
 
-const startAutoHighlightingActiveItemCommand: RegionHelperNonStoresCommand = {
+const startAutoHighlightingActiveItemCommand: RegionHelperNonClosuredCommand = {
   id: "regionHelper.fullOutlineView.startAutoHighlightingActiveItem",
   callback: startAutoHighlightingActiveItem,
-  needsStoreParams: false,
+  needsRegionHelperParams: false,
 };
 
 export const allFullOutlineViewConfigCommands = [
@@ -36,6 +38,10 @@ export const allFullOutlineViewConfigCommands = [
   stopAutoHighlightingActiveItemCommand,
   startAutoHighlightingActiveItemCommand,
 ];
+
+// #endregion
+
+// #region Command implementations
 
 function hideFullOutlineView(): void {
   const isAlreadyVisible = getGlobalFullOutlineViewConfigValue("isVisible");
@@ -80,3 +86,5 @@ function startAutoHighlightingActiveItem(): void {
   }
   setGlobalFullOutlineViewConfigValue("shouldAutoHighlightActiveItem", true);
 }
+
+// #endregion

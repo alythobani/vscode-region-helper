@@ -3,15 +3,18 @@ import { goToNextTopLevelRegionBoundary } from "../lib/goToNextTopLevelRegionBou
 import { type Region } from "../models/Region";
 import { getActiveCursorLineIdx } from "../utils/getActiveCursorLineIdx";
 import { moveCursorToFirstNonWhitespaceCharOfLine } from "../utils/moveCursorToFirstNonWhitespaceOfLine";
-import { type RegionHelperStoreParams, type RegionHelperStoresCommand } from "./registerCommand";
+import {
+  type RegionHelperClosuredCommand,
+  type RegionHelperClosuredParams,
+} from "./registerCommand";
 
-export const goToRegionBoundaryCommand: RegionHelperStoresCommand = {
+export const goToRegionBoundaryCommand: RegionHelperClosuredCommand = {
   id: "regionHelper.goToRegionBoundary",
   callback: goToRegionBoundary,
-  needsStoreParams: true,
+  needsRegionHelperParams: true,
 };
 
-function goToRegionBoundary({ regionStore }: RegionHelperStoreParams): void {
+function goToRegionBoundary({ regionStore }: RegionHelperClosuredParams): void {
   const { activeTextEditor } = vscode.window;
   if (!activeTextEditor) {
     return;

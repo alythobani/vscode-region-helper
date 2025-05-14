@@ -1,15 +1,18 @@
 import * as vscode from "vscode";
 import { getActiveRegionInEditor } from "../utils/getActiveRegion";
 import { selectLines } from "../utils/selectionUtils";
-import { type RegionHelperStoreParams, type RegionHelperStoresCommand } from "./registerCommand";
+import {
+  type RegionHelperClosuredCommand,
+  type RegionHelperClosuredParams,
+} from "./registerCommand";
 
-export const selectCurrentRegionCommand: RegionHelperStoresCommand = {
+export const selectCurrentRegionCommand: RegionHelperClosuredCommand = {
   id: "regionHelper.selectCurrentRegion",
   callback: selectCurrentRegion,
-  needsStoreParams: true,
+  needsRegionHelperParams: true,
 };
 
-function selectCurrentRegion({ regionStore }: RegionHelperStoreParams): void {
+function selectCurrentRegion({ regionStore }: RegionHelperClosuredParams): void {
   const { activeTextEditor } = vscode.window;
   if (!activeTextEditor) {
     return;

@@ -1,29 +1,16 @@
 import {
-  type RegionHelperClosuredCommandCallback,
-  type RegionHelperStoresCommand,
+  type RegionHelperClosuredCommand,
+  type RegionHelperClosuredParams,
 } from "./registerCommand";
 
-const expandAllFullOutlineItems: RegionHelperClosuredCommandCallback = () => {
-  // ?
-};
-
-const collapseAllFullOutlineItems: RegionHelperClosuredCommandCallback = () => {
-  // ?
-};
-
-const expandAllFullOutlineItemsCommand: RegionHelperStoresCommand = {
+const expandAllFullOutlineItemsCommand: RegionHelperClosuredCommand = {
   id: "regionHelper.fullOutlineView.expandAll",
   callback: expandAllFullOutlineItems,
-  needsStoreParams: true,
+  needsRegionHelperParams: true,
 };
 
-const collapseAllFullOutlineItemsCommand: RegionHelperStoresCommand = {
-  id: "regionHelper.fullOutlineView.collapseAll",
-  callback: collapseAllFullOutlineItems,
-  needsStoreParams: true,
-};
+export const allExpandAllCommands = [expandAllFullOutlineItemsCommand];
 
-export const allExpandAndCollapseAllCommands = [
-  expandAllFullOutlineItemsCommand,
-  collapseAllFullOutlineItemsCommand,
-];
+function expandAllFullOutlineItems({ fullTreeViewProvider }: RegionHelperClosuredParams): void {
+  fullTreeViewProvider.expandAllTreeItems();
+}

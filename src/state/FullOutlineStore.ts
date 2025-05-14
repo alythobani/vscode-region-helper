@@ -37,7 +37,7 @@ export class FullOutlineStore {
   }
   // #endregion
 
-  // #region Properties
+  // #region Public properties
   private _topLevelItems: FullTreeItem[] = [];
   private _onDidChangeFullOutlineItems = new vscode.EventEmitter<void>();
   readonly onDidChangeFullOutlineItems = this._onDidChangeFullOutlineItems.event;
@@ -91,6 +91,7 @@ export class FullOutlineStore {
     );
   }
 
+  // #region Refresh items on document change
   private onDocumentChange(event: vscode.TextDocumentChangeEvent): void {
     // RegionStore and DocumentSymbolStore will soon refresh the region and symbol data, at which
     // point we'll refresh the active item with the up-to-date data.
@@ -125,7 +126,9 @@ export class FullOutlineStore {
     this._onDidChangeFullOutlineItems.fire();
     this.isRefreshingItems = false;
   }
+  // #endregion
 
+  // #region Refresh active item on selection change
   private onSelectionChange(event: vscode.TextEditorSelectionChangeEvent): void {
     if (this.isRefreshingItems) {
       return;
@@ -162,14 +165,17 @@ export class FullOutlineStore {
       this.refreshActiveItemTimeout = undefined;
     }
   }
+  // #endregion
 
   onCollapseTreeItem(fullTreeItem: FullTreeItem): void {
     const itemId = fullTreeItem.id;
     console.log(`Collapsing item with ID: ${itemId}`);
+    // TODO: update CollapsibleStateStore
   }
 
   onExpandTreeItem(fullTreeItem: FullTreeItem): void {
     const itemId = fullTreeItem.id;
     console.log(`Expanding item with ID: ${itemId}`);
+    // TODO: update CollapsibleStateStore
   }
 }

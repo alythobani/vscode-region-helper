@@ -8,17 +8,20 @@ import {
 } from "../utils/highlightRegion";
 import { moveCursorToFirstNonWhitespaceCharOfLine } from "../utils/moveCursorToFirstNonWhitespaceOfLine";
 import { scrollCurrentLineIntoView } from "../utils/scrollUtils";
-import { type RegionHelperStoreParams, type RegionHelperStoresCommand } from "./registerCommand";
+import {
+  type RegionHelperClosuredCommand,
+  type RegionHelperClosuredParams,
+} from "./registerCommand";
 
 type RegionQuickPickItem = vscode.QuickPickItem & { startLineIdx: number; endLineIdx: number };
 
-export const goToRegionFromQuickPickCommand: RegionHelperStoresCommand = {
+export const goToRegionFromQuickPickCommand: RegionHelperClosuredCommand = {
   id: "regionHelper.goToRegionFromQuickPick",
   callback: goToRegionFromQuickPick,
-  needsStoreParams: true,
+  needsRegionHelperParams: true,
 };
 
-function goToRegionFromQuickPick({ regionStore }: RegionHelperStoreParams): void {
+function goToRegionFromQuickPick({ regionStore }: RegionHelperClosuredParams): void {
   const { activeTextEditor } = vscode.window;
   if (!activeTextEditor) {
     return;

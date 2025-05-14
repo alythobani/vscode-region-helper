@@ -24,5 +24,6 @@
     // TypeScript
     "typescript.preferences.importModuleSpecifier": "relative"
   },
-  "markdown.extension.toc.updateOnSave": false
+  "markdown.extension.toc.updateOnSave": false,
+  "cSpell.words": ["dockercompose"]
 }
