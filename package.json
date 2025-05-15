@@ -292,8 +292,14 @@
                 "endRegex": "^\\s*#\\s*endregion(?:\\s.*)?"
               },
               "php": {
-                "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
-                "endRegex": "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
+                "startRegex": [
+                  "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
+                  "^\\s*#\\s*region(?:\\s+(.*?)\\s*)?$"
+                ],
+                "endRegex": [
+                  "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$",
+                  "^\\s*#\\s*endregion(?:\\s.*)?"
+                ]
               },
               "postcss": {
                 "startRegex": "^\\s*\\/\\*\\s*#region(?:\\s+(.*?)\\s*)?\\*\\/",

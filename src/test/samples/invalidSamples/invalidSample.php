@@ -6,15 +6,15 @@ $x = 42;
 // #endregion Invalid end boundary
 // #region Invalid start boundary
 
-// #region Second Region
+#region Second Region
 class MyClass {
-    // #region   InnerRegion
+    #region   InnerRegion
     public function myMethod() {}
-    //#endregion    ends InnerRegion
+    #  endregion    ends InnerRegion
 
     // #region
     public function myMethod2() {}
     //      #endregion
 }
-// #endregion
+#endregion
 ?>

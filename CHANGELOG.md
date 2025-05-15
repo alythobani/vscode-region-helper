@@ -8,6 +8,7 @@ This changelog adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 - **Add Collapse/Expand All actions**: Action buttons added to the Regions and Full Outline tree views' title bars to collapse or expand all tree items
 - **Add persistent tree view state**: Expanded/collapsed items are remembered when switching files or restarting VS Code
+- **Fix PHP default region support:** Add `#region` and `#endregion` region syntax to default PHP boundary patterns configuration
 
 ## [1.3.0] - 2025-03-18
 

@@ -3,15 +3,15 @@
 $x = 42;
 //   #endregion
 
-// #region Second Region
+#region Second Region
 class MyClass {
-    // #region   InnerRegion
+    #region   InnerRegion
     public function myMethod() {}
-    //#endregion    ends InnerRegion
+    #  endregion    ends InnerRegion
 
     // #region
     public function myMethod2() {}
     //      #endregion
 }
-// #endregion
+#endregion
 ?>
