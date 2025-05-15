@@ -67,6 +67,7 @@ export class CollapsibleStateManager {
   private onFileRename({ oldUri, newUri }: { oldUri: vscode.Uri; newUri: vscode.Uri }): void {
     const oldDocId = getDocumentIdFromUri(oldUri);
     const newDocId = getDocumentIdFromUri(newUri);
+    this.log(`onFileRename: ${oldDocId} -> ${newDocId}`);
     const store = this.collapsibleStateStoreByDocumentId[oldDocId];
     if (!store) return;
     this.collapsibleStateStoreByDocumentId[newDocId] = store;
@@ -76,6 +77,7 @@ export class CollapsibleStateManager {
 
   private onFileDelete(deletedUri: vscode.Uri): void {
     const deletedDocId = getDocumentIdFromUri(deletedUri);
+    this.log(`onFileDelete: ${deletedDocId}`);
     this.deleteDocumentStore(deletedDocId);
     this.debouncedSaveToWorkspaceState();
   }
@@ -297,7 +299,9 @@ export class CollapsibleStateManager {
 
   /** Saves the current state to VS Code's workspace storage (if storage is provided) */
   async saveToWorkspaceState(): Promise<void> {
-    this.log(`Saving to ${this.storageKey}`, this.collapsibleStateStoreByDocumentId);
+    this.log(
+      `Saving to ${this.storageKey}: ${JSON.stringify(this.collapsibleStateStoreByDocumentId)}`
+    );
     const start = performance.now();
     const serializedStoreByDocId: SerializedCollapsibleStateStoreByDocumentId = {};
     for (const [docId, store] of Object.entries(this.collapsibleStateStoreByDocumentId)) {
@@ -313,7 +317,9 @@ export class CollapsibleStateManager {
       await this.workspaceState.update(this.storageKey, undefined);
       return;
     }
-    this.log("Saving workspace stores", serializedStoreByDocId);
+    this.log(
+      `Saving serialized data to ${this.storageKey}: ${JSON.stringify(serializedStoreByDocId)}`
+    );
     await this.workspaceState.update(this.storageKey, serializedStoreByDocId);
     const end = performance.now();
     this.log(`Saved ${this.storageKey} to workspace state in ${Math.round(end - start)}ms`);
