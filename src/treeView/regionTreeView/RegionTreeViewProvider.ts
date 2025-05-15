@@ -91,12 +91,12 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
     this.highlightActiveRegion();
   }
 
-  private highlightActiveRegion(): void {
+  private highlightActiveRegion({ expand = false }: { expand?: boolean | number } = {}): void {
     const { activeRegion } = this.regionStore;
     if (!this.treeView || !activeRegion) {
       return;
     }
-    this.treeView.reveal(activeRegion, { select: true, focus: false });
+    this.treeView.reveal(activeRegion, { select: true, focus: false, expand });
   }
   // #endregion
 
@@ -165,6 +165,6 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
     // `shouldAutoHighlightActiveRegion` setting, since the view is open anyway when/after calling
     // Expand All, so there's no harm in revealing. This helps re-orient instead of scroll position
     // being reset to the top of the tree view.
-    this.highlightActiveRegion(); // TODO: call with expand: 3
+    this.highlightActiveRegion({ expand: 3 });
   }
 }

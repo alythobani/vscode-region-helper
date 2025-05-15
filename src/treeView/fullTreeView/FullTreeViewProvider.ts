@@ -98,12 +98,12 @@ export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeIte
     this.highlightActiveItem();
   }
 
-  private highlightActiveItem(): void {
+  private highlightActiveItem({ expand = false }: { expand?: boolean | number } = {}): void {
     const { activeFullOutlineItem } = this.fullOutlineStore;
     if (!this.treeView || !activeFullOutlineItem) {
       return;
     }
-    this.treeView.reveal(activeFullOutlineItem, { select: true, focus: false });
+    this.treeView.reveal(activeFullOutlineItem, { select: true, focus: false, expand });
   }
   // #endregion
 
@@ -161,6 +161,6 @@ export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeIte
     // `shouldAutoHighlightActiveItem` setting, since the view is open anyway when/after calling
     // Expand All, so there's no harm in revealing. This helps re-orient instead of scroll position
     // being reset to the top of the tree view.
-    this.highlightActiveItem(); // TODO: call with expand: 3
+    this.highlightActiveItem({ expand: 3 });
   }
 }
