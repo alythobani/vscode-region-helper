@@ -5,7 +5,7 @@ import { throwNever } from "../utils/errorUtils";
 import { isEmptyObject } from "../utils/objectUtils";
 
 const CLEAN_IDS_AND_MAYBE_SWITCH_MODE_DEBOUNCE_DELAY_MS = 2000;
-const SAVE_TO_WORKSPACE_STATE_DEBOUNCE_DELAY_MS = 10000;
+const SAVE_TO_WORKSPACE_STATE_DEBOUNCE_DELAY_MS = 15000;
 
 /** Whether we should store a set of IDs for collapsed or expanded items; we can switch modes to
  * reduce how much data we need to store. E.g. after calling "Expand All" we should switch to
@@ -71,11 +71,13 @@ export class CollapsibleStateManager {
     if (!store) return;
     this.collapsibleStateStoreByDocumentId[newDocId] = store;
     this.deleteDocumentStore(oldDocId);
+    this.debouncedSaveToWorkspaceState();
   }
 
   private onFileDelete(deletedUri: vscode.Uri): void {
     const deletedDocId = getDocumentIdFromUri(deletedUri);
     this.deleteDocumentStore(deletedDocId);
+    this.debouncedSaveToWorkspaceState();
   }
 
   /** Gets the saved collapsible state of the given item ID in the given document, if available.
@@ -142,7 +144,7 @@ export class CollapsibleStateManager {
       `Collapsed item ${itemId}, ${documentId} store has ${store.itemIds.size} items now:`,
       JSON.stringify([...store.itemIds], null, 2)
     );
-    void this.debouncedSaveToWorkspaceState();
+    this.debouncedSaveToWorkspaceState();
   }
 
   onExpandTreeItem({
@@ -174,7 +176,7 @@ export class CollapsibleStateManager {
       `Expanded item ${itemId}, ${documentId} store now:`,
       JSON.stringify([...store.itemIds], null, 2)
     );
-    void this.debouncedSaveToWorkspaceState();
+    this.debouncedSaveToWorkspaceState();
   }
 
   onExpandAllTreeItems({ documentId }: { documentId: string | undefined }): void {
@@ -191,6 +193,7 @@ export class CollapsibleStateManager {
       `Expanded all items, ${documentId} store now:`,
       JSON.stringify([...store.itemIds], null, 2)
     );
+    this.debouncedSaveToWorkspaceState();
   }
 
   // #endregion
