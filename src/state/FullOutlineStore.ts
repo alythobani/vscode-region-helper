@@ -1,12 +1,13 @@
 import * as vscode from "vscode";
 import { type FullTreeItem } from "../treeView/fullTreeView/FullTreeItem";
-import { generateTopLevelFullTreeItems } from "../treeView/fullTreeView/generateTopLevelFullTreeItems";
+import { generateFullOutlineTreeItems } from "../treeView/fullTreeView/generateTopLevelFullTreeItems";
 import { getActiveFullTreeItem } from "../treeView/fullTreeView/getActiveFullTreeItem";
 import {
   getFlattenedRegionFullTreeItems,
   getFlattenedSymbolFullTreeItems,
 } from "../treeView/fullTreeView/getFlattenedFullTreeItems";
 import { debounce } from "../utils/debounce";
+import { type CollapsibleStateManager } from "./CollapsibleStateManager";
 import { type DocumentSymbolStore } from "./DocumentSymbolStore";
 import { type RegionStore } from "./RegionStore";
 
@@ -20,12 +21,18 @@ export class FullOutlineStore {
   static initialize(
     regionStore: RegionStore,
     documentSymbolStore: DocumentSymbolStore,
+    collapsibleStateManager: CollapsibleStateManager,
     subscriptions: vscode.Disposable[]
   ): FullOutlineStore {
     if (this._instance) {
       throw new Error("FullOutlineStore is already initialized! Only one instance is allowed.");
     }
-    this._instance = new FullOutlineStore(regionStore, documentSymbolStore, subscriptions);
+    this._instance = new FullOutlineStore(
+      regionStore,
+      documentSymbolStore,
+      collapsibleStateManager,
+      subscriptions
+    );
     return this._instance;
   }
 
@@ -45,11 +52,21 @@ export class FullOutlineStore {
     return this._topLevelItems;
   }
 
+  private _allParentIds = new Set<string>();
+  get allParentIds(): Set<string> {
+    return this._allParentIds;
+  }
+
   private _activeItem: FullTreeItem | undefined = undefined;
   private _onDidChangeActiveFullOutlineItem = new vscode.EventEmitter<void>();
   readonly onDidChangeActiveFullOutlineItem = this._onDidChangeActiveFullOutlineItem.event;
   get activeFullOutlineItem(): FullTreeItem | undefined {
     return this._activeItem;
+  }
+
+  private _documentId: string | undefined = undefined;
+  get documentId(): string | undefined {
+    return this._documentId;
   }
 
   private _versionedDocumentId: string | undefined = undefined;
@@ -70,6 +87,7 @@ export class FullOutlineStore {
   private constructor(
     private regionStore: RegionStore,
     private documentSymbolStore: DocumentSymbolStore,
+    private collapsibleStateManager: CollapsibleStateManager,
     subscriptions: vscode.Disposable[]
   ) {
     this.registerListeners(subscriptions);
@@ -91,7 +109,6 @@ export class FullOutlineStore {
     );
   }
 
-  // #region Refresh items on document change
   private onDocumentChange(event: vscode.TextDocumentChangeEvent): void {
     // RegionStore and DocumentSymbolStore will soon refresh the region and symbol data, at which
     // point we'll refresh the active item with the up-to-date data.
@@ -100,6 +117,7 @@ export class FullOutlineStore {
     }
   }
 
+  // #region Refresh Full Outline items
   private refreshFullOutline(): void {
     const regionStoreVersionedDocumentId = this.regionStore.versionedDocumentId;
     const documentSymbolStoreVersionedDocumentId = this.documentSymbolStore.versionedDocumentId;
@@ -107,6 +125,7 @@ export class FullOutlineStore {
       // Wait for both region and symbol data to be synced on the same document version
       return;
     }
+    this._documentId = this.regionStore.documentId;
     this._versionedDocumentId = regionStoreVersionedDocumentId;
     this.refreshItems();
     this.refreshActiveItem();
@@ -118,11 +137,14 @@ export class FullOutlineStore {
     const flattenedSymbolItems = getFlattenedSymbolFullTreeItems(
       this.documentSymbolStore.flattenedDocumentSymbols
     );
-    const topLevelItems = generateTopLevelFullTreeItems({
+    const { topLevelItems, allParentIds } = generateFullOutlineTreeItems({
       flattenedRegionItems,
       flattenedSymbolItems,
+      collapsibleStateManager: this.collapsibleStateManager,
+      documentId: this._documentId,
     });
     this._topLevelItems = topLevelItems;
+    this._allParentIds = allParentIds;
     this._onDidChangeFullOutlineItems.fire();
     this.isRefreshingItems = false;
   }
@@ -166,16 +188,4 @@ export class FullOutlineStore {
     }
   }
   // #endregion
-
-  onCollapseTreeItem(fullTreeItem: FullTreeItem): void {
-    const itemId = fullTreeItem.id;
-    console.log(`Collapsing item with ID: ${itemId}`);
-    // TODO: update CollapsibleStateStore
-  }
-
-  onExpandTreeItem(fullTreeItem: FullTreeItem): void {
-    const itemId = fullTreeItem.id;
-    console.log(`Expanding item with ID: ${itemId}`);
-    // TODO: update CollapsibleStateStore
-  }
 }

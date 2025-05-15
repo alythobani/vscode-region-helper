@@ -25,13 +25,20 @@ export function parseAllRegions(document: vscode.TextDocument): RegionParseResul
     return { topLevelRegions, invalidMarkers };
   }
 
+  const regionCountByEffectiveName = new Map<string, number>();
+
   const { startRegex, endRegex } = regionBoundaryPattern;
   let regionIdx = 0;
   for (let lineIdx = 0; lineIdx < document.lineCount; lineIdx++) {
     const lineText = document.lineAt(lineIdx).text;
     const startMatch = matchLineWithRegexOrArray(lineText, startRegex);
     if (startMatch) {
-      const newRegion = makeNewOpenRegion({ startMatch, startLineIdx: lineIdx, regionIdx });
+      const newRegion = makeNewOpenRegion({
+        startMatch,
+        startLineIdx: lineIdx,
+        regionIdx,
+        regionCountByEffectiveName,
+      });
       openRegionsStack.push(newRegion);
       regionIdx = 0;
       continue;
@@ -84,14 +91,18 @@ function makeNewOpenRegion({
   startMatch,
   startLineIdx,
   regionIdx,
+  regionCountByEffectiveName,
 }: {
   startMatch: RegExpMatchArray;
   startLineIdx: number;
   regionIdx: number;
+  regionCountByEffectiveName: Map<string, number>;
 }): Region {
-  const trimmedName = startMatch[1]?.trim();
+  const maybeRegionName = maybeGetRegionNameFromStartMatch(startMatch);
+  const id = getUniqueRegionId({ maybeRegionName, regionCountByEffectiveName });
   return {
-    name: trimmedName === "" ? undefined : trimmedName,
+    id,
+    name: maybeRegionName,
     startLineIdx,
     endLineIdx: -1,
     endLineCharacterIdx: -1,
@@ -99,6 +110,27 @@ function makeNewOpenRegion({
     wasClosed: false,
     children: [],
   };
+}
+
+function maybeGetRegionNameFromStartMatch(startMatch: RegExpMatchArray): string | undefined {
+  const maybeTrimmedName = startMatch[1]?.trim();
+  if (maybeTrimmedName === "" || maybeTrimmedName === undefined) {
+    return undefined;
+  }
+  return maybeTrimmedName;
+}
+
+function getUniqueRegionId({
+  maybeRegionName,
+  regionCountByEffectiveName,
+}: {
+  maybeRegionName: string | undefined;
+  regionCountByEffectiveName: Map<string, number>;
+}): string {
+  const effectiveRegionName = maybeRegionName ?? "unnamed";
+  const newRegionCount = (regionCountByEffectiveName.get(effectiveRegionName) ?? 0) + 1;
+  regionCountByEffectiveName.set(effectiveRegionName, newRegionCount);
+  return `${effectiveRegionName}-${newRegionCount}`;
 }
 
 function addClosedChildrenToTopLevelRegions(region: Region, topLevelRegions: Region[]): void {

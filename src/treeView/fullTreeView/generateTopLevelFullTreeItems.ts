@@ -1,16 +1,23 @@
 import * as vscode from "vscode";
+import { type CollapsibleStateManager } from "../../state/CollapsibleStateManager";
 import { assertExists } from "../../utils/assertUtils";
 import { type FullTreeItem } from "./FullTreeItem";
 
-export function generateTopLevelFullTreeItems({
+export function generateFullOutlineTreeItems({
   flattenedRegionItems,
   flattenedSymbolItems,
+  collapsibleStateManager,
+  documentId,
 }: {
   flattenedRegionItems: FullTreeItem[];
   flattenedSymbolItems: FullTreeItem[];
-}): FullTreeItem[] {
+  collapsibleStateManager: CollapsibleStateManager;
+  documentId: string | undefined;
+}): { topLevelItems: FullTreeItem[]; allParentIds: Set<string> } {
   const topLevelFullTreeItems: FullTreeItem[] = [];
   const parentStack: FullTreeItem[] = [];
+
+  const allParentIds = new Set<string>();
 
   let regionIdx = 0;
   let symbolIdx = 0;
@@ -50,8 +57,13 @@ export function generateTopLevelFullTreeItems({
     if (currentParent !== undefined) {
       // Attach as a child of the most recent valid parent
       currentParent.children.push(nextItem);
-      currentParent.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
+      currentParent.collapsibleState = getInitialCollapsibleStateForParentItem(
+        currentParent,
+        collapsibleStateManager,
+        documentId
+      );
       nextItem.parent = currentParent;
+      allParentIds.add(currentParent.id);
     } else {
       // No valid parent found → this is a top-level item
       topLevelFullTreeItems.push(nextItem);
@@ -61,5 +73,17 @@ export function generateTopLevelFullTreeItems({
     parentStack.push(nextItem);
   }
 
-  return topLevelFullTreeItems;
+  return { topLevelItems: topLevelFullTreeItems, allParentIds };
+}
+
+function getInitialCollapsibleStateForParentItem(
+  parentItem: FullTreeItem,
+  collapsibleStateManager: CollapsibleStateManager,
+  documentId: string | undefined
+): vscode.TreeItemCollapsibleState {
+  const savedCollapsibleState = collapsibleStateManager.getSavedCollapsibleState({
+    documentId,
+    itemId: parentItem.id,
+  });
+  return savedCollapsibleState ?? vscode.TreeItemCollapsibleState.Expanded;
 }

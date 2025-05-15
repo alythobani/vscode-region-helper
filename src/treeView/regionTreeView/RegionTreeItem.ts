@@ -4,14 +4,12 @@ import { type Region } from "../../models/Region";
 import { goToRegionTreeItemCommand } from "./goToRegionTreeItem";
 
 export class RegionTreeItem extends vscode.TreeItem {
-  constructor(public readonly region: Region) {
+  constructor(
+    public readonly region: Region,
+    initialCollapsibleState: vscode.TreeItemCollapsibleState
+  ) {
     const displayName = getRegionDisplayName(region);
-    super(
-      displayName,
-      region.children.length > 0
-        ? vscode.TreeItemCollapsibleState.Expanded
-        : vscode.TreeItemCollapsibleState.None
-    );
+    super(displayName, initialCollapsibleState);
     this.tooltip = `${displayName}: ${getRegionRangeText(region)}`;
     this.command = {
       command: goToRegionTreeItemCommand.id,

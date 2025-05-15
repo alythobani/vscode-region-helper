@@ -5,6 +5,7 @@ import { makeGoToFullTreeItemCommand } from "./goToFullTreeItem";
 export type FullTreeItemType = "region" | "symbol";
 
 export class FullTreeItem extends vscode.TreeItem {
+  override id: string;
   displayName: string;
   itemType: FullTreeItemType;
   range: vscode.Range;

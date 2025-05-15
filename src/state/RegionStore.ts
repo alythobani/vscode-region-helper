@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
-import { type FlattenedRegion, flattenRegions } from "../lib/flattenRegions";
-import { getCurrentActiveVersionedDocumentId } from "../lib/getVersionedDocumentId";
+import { type FlattenedRegion, flattenRegionsAndCountParents } from "../lib/flattenRegions";
+import { getDocumentId, getVersionedDocumentId } from "../lib/getVersionedDocumentId";
 import { type InvalidMarker, parseAllRegions } from "../lib/parseAllRegions";
 import { type Region } from "../models/Region";
 import { debounce } from "../utils/debounce";
@@ -10,6 +10,7 @@ const REFRESH_REGIONS_DEBOUNCE_DELAY_MS = 100;
 const REFRESH_ACTIVE_REGION_DEBOUNCE_DELAY_MS = 100;
 
 export class RegionStore {
+  // #region Singleton initialization
   private static _instance: RegionStore | undefined = undefined;
 
   static initialize(subscriptions: vscode.Disposable[]): RegionStore {
@@ -26,7 +27,9 @@ export class RegionStore {
     }
     return this._instance;
   }
+  // #endregion
 
+  // #region Public properties
   private _topLevelRegions: Region[] = [];
   private _flattenedRegions: FlattenedRegion[] = [];
   private _onDidChangeRegions = new vscode.EventEmitter<void>();
@@ -36,6 +39,11 @@ export class RegionStore {
   }
   get flattenedRegions(): FlattenedRegion[] {
     return this._flattenedRegions;
+  }
+
+  private _allParentIds: Set<string> = new Set<string>();
+  get allParentIds(): Set<string> {
+    return this._allParentIds;
   }
 
   private _activeRegion: Region | undefined = undefined;
@@ -52,10 +60,16 @@ export class RegionStore {
     return this._invalidMarkers;
   }
 
+  private _documentId: string | undefined = undefined;
+  get documentId(): string | undefined {
+    return this._documentId;
+  }
+
   private _versionedDocumentId: string | undefined = undefined;
   get versionedDocumentId(): string | undefined {
     return this._versionedDocumentId;
   }
+  // #endregion
 
   private debouncedRefreshRegionsAndActiveRegion = debounce(
     this.refreshRegionsAndActiveRegion.bind(this),
@@ -103,22 +117,26 @@ export class RegionStore {
   private refreshRegions(): void {
     this.isRefreshingRegions = true;
     const activeDocument = vscode.window.activeTextEditor?.document;
-    const versionedDocumentId = getCurrentActiveVersionedDocumentId();
+    const activeDocumentId = activeDocument ? getDocumentId(activeDocument) : undefined;
+    const versionedDocumentId = activeDocument ? getVersionedDocumentId(activeDocument) : undefined;
     let shouldFireChangeEvents: boolean;
     if (!activeDocument) {
       const oldFlattenedRegions = this._flattenedRegions;
       this._topLevelRegions = [];
       this._flattenedRegions = [];
       this._invalidMarkers = [];
+      this._allParentIds = new Set<string>();
       shouldFireChangeEvents = oldFlattenedRegions.length > 0;
     } else {
       const { topLevelRegions, invalidMarkers } = parseAllRegions(activeDocument);
       this._topLevelRegions = topLevelRegions;
-      const newFlattenedRegions = flattenRegions(topLevelRegions);
-      this._flattenedRegions = newFlattenedRegions;
+      const { flattenedRegions, allParentIds } = flattenRegionsAndCountParents(topLevelRegions);
+      this._flattenedRegions = flattenedRegions;
+      this._allParentIds = allParentIds;
       this._invalidMarkers = invalidMarkers;
       shouldFireChangeEvents = true; // TODO - can make this more precise if desired
     }
+    this._documentId = activeDocumentId;
     this._versionedDocumentId = versionedDocumentId;
     if (shouldFireChangeEvents) {
       this._onDidChangeRegions.fire();
@@ -127,6 +145,7 @@ export class RegionStore {
     this.isRefreshingRegions = false;
   }
 
+  // #region Refresh active region on selection change
   private onSelectionChange(event: vscode.TextEditorSelectionChangeEvent): void {
     if (this.isRefreshingRegions) {
       return;
@@ -159,6 +178,7 @@ export class RegionStore {
       this.refreshActiveRegionTimeout = undefined;
     }
   }
+  // #endregion
 }
 
 // function didFlattenedRegionsChange(

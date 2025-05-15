@@ -9,7 +9,7 @@ import { FullTreeItem, type FullTreeItemType } from "./FullTreeItem";
  * Creates a flattened list of region items for the Full Outline tree view, given a flattened list
  * of regions. Turns each region into a `FullTreeItem` object, with no parent or children yet, since
  * we'll manually add those later when generating the full tree. Gives a unique ID to each item, for
- * the sake of persistent collapsed/selected state (see `vscode.TreeItem.id`).
+ * the sake of persistent collapsed/selected state (see {@link vscode.TreeItem.id}).
  */
 export function getFlattenedRegionFullTreeItems(flattenedRegions: Region[]): FullTreeItem[] {
   const itemCountByPartialId = new Map<string, number>();

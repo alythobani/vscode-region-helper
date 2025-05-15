@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { getGlobalFullOutlineViewConfigValue } from "../../config/fullOutlineViewConfig";
 import { isCurrentActiveVersionedDocumentId } from "../../lib/getVersionedDocumentId";
+import { type CollapsibleStateManager } from "../../state/CollapsibleStateManager";
 import { type FullOutlineStore } from "../../state/FullOutlineStore";
 import { debounce } from "../../utils/debounce";
 import { type FullTreeItem } from "./FullTreeItem";
@@ -21,7 +22,11 @@ export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeIte
 
   private autoHighlightActiveItemTimeout: NodeJS.Timeout | undefined;
 
-  constructor(private fullOutlineStore: FullOutlineStore, subscriptions: vscode.Disposable[]) {
+  constructor(
+    private fullOutlineStore: FullOutlineStore,
+    private collapsibleStateManager: CollapsibleStateManager,
+    subscriptions: vscode.Disposable[]
+  ) {
     this.registerListeners(subscriptions);
     this.debouncedAutoHighlightActiveItem();
   }
@@ -123,17 +128,29 @@ export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeIte
    */
   setTreeView(treeView: vscode.TreeView<FullTreeItem>): void {
     this.treeView = treeView;
-    treeView.onDidCollapseElement((event) =>
-      this.fullOutlineStore.onCollapseTreeItem(event.element)
-    );
-    treeView.onDidExpandElement((event) => this.fullOutlineStore.onExpandTreeItem(event.element));
+    treeView.onDidCollapseElement(this.onDidCollapseElement.bind(this));
+    treeView.onDidExpandElement(this.onDidExpandElement.bind(this));
+  }
+
+  onDidCollapseElement(event: vscode.TreeViewExpansionEvent<FullTreeItem>): void {
+    const { id: itemId } = event.element;
+    const { documentId, allParentIds } = this.fullOutlineStore;
+    this.collapsibleStateManager.onCollapseTreeItem({ itemId, documentId, allParentIds });
+  }
+
+  onDidExpandElement(event: vscode.TreeViewExpansionEvent<FullTreeItem>): void {
+    const { id: itemId } = event.element;
+    const { documentId, allParentIds } = this.fullOutlineStore;
+    this.collapsibleStateManager.onExpandTreeItem({ itemId, documentId, allParentIds });
   }
 
   expandAllTreeItems(): void {
     if (!this.treeView) {
       return;
     }
-    for (const topLevelItem of this.fullOutlineStore.topLevelFullOutlineItems) {
+    const { documentId, topLevelFullOutlineItems } = this.fullOutlineStore;
+    this.collapsibleStateManager.onExpandAllTreeItems({ documentId });
+    for (const topLevelItem of topLevelFullOutlineItems) {
       this.treeView.reveal(topLevelItem, {
         select: false,
         focus: false,
@@ -144,6 +161,6 @@ export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeIte
     // `shouldAutoHighlightActiveItem` setting, since the view is open anyway when/after calling
     // Expand All, so there's no harm in revealing. This helps re-orient instead of scroll position
     // being reset to the top of the tree view.
-    this.highlightActiveItem();
+    this.highlightActiveItem(); // TODO: call with expand: 3
   }
 }

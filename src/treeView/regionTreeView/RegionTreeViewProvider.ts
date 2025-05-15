@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { getGlobalRegionsViewConfigValue } from "../../config/regionsViewConfig";
 import { isCurrentActiveVersionedDocumentId } from "../../lib/getVersionedDocumentId";
 import { type Region } from "../../models/Region";
+import { type CollapsibleStateManager } from "../../state/CollapsibleStateManager";
 import { type RegionStore } from "../../state/RegionStore";
 import { debounce } from "../../utils/debounce";
 import { RegionTreeItem } from "./RegionTreeItem";
@@ -22,7 +23,11 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
 
   private autoHighlightActiveRegionTimeout: NodeJS.Timeout | undefined;
 
-  constructor(private regionStore: RegionStore, subscriptions: vscode.Disposable[]) {
+  constructor(
+    private regionStore: RegionStore,
+    private collapsibleStateManager: CollapsibleStateManager,
+    subscriptions: vscode.Disposable[]
+  ) {
     this.registerListeners(subscriptions);
     this.debouncedAutoHighlightActiveRegion();
   }
@@ -97,7 +102,19 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
 
   // #region Required TreeDataProvider methods
   getTreeItem(region: Region): vscode.TreeItem {
-    return new RegionTreeItem(region);
+    const initialCollapsibleState = this.getInitialCollapsibleState(region);
+    return new RegionTreeItem(region, initialCollapsibleState);
+  }
+
+  getInitialCollapsibleState(region: Region): vscode.TreeItemCollapsibleState {
+    if (region.children.length === 0) {
+      return vscode.TreeItemCollapsibleState.None;
+    }
+    const savedCollapsibleState = this.collapsibleStateManager.getSavedCollapsibleState({
+      documentId: this.regionStore.documentId,
+      itemId: region.id,
+    });
+    return savedCollapsibleState ?? vscode.TreeItemCollapsibleState.Expanded;
   }
 
   getParent(element: Region): vscode.ProviderResult<Region> {
@@ -120,12 +137,23 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
    */
   setTreeView(treeView: vscode.TreeView<Region>): void {
     this.treeView = treeView;
+    treeView.onDidCollapseElement((event) => {
+      const { id: itemId } = event.element;
+      const { documentId, allParentIds } = this.regionStore;
+      this.collapsibleStateManager.onCollapseTreeItem({ itemId, documentId, allParentIds });
+    });
+    treeView.onDidExpandElement((event) => {
+      const { id: itemId } = event.element;
+      const { documentId, allParentIds } = this.regionStore;
+      this.collapsibleStateManager.onExpandTreeItem({ itemId, documentId, allParentIds });
+    });
   }
 
   expandAllTreeItems(): void {
     if (!this.treeView) {
       return;
     }
+    this.collapsibleStateManager.onExpandAllTreeItems({ documentId: this.regionStore.documentId });
     for (const topLevelRegion of this.regionStore.topLevelRegions) {
       this.treeView.reveal(topLevelRegion, {
         select: false,
@@ -137,6 +165,6 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
     // `shouldAutoHighlightActiveRegion` setting, since the view is open anyway when/after calling
     // Expand All, so there's no harm in revealing. This helps re-orient instead of scroll position
     // being reset to the top of the tree view.
-    this.highlightActiveRegion();
+    this.highlightActiveRegion(); // TODO: call with expand: 3
   }
 }
