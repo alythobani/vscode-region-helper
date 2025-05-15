@@ -2,24 +2,26 @@ import * as vscode from "vscode";
 import { getRegionDisplayName, getRegionRangeText } from "../lib/getRegionDisplayInfo";
 import { getRegionParents } from "../lib/getRegionParents";
 import { type Region } from "../models/Region";
-import { type RegionStore } from "../state/RegionStore";
 import {
   clearHighlightedRegions,
   highlightAndScrollRegionIntoView,
 } from "../utils/highlightRegion";
 import { moveCursorToFirstNonWhitespaceCharOfLine } from "../utils/moveCursorToFirstNonWhitespaceOfLine";
 import { scrollCurrentLineIntoView } from "../utils/scrollUtils";
-import { type RegionHelperCommand } from "./registerCommand";
+import {
+  type RegionHelperClosuredCommand,
+  type RegionHelperClosuredParams,
+} from "./registerCommand";
 
 type RegionQuickPickItem = vscode.QuickPickItem & { startLineIdx: number; endLineIdx: number };
 
-export const goToRegionFromQuickPickCommand: RegionHelperCommand = {
+export const goToRegionFromQuickPickCommand: RegionHelperClosuredCommand = {
   id: "regionHelper.goToRegionFromQuickPick",
   callback: goToRegionFromQuickPick,
-  needsRegionStore: true,
+  needsRegionHelperParams: true,
 };
 
-function goToRegionFromQuickPick(regionStore: RegionStore): void {
+function goToRegionFromQuickPick({ regionStore }: RegionHelperClosuredParams): void {
   const { activeTextEditor } = vscode.window;
   if (!activeTextEditor) {
     return;

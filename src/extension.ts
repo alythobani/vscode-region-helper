@@ -5,6 +5,7 @@ import { RegionDiagnosticsManager } from "./diagnostics/RegionDiagnosticsManager
 import { type FlattenedRegion } from "./lib/flattenRegions";
 import { type InvalidMarker } from "./lib/parseAllRegions";
 import { type Region } from "./models/Region";
+import { CollapsibleStateManager } from "./state/CollapsibleStateManager";
 import { DocumentSymbolStore } from "./state/DocumentSymbolStore";
 import { FullOutlineStore } from "./state/FullOutlineStore";
 import { RegionStore } from "./state/RegionStore";
@@ -13,27 +14,45 @@ import { FullTreeViewProvider } from "./treeView/fullTreeView/FullTreeViewProvid
 import { RegionTreeViewProvider } from "./treeView/regionTreeView/RegionTreeViewProvider";
 
 export function activate(context: vscode.ExtensionContext): RegionHelperAPI {
-  console.log("Activating extension 'Region Helper'");
+  const { subscriptions, workspaceState } = context;
+  const regionCollapsibleStateManager = new CollapsibleStateManager(
+    workspaceState,
+    "regionsViewCollapsibleStateStoreByDocumentId"
+  );
+  const fullOutlineCollapsibleStateManager = new CollapsibleStateManager(
+    workspaceState,
+    "fullOutlineViewCollapsibleStateStoreByDocumentId"
+  );
 
-  const { subscriptions } = context;
   const regionStore = RegionStore.initialize(subscriptions);
   const documentSymbolStore = DocumentSymbolStore.initialize(subscriptions);
   const fullOutlineStore = FullOutlineStore.initialize(
     regionStore,
     documentSymbolStore,
+    fullOutlineCollapsibleStateManager,
     subscriptions
   );
 
-  const regionTreeViewProvider = new RegionTreeViewProvider(regionStore, subscriptions);
-  const treeView = vscode.window.createTreeView("regionHelperRegionsView", {
+  const regionTreeViewProvider = new RegionTreeViewProvider(
+    regionStore,
+    regionCollapsibleStateManager,
+    subscriptions
+  );
+  const regionTreeView = vscode.window.createTreeView("regionHelperRegionsView", {
     treeDataProvider: regionTreeViewProvider,
+    showCollapseAll: true,
   });
-  regionTreeViewProvider.setTreeView(treeView);
-  subscriptions.push(treeView);
+  regionTreeViewProvider.setTreeView(regionTreeView);
+  subscriptions.push(regionTreeView);
 
-  const fullTreeViewProvider = new FullTreeViewProvider(fullOutlineStore, subscriptions);
+  const fullTreeViewProvider = new FullTreeViewProvider(
+    fullOutlineStore,
+    fullOutlineCollapsibleStateManager,
+    subscriptions
+  );
   const fullTreeView = vscode.window.createTreeView("regionHelperFullTreeView", {
     treeDataProvider: fullTreeViewProvider,
+    showCollapseAll: true,
   });
   fullTreeViewProvider.setTreeView(fullTreeView);
   subscriptions.push(fullTreeView);
@@ -41,7 +60,7 @@ export function activate(context: vscode.ExtensionContext): RegionHelperAPI {
   const regionDiagnosticsManager = new RegionDiagnosticsManager(regionStore, subscriptions);
   subscriptions.push(regionDiagnosticsManager.diagnostics);
 
-  registerAllCommands(subscriptions, regionStore);
+  registerAllCommands(subscriptions, { regionStore, regionTreeViewProvider, fullTreeViewProvider });
 
   return {
     // #region Region Store API

@@ -5,7 +5,8 @@ export type FlattenedRegion = Region & {
 };
 
 /**
- * Flattens a tree of regions, with a `flatRegionIdx` field on each resulting flattened item.
+ * Flattens a tree of regions, with a `flatRegionIdx` field on each resulting flattened item, and
+ * counts the number of parent regions along the way.
  *
  * Note: This function takes O(numRegions) time to run, and is run on `topLevelRegions` at every
  * document change.  Normally, this would be a performance concern, but relatively speaking, a file
@@ -13,13 +14,20 @@ export type FlattenedRegion = Region & {
  * If there are performance issues with this extension, `parseAllRegions` will likely be the much
  * bigger concern.
  */
-export function flattenRegions(regions: Region[]): FlattenedRegion[] {
-  const flattened: FlattenedRegion[] = [];
+export function flattenRegionsAndCountParents(regions: Region[]): {
+  flattenedRegions: FlattenedRegion[];
+  allParentIds: Set<string>;
+} {
+  const flattenedRegions: FlattenedRegion[] = [];
   let flatRegionIdx = 0;
+  const allParentIds = new Set<string>();
 
   function traverse(region: Region): void {
     const flattenedRegion: FlattenedRegion = { ...region, flatRegionIdx: flatRegionIdx++ };
-    flattened.push(flattenedRegion);
+    flattenedRegions.push(flattenedRegion);
+    if (region.children.length > 0) {
+      allParentIds.add(region.id);
+    }
     for (const child of region.children) {
       traverse(child);
     }
@@ -29,5 +37,5 @@ export function flattenRegions(regions: Region[]): FlattenedRegion[] {
     traverse(region);
   }
 
-  return flattened;
+  return { flattenedRegions, allParentIds };
 }

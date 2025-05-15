@@ -4,30 +4,32 @@ import {
   getGlobalFullOutlineViewConfigValue,
   setGlobalFullOutlineViewConfigValue,
 } from "../config/fullOutlineViewConfig";
-import { type RegionHelperCommand } from "./registerCommand";
+import { type RegionHelperNonClosuredCommand } from "./registerCommand";
 
-const hideFullOutlineViewCommand: RegionHelperCommand = {
+// #region Exported commands
+
+const hideFullOutlineViewCommand: RegionHelperNonClosuredCommand = {
   id: "regionHelper.fullOutlineView.hide",
   callback: hideFullOutlineView,
-  needsRegionStore: false,
+  needsRegionHelperParams: false,
 };
 
-const showFullOutlineViewCommand: RegionHelperCommand = {
+const showFullOutlineViewCommand: RegionHelperNonClosuredCommand = {
   id: "regionHelper.fullOutlineView.show",
   callback: showFullOutlineView,
-  needsRegionStore: false,
+  needsRegionHelperParams: false,
 };
 
-const stopAutoHighlightingActiveItemCommand: RegionHelperCommand = {
+const stopAutoHighlightingActiveItemCommand: RegionHelperNonClosuredCommand = {
   id: "regionHelper.fullOutlineView.stopAutoHighlightingActiveItem",
   callback: stopAutoHighlightingActiveItem,
-  needsRegionStore: false,
+  needsRegionHelperParams: false,
 };
 
-const startAutoHighlightingActiveItemCommand: RegionHelperCommand = {
+const startAutoHighlightingActiveItemCommand: RegionHelperNonClosuredCommand = {
   id: "regionHelper.fullOutlineView.startAutoHighlightingActiveItem",
   callback: startAutoHighlightingActiveItem,
-  needsRegionStore: false,
+  needsRegionHelperParams: false,
 };
 
 export const allFullOutlineViewConfigCommands = [
@@ -36,6 +38,10 @@ export const allFullOutlineViewConfigCommands = [
   stopAutoHighlightingActiveItemCommand,
   startAutoHighlightingActiveItemCommand,
 ];
+
+// #endregion
+
+// #region Command implementations
 
 function hideFullOutlineView(): void {
   const isAlreadyVisible = getGlobalFullOutlineViewConfigValue("isVisible");
@@ -80,3 +86,5 @@ function startAutoHighlightingActiveItem(): void {
   }
   setGlobalFullOutlineViewConfigValue("shouldAutoHighlightActiveItem", true);
 }
+
+// #endregion

@@ -1,12 +1,13 @@
 import * as vscode from "vscode";
-import {
-  type FullTreeItem,
-  getFlattenedRegionFullTreeItem,
-  getFlattenedSymbolFullTreeItem,
-} from "../treeView/fullTreeView/FullTreeItem";
-import { generateTopLevelFullTreeItems } from "../treeView/fullTreeView/generateTopLevelFullTreeItems";
+import { type FullTreeItem } from "../treeView/fullTreeView/FullTreeItem";
+import { generateFullOutlineTreeItems } from "../treeView/fullTreeView/generateTopLevelFullTreeItems";
 import { getActiveFullTreeItem } from "../treeView/fullTreeView/getActiveFullTreeItem";
+import {
+  getFlattenedRegionFullTreeItems,
+  getFlattenedSymbolFullTreeItems,
+} from "../treeView/fullTreeView/getFlattenedFullTreeItems";
 import { debounce } from "../utils/debounce";
+import { type CollapsibleStateManager } from "./CollapsibleStateManager";
 import { type DocumentSymbolStore } from "./DocumentSymbolStore";
 import { type RegionStore } from "./RegionStore";
 
@@ -14,17 +15,24 @@ const REFRESH_FULL_OUTLINE_DEBOUNCE_DELAY_MS = 100;
 const REFRESH_ACTIVE_ITEM_DEBOUNCE_DELAY_MS = 100;
 
 export class FullOutlineStore {
+  // #region Singleton initialization
   private static _instance: FullOutlineStore | undefined = undefined;
 
   static initialize(
     regionStore: RegionStore,
     documentSymbolStore: DocumentSymbolStore,
+    collapsibleStateManager: CollapsibleStateManager,
     subscriptions: vscode.Disposable[]
   ): FullOutlineStore {
     if (this._instance) {
       throw new Error("FullOutlineStore is already initialized! Only one instance is allowed.");
     }
-    this._instance = new FullOutlineStore(regionStore, documentSymbolStore, subscriptions);
+    this._instance = new FullOutlineStore(
+      regionStore,
+      documentSymbolStore,
+      collapsibleStateManager,
+      subscriptions
+    );
     return this._instance;
   }
 
@@ -34,12 +42,19 @@ export class FullOutlineStore {
     }
     return this._instance;
   }
+  // #endregion
 
+  // #region Public properties
   private _topLevelItems: FullTreeItem[] = [];
   private _onDidChangeFullOutlineItems = new vscode.EventEmitter<void>();
   readonly onDidChangeFullOutlineItems = this._onDidChangeFullOutlineItems.event;
   get topLevelFullOutlineItems(): FullTreeItem[] {
     return this._topLevelItems;
+  }
+
+  private _allParentIds = new Set<string>();
+  get allParentIds(): Set<string> {
+    return this._allParentIds;
   }
 
   private _activeItem: FullTreeItem | undefined = undefined;
@@ -49,10 +64,17 @@ export class FullOutlineStore {
     return this._activeItem;
   }
 
+  private _documentId: string | undefined = undefined;
+  get documentId(): string | undefined {
+    return this._documentId;
+  }
+
   private _versionedDocumentId: string | undefined = undefined;
   get versionedDocumentId(): string | undefined {
     return this._versionedDocumentId;
   }
+
+  // #endregion
 
   private debouncedRefreshFullOutline = debounce(
     this.refreshFullOutline.bind(this),
@@ -65,6 +87,7 @@ export class FullOutlineStore {
   private constructor(
     private regionStore: RegionStore,
     private documentSymbolStore: DocumentSymbolStore,
+    private collapsibleStateManager: CollapsibleStateManager,
     subscriptions: vscode.Disposable[]
   ) {
     this.registerListeners(subscriptions);
@@ -94,6 +117,7 @@ export class FullOutlineStore {
     }
   }
 
+  // #region Refresh Full Outline items
   private refreshFullOutline(): void {
     const regionStoreVersionedDocumentId = this.regionStore.versionedDocumentId;
     const documentSymbolStoreVersionedDocumentId = this.documentSymbolStore.versionedDocumentId;
@@ -101,6 +125,7 @@ export class FullOutlineStore {
       // Wait for both region and symbol data to be synced on the same document version
       return;
     }
+    this._documentId = this.regionStore.documentId;
     this._versionedDocumentId = regionStoreVersionedDocumentId;
     this.refreshItems();
     this.refreshActiveItem();
@@ -108,19 +133,24 @@ export class FullOutlineStore {
 
   private refreshItems(): void {
     this.isRefreshingItems = true;
-    const { flattenedRegions } = this.regionStore;
-    const flattenedRegionItems = flattenedRegions.map(getFlattenedRegionFullTreeItem);
-    const { flattenedDocumentSymbols } = this.documentSymbolStore;
-    const flattenedSymbolItems = flattenedDocumentSymbols.map(getFlattenedSymbolFullTreeItem);
-    const topLevelItems = generateTopLevelFullTreeItems({
+    const flattenedRegionItems = getFlattenedRegionFullTreeItems(this.regionStore.flattenedRegions);
+    const flattenedSymbolItems = getFlattenedSymbolFullTreeItems(
+      this.documentSymbolStore.flattenedDocumentSymbols
+    );
+    const { topLevelItems, allParentIds } = generateFullOutlineTreeItems({
       flattenedRegionItems,
       flattenedSymbolItems,
+      collapsibleStateManager: this.collapsibleStateManager,
+      documentId: this._documentId,
     });
     this._topLevelItems = topLevelItems;
+    this._allParentIds = allParentIds;
     this._onDidChangeFullOutlineItems.fire();
     this.isRefreshingItems = false;
   }
+  // #endregion
 
+  // #region Refresh active item on selection change
   private onSelectionChange(event: vscode.TextEditorSelectionChangeEvent): void {
     if (this.isRefreshingItems) {
       return;
@@ -157,4 +187,5 @@ export class FullOutlineStore {
       this.refreshActiveItemTimeout = undefined;
     }
   }
+  // #endregion
 }

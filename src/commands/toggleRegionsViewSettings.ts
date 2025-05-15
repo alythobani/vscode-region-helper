@@ -4,38 +4,44 @@ import {
   setGlobalRegionsViewConfigValue,
   setRegionsViewVisibility,
 } from "../config/regionsViewConfig";
-import { type RegionHelperCommand } from "./registerCommand";
+import { type RegionHelperNonClosuredCommand } from "./registerCommand";
 
-const hideRegionsViewCommand: RegionHelperCommand = {
+// #region Exported commands
+
+const hideRegionsViewCommand: RegionHelperNonClosuredCommand = {
   id: "regionHelper.regionsView.hide",
   callback: hideRegionsView,
-  needsRegionStore: false,
+  needsRegionHelperParams: false,
 };
 
-const showRegionsViewCommand: RegionHelperCommand = {
+const showRegionsViewCommand: RegionHelperNonClosuredCommand = {
   id: "regionHelper.regionsView.show",
   callback: showRegionsView,
-  needsRegionStore: false,
+  needsRegionHelperParams: false,
 };
 
-const stopAutoHighlightingActiveRegionCommand: RegionHelperCommand = {
+const stopAutoHighlightingActiveRegionCommand: RegionHelperNonClosuredCommand = {
   id: "regionHelper.regionsView.stopAutoHighlightingActiveRegion",
   callback: stopAutoHighlightingActiveRegion,
-  needsRegionStore: false,
+  needsRegionHelperParams: false,
 };
 
-const startAutoHighlightingActiveRegionCommand: RegionHelperCommand = {
+const startAutoHighlightingActiveRegionCommand: RegionHelperNonClosuredCommand = {
   id: "regionHelper.regionsView.startAutoHighlightingActiveRegion",
   callback: startAutoHighlightingActiveRegion,
-  needsRegionStore: false,
+  needsRegionHelperParams: false,
 };
 
-export const allRegionsViewConfigCommands: RegionHelperCommand[] = [
+export const allRegionsViewConfigCommands: RegionHelperNonClosuredCommand[] = [
   hideRegionsViewCommand,
   showRegionsViewCommand,
   stopAutoHighlightingActiveRegionCommand,
   startAutoHighlightingActiveRegionCommand,
 ];
+
+// #endregion
+
+// #region Command implementations
 
 function hideRegionsView(): void {
   const isAlreadyVisible = getGlobalRegionsViewConfigValue("isVisible");
@@ -62,3 +68,5 @@ function stopAutoHighlightingActiveRegion(): void {
 function startAutoHighlightingActiveRegion(): void {
   setGlobalRegionsViewConfigValue("shouldAutoHighlightActiveRegion", true);
 }
+
+// #endregion

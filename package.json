@@ -7,7 +7,7 @@
   "publisher": "AlyThobani",
   "name": "region-helper",
   "displayName": "Region Helper",
-  "description": "Visualize and navigate code regions in your files.",
+  "description": "Keyboard navigation, interactive tree views, fuzzy search, diagnostics, and other useful tools for code regions.",
   "repository": {
     "type": "git",
     "url": "https://github.com/alythobani/vscode-region-helper.git"
@@ -18,7 +18,7 @@
   },
   "icon": "./assets/icon.png",
   "license": "GPL-3.0-only",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "engines": {
     "vscode": "^1.94.0"
   },
@@ -95,6 +95,16 @@
         "title": "Region Helper: Full Outline View: Start Auto-Highlighting Active Item",
         "when": "!config.regionHelper.fullOutlineView.shouldAutoHighlightActiveItem",
         "icon": "$(sync-ignored)"
+      },
+      {
+        "command": "regionHelper.regionsView.expandAll",
+        "title": "Region Helper: Regions View: Expand All",
+        "icon": "$(expand-all)"
+      },
+      {
+        "command": "regionHelper.fullOutlineView.expandAll",
+        "title": "Region Helper: Full Outline View: Expand All",
+        "icon": "$(expand-all)"
       }
     ],
     "configuration": [
@@ -435,22 +445,32 @@
         {
           "command": "regionHelper.regionsView.stopAutoHighlightingActiveRegion",
           "when": "view == regionHelperRegionsView && config.regionHelper.regionsView.shouldAutoHighlightActiveRegion",
-          "group": "navigation"
+          "group": "navigation@1"
         },
         {
           "command": "regionHelper.regionsView.startAutoHighlightingActiveRegion",
           "when": "view == regionHelperRegionsView && !config.regionHelper.regionsView.shouldAutoHighlightActiveRegion",
-          "group": "navigation"
+          "group": "navigation@1"
         },
         {
           "command": "regionHelper.fullOutlineView.stopAutoHighlightingActiveItem",
           "when": "view == regionHelperFullTreeView && config.regionHelper.fullOutlineView.shouldAutoHighlightActiveItem",
-          "group": "navigation"
+          "group": "navigation@1"
         },
         {
           "command": "regionHelper.fullOutlineView.startAutoHighlightingActiveItem",
           "when": "view == regionHelperFullTreeView && !config.regionHelper.fullOutlineView.shouldAutoHighlightActiveItem",
-          "group": "navigation"
+          "group": "navigation@1"
+        },
+        {
+          "command": "regionHelper.regionsView.expandAll",
+          "when": "view == regionHelperRegionsView",
+          "group": "navigation@2"
+        },
+        {
+          "command": "regionHelper.fullOutlineView.expandAll",
+          "when": "view == regionHelperFullTreeView",
+          "group": "navigation@2"
         }
       ]
     },

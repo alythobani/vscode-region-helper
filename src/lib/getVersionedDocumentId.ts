@@ -8,7 +8,7 @@ export function isCurrentActiveVersionedDocumentId(
 }
 
 export function getCurrentActiveVersionedDocumentId(): string | undefined {
-  const activeTextEditor = vscode.window.activeTextEditor;
+  const { activeTextEditor } = vscode.window;
   if (!activeTextEditor) {
     return undefined;
   }
@@ -16,5 +16,13 @@ export function getCurrentActiveVersionedDocumentId(): string | undefined {
 }
 
 export function getVersionedDocumentId(document: vscode.TextDocument): string {
-  return `${document.uri.toString()}@${document.version}`;
+  return `${getDocumentId(document)}@${document.version}`;
+}
+
+export function getDocumentId(document: vscode.TextDocument): string {
+  return getDocumentIdFromUri(document.uri);
+}
+
+export function getDocumentIdFromUri(uri: vscode.Uri): string {
+  return uri.toString();
 }

@@ -1,12 +1,12 @@
 import * as vscode from "vscode";
-import { type RegionHelperCommand } from "../../commands/registerCommand";
+import { type RegionHelperNonClosuredCommand } from "../../commands/registerCommand";
 import { focusEditor } from "../../utils/focusEditor";
 import { moveCursorToFirstNonWhitespaceCharOfLine } from "../../utils/moveCursorToFirstNonWhitespaceOfLine";
 
-export const goToRegionTreeItemCommand: RegionHelperCommand = {
+export const goToRegionTreeItemCommand: RegionHelperNonClosuredCommand = {
   id: "regionHelper.goToRegionTreeItem",
   callback: goToRegionTreeItem,
-  needsRegionStore: false,
+  needsRegionHelperParams: false,
 };
 
 function goToRegionTreeItem(startLineIdx: number): void {

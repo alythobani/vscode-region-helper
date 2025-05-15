@@ -1,6 +1,6 @@
 import * as assert from "assert";
 
-import { flattenRegions } from "../../lib/flattenRegions";
+import { flattenRegionsAndCountParents } from "../../lib/flattenRegions";
 import { parseAllRegions } from "../../lib/parseAllRegions";
 import { openSampleDocument } from "../utils/openSampleDocument";
 
@@ -8,8 +8,9 @@ suite("flattenRegions", () => {
   test("Flatten regions in the sample document", async () => {
     const sampleDocument = await openSampleDocument("sampleRegionsDocument.ts");
     const { topLevelRegions } = parseAllRegions(sampleDocument);
-    const flattenedRegions = flattenRegions(topLevelRegions);
+    const { flattenedRegions, allParentIds } = flattenRegionsAndCountParents(topLevelRegions);
     assert.strictEqual(flattenedRegions.length, 9);
+    assert.strictEqual(allParentIds.size, 3);
     const regionNames = flattenedRegions.map((region) => region.name);
     assert.deepStrictEqual(regionNames, [
       "Imports",

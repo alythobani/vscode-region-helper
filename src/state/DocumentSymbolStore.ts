@@ -50,18 +50,18 @@ export class DocumentSymbolStore {
   private constructor(subscriptions: vscode.Disposable[]) {
     this.registerListeners(subscriptions);
     if (vscode.window.activeTextEditor?.document) {
-      void this.debouncedRefreshDocumentSymbols(vscode.window.activeTextEditor.document);
+      this.debouncedRefreshDocumentSymbols(vscode.window.activeTextEditor.document);
     }
   }
 
   private registerListeners(subscriptions: vscode.Disposable[]): void {
     vscode.window.onDidChangeActiveTextEditor(
-      (editor) => void this.debouncedRefreshDocumentSymbols(editor?.document),
+      (editor) => this.debouncedRefreshDocumentSymbols(editor?.document),
       undefined,
       subscriptions
     );
     vscode.workspace.onDidChangeTextDocument(
-      (event) => void this.debouncedRefreshDocumentSymbols(event.document),
+      (event) => this.debouncedRefreshDocumentSymbols(event.document),
       undefined,
       subscriptions
     );
@@ -94,7 +94,7 @@ export class DocumentSymbolStore {
               DOCUMENT_SYMBOLS_FETCH_REATTEMPT_DELAY_MS
             );
       if (documentSymbols === undefined) {
-        void this.debouncedRefreshDocumentSymbols(document, attemptIdx + 1);
+        this.debouncedRefreshDocumentSymbols(document, attemptIdx + 1);
         return;
       }
       sortSymbolsRecursivelyByStart(documentSymbols); // By default, `executeDocumentSymbolProvider` returns symbols ordered by name
