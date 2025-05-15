@@ -37,10 +37,6 @@ type SerializedCollapsibleStateStoreByDocumentId = Record<string, SerializedColl
  * collapsible state persists across sessions and file switches.
  */
 export class CollapsibleStateManager {
-  private log(message: string, ...args: unknown[]): void {
-    console.log(`Region Helper: CollapsibleStateManager: ${message}`, ...args);
-  }
-
   private collapsibleStateStoreByDocumentId: CollapsibleStateStoreByDocumentId = {};
 
   private debouncedCleanIdsAndMaybeSwitchMode = debounce(
@@ -67,7 +63,6 @@ export class CollapsibleStateManager {
   private onFileRename({ oldUri, newUri }: { oldUri: vscode.Uri; newUri: vscode.Uri }): void {
     const oldDocId = getDocumentIdFromUri(oldUri);
     const newDocId = getDocumentIdFromUri(newUri);
-    this.log(`onFileRename: ${oldDocId} -> ${newDocId}`);
     const store = this.collapsibleStateStoreByDocumentId[oldDocId];
     if (!store) return;
     this.collapsibleStateStoreByDocumentId[newDocId] = store;
@@ -77,7 +72,6 @@ export class CollapsibleStateManager {
 
   private onFileDelete(deletedUri: vscode.Uri): void {
     const deletedDocId = getDocumentIdFromUri(deletedUri);
-    this.log(`onFileDelete: ${deletedDocId}`);
     this.deleteDocumentStore(deletedDocId);
     this.debouncedSaveToWorkspaceState();
   }
@@ -142,10 +136,6 @@ export class CollapsibleStateManager {
       default:
         throwNever(store.storageMode);
     }
-    this.log(
-      `Collapsed item ${itemId}, ${documentId} store has ${store.itemIds.size} items now:`,
-      JSON.stringify([...store.itemIds], null, 2)
-    );
     this.debouncedSaveToWorkspaceState();
   }
 
@@ -174,16 +164,11 @@ export class CollapsibleStateManager {
       default:
         throwNever(store.storageMode);
     }
-    this.log(
-      `Expanded item ${itemId}, ${documentId} store now:`,
-      JSON.stringify([...store.itemIds], null, 2)
-    );
     this.debouncedSaveToWorkspaceState();
   }
 
   onExpandAllTreeItems({ documentId }: { documentId: string | undefined }): void {
     if (documentId === undefined) {
-      this.log("No document ID provided for expand all event");
       return;
     }
     const store = this.getOrCreateStoreForDocument(documentId);
@@ -191,10 +176,6 @@ export class CollapsibleStateManager {
     // none collapsed), we should switch to collapsedItemIds mode and clear the item IDs set
     store.storageMode = "collapsedItemIds";
     store.itemIds.clear();
-    this.log(
-      `Expanded all items, ${documentId} store now:`,
-      JSON.stringify([...store.itemIds], null, 2)
-    );
     this.debouncedSaveToWorkspaceState();
   }
 
@@ -233,7 +214,6 @@ export class CollapsibleStateManager {
   private removeInvalidItemIds(store: CollapsibleStateStore, allParentIds: Set<string>): void {
     for (const itemId of store.itemIds) {
       if (!allParentIds.has(itemId)) {
-        this.log(`Removing invalid item ID ${itemId} from store`);
         store.itemIds.delete(itemId);
       }
     }
@@ -243,9 +223,6 @@ export class CollapsibleStateManager {
   private maybeSwitchStorageMode(store: CollapsibleStateStore, allParentIds: Set<string>): void {
     const { itemIds, storageMode } = store;
     if (itemIds.size >= allParentIds.size) {
-      this.log(
-        `All ${itemIds.size} parent IDs are stored in ${storageMode}, switching storage mode`
-      );
       itemIds.clear();
       store.storageMode = this.getOppositeStorageMode(storageMode);
     }
@@ -264,7 +241,6 @@ export class CollapsibleStateManager {
   }
 
   private deleteDocumentStore(documentId: string): void {
-    this.log(`Deleting store for document ID ${documentId}`);
     // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
     delete this.collapsibleStateStoreByDocumentId[documentId];
   }
@@ -278,16 +254,8 @@ export class CollapsibleStateManager {
     const serializedStoreByDocId =
       this.workspaceState.get<SerializedCollapsibleStateStoreByDocumentId>(this.storageKey);
     if (!serializedStoreByDocId) {
-      console.log(
-        `Region Helper: CollapsibleStateManager: No ${this.storageKey} found in workspace state`
-      );
       return;
     }
-
-    console.log(
-      `Region Helper: CollapsibleStateManager: Loaded ${this.storageKey} from workspace state`,
-      serializedStoreByDocId
-    );
 
     for (const [docId, serializedStore] of Object.entries(serializedStoreByDocId)) {
       this.collapsibleStateStoreByDocumentId[docId] = {
@@ -299,10 +267,6 @@ export class CollapsibleStateManager {
 
   /** Saves the current state to VS Code's workspace storage (if storage is provided) */
   async saveToWorkspaceState(): Promise<void> {
-    this.log(
-      `Saving to ${this.storageKey}: ${JSON.stringify(this.collapsibleStateStoreByDocumentId)}`
-    );
-    const start = performance.now();
     const serializedStoreByDocId: SerializedCollapsibleStateStoreByDocumentId = {};
     for (const [docId, store] of Object.entries(this.collapsibleStateStoreByDocumentId)) {
       const { storageMode, itemIds } = store;
@@ -313,16 +277,10 @@ export class CollapsibleStateManager {
       serializedStoreByDocId[docId] = { storageMode, itemIds: Array.from(itemIds) };
     }
     if (isEmptyObject(serializedStoreByDocId)) {
-      this.log("All workspace stores are empty, removing storage");
       await this.workspaceState.update(this.storageKey, undefined);
       return;
     }
-    this.log(
-      `Saving serialized data to ${this.storageKey}: ${JSON.stringify(serializedStoreByDocId)}`
-    );
     await this.workspaceState.update(this.storageKey, serializedStoreByDocId);
-    const end = performance.now();
-    this.log(`Saved ${this.storageKey} to workspace state in ${Math.round(end - start)}ms`);
   }
 
   // #endregion
