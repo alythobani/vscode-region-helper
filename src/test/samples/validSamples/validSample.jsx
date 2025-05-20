@@ -2,7 +2,7 @@
 const x = 42;
 //#endregion
 
-// #region Second Region
+/***   #region Second Region */
 class MyComponent extends React.Component {
   //    #region    InnerRegion
   render() {
@@ -14,10 +14,11 @@ class MyComponent extends React.Component {
   }
   //   #endregion   ends InnerRegion
 
-  //  #region
+  /*#region */
   someMethodInUnnamedRegion() {
     return 42;
   }
-  //#endregion
+  /*   #endregion */
 }
-// #endregion
+
+/**#endregion */

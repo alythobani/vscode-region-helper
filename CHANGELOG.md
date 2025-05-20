@@ -4,6 +4,12 @@ All notable changes to the "region-helper" extension will be documented in this 
 
 This changelog adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) and is structured for clarity and readability, inspired by [Common Changelog](https://common-changelog.org/) and [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.4.1] - 2025-05-20
+
+- **Extend block comment region pattern support**
+  - Add block comment region syntax (e.g. `/* #region */`) to default region boundary patterns configuration for `javascript`, `javascriptreact`, `typescript`, `typescriptreact`, and `vue` languages.
+  - Adjust block comment region syntax for `less`, `css`, `postcss`, `scss`, and the above JS-based languages to allow for one or more opening/closing asterisks, e.g. `/** #region */` or `/*** #endregion ***/`
+
 ## [1.4.0] - 2025-05-14
 
 - **Add Collapse/Expand All actions**: Action buttons added to the Regions and Full Outline tree views' title bars to collapse or expand all tree items

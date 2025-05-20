@@ -7,19 +7,19 @@
 <!--   #region Second Region -->
 <script>
 export default {
-  //  #region    InnerRegion  
+  //#region    InnerRegion  
   data() {
     return { msg: "Hello" };
   },
-  //  #endregion   ends InnerRegion  
+  //   #endregion   ends InnerRegion  
 
-  // #region
+  /***   #region */
   methods: {
     sayHello() {
       console.log("Hello");
     }
   }
-  // #endregion
+  /*#endregion */
 };
 </script>
 <!-- #endregion -->
