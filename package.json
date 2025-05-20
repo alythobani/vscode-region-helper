@@ -18,7 +18,7 @@
   },
   "icon": "./assets/icon.png",
   "license": "GPL-3.0-only",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "engines": {
     "vscode": "^1.94.0"
   },
@@ -170,8 +170,8 @@
                 "endRegex": "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
               },
               "css": {
-                "startRegex": "^\\s*\\/\\*\\s*#region(?:\\s+(.*?)\\s*)?\\*\\/",
-                "endRegex": "^\\s*\\/\\*\\s*#endregion(?:\\s.*)?\\*\\/"
+                "startRegex": "^\\s*\\/\\*+\\s*#region(?:\\s+(.*?)\\s*)?\\*+\\/",
+                "endRegex": "^\\s*\\/\\*+\\s*#endregion(?:\\s.*)?\\*+\\/"
               },
               "dart": {
                 "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
@@ -218,12 +218,24 @@
                 "endRegex": "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
               },
               "javascript": {
-                "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
-                "endRegex": "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
+                "startRegex": [
+                  "^\\s*\\/\\*+\\s*#region(?:\\s+(.*?)\\s*)?\\*+\\/",
+                  "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$"
+                ],
+                "endRegex": [
+                  "^\\s*\\/\\*+\\s*#endregion(?:\\s.*)?\\*+\\/",
+                  "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
+                ]
               },
               "javascriptreact": {
-                "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
-                "endRegex": "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
+                "startRegex": [
+                  "^\\s*\\/\\*+\\s*#region(?:\\s+(.*?)\\s*)?\\*+\\/",
+                  "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$"
+                ],
+                "endRegex": [
+                  "^\\s*\\/\\*+\\s*#endregion(?:\\s.*)?\\*+\\/",
+                  "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
+                ]
               },
               "json": {
                 "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
@@ -243,11 +255,11 @@
               },
               "less": {
                 "startRegex": [
-                  "^\\s*\\/\\*\\s*#region(?:\\s+(.*?)\\s*)?\\*\\/",
+                  "^\\s*\\/\\*+\\s*#region(?:\\s+(.*?)\\s*)?\\*+\\/",
                   "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$"
                 ],
                 "endRegex": [
-                  "^\\s*\\/\\*\\s*#endregion(?:\\s.*)?\\*\\/",
+                  "^\\s*\\/\\*+\\s*#endregion(?:\\s.*)?\\*+\\/",
                   "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
                 ]
               },
@@ -302,8 +314,8 @@
                 ]
               },
               "postcss": {
-                "startRegex": "^\\s*\\/\\*\\s*#region(?:\\s+(.*?)\\s*)?\\*\\/",
-                "endRegex": "^\\s*\\/\\*\\s*#endregion(?:\\s.*)?\\*\\/"
+                "startRegex": "^\\s*\\/\\*+\\s*#region(?:\\s+(.*?)\\s*)?\\*+\\/",
+                "endRegex": "^\\s*\\/\\*+\\s*#endregion(?:\\s.*)?\\*+\\/"
               },
               "python": {
                 "startRegex": "^\\s*#\\s*region(?:\\s+(.*?)\\s*)?$",
@@ -324,11 +336,11 @@
               "scss": {
                 "startRegex": [
                   "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
-                  "^\\s*\\/\\*\\s*#region(?:\\s+(.*?)\\s*)?\\*\\/"
+                  "^\\s*\\/\\*+\\s*#region(?:\\s+(.*?)\\s*)?\\*+\\/"
                 ],
                 "endRegex": [
                   "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$",
-                  "^\\s*\\/\\*\\s*#endregion(?:\\s.*)?\\*\\/"
+                  "^\\s*\\/\\*+\\s*#endregion(?:\\s.*)?\\*+\\/"
                 ]
               },
               "shellscript": {
@@ -356,19 +368,33 @@
                 "endRegex": "^\\s*#\\s*endregion(?:\\s.*)?"
               },
               "typescript": {
-                "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
-                "endRegex": "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
+                "startRegex": [
+                  "^\\s*\\/\\*+\\s*#region(?:\\s+(.*?)\\s*)?\\*+\\/",
+                  "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$"
+                ],
+                "endRegex": [
+                  "^\\s*\\/\\*+\\s*#endregion(?:\\s.*)?\\*+\\/",
+                  "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
+                ]
               },
               "typescriptreact": {
-                "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
-                "endRegex": "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
+                "startRegex": [
+                  "^\\s*\\/\\*+\\s*#region(?:\\s+(.*?)\\s*)?\\*+\\/",
+                  "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$"
+                ],
+                "endRegex": [
+                  "^\\s*\\/\\*+\\s*#endregion(?:\\s.*)?\\*+\\/",
+                  "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
+                ]
               },
               "vue": {
                 "startRegex": [
+                  "^\\s*\\/\\*+\\s*#region(?:\\s+(.*?)\\s*)?\\*+\\/",
                   "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
                   "^\\s*<!--\\s*#region(?:\\s+(.*?)\\s*)?-->"
                 ],
                 "endRegex": [
+                  "^\\s*\\/\\*+\\s*#endregion(?:\\s.*)?\\*+\\/",
                   "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$",
                   "^\\s*<!--\\s*#endregion(?:\\s.*)?-->"
                 ]

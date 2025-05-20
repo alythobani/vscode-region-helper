@@ -2,7 +2,7 @@
 const x: number = 42;
 //#endregion
 
-// #region Second Region
+/***   #region Second Region */
 class MyComponent extends React.Component {
   //   #region    InnerRegion
   render(): JSX.Element {
@@ -14,10 +14,11 @@ class MyComponent extends React.Component {
   }
   //  #endregion   ends InnerRegion
 
-  //  #region
+  /*#region */
   render2(): JSX.Element {
     return <div>Unnamed region</div>;
   }
-  //#endregion
+  /*   #endregion */
 }
-// #endregion
+
+/**#endregion */
