@@ -22,6 +22,7 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
   );
 
   private autoHighlightActiveRegionTimeout: NodeJS.Timeout | undefined;
+  private isTreeViewVisible = false;
 
   constructor(
     private regionStore: RegionStore,
@@ -75,8 +76,19 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
     }
   }
 
+  /**
+   * Auto-highlights (using `treeView.reveal`) the cursor's active region in the tree view if:
+   * 1. The tree view is visible
+   * 2. The `shouldAutoHighlightActiveRegion` setting is enabled
+   * 3. The active region is from the active editor's current document version
+   */
   private autoHighlightActiveRegion(): void {
     this.clearAutoHighlightActiveRegionTimeoutIfExists();
+    if (!this.isTreeViewVisible) {
+      // Revealing the active item when the view isn't already visible would expand it if collapsed
+      // and/or change panel if not already open (e.g. if in Search view), which would be annoying
+      return;
+    }
     const shouldAutoHighlightActiveRegion = getGlobalRegionsViewConfigValue(
       "shouldAutoHighlightActiveRegion"
     );
@@ -92,6 +104,7 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
   }
 
   private highlightActiveRegion({ expand = false }: { expand?: boolean | number } = {}): void {
+    this.clearAutoHighlightActiveRegionTimeoutIfExists();
     const { activeRegion } = this.regionStore;
     if (!this.treeView || !activeRegion) {
       return;
@@ -147,6 +160,7 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
       const { documentId, allParentIds } = this.regionStore;
       this.collapsibleStateManager.onExpandTreeItem({ itemId, documentId, allParentIds });
     });
+    treeView.onDidChangeVisibility(this.onTreeViewVisibilityChanged.bind(this));
   }
 
   expandAllTreeItems(): void {
@@ -167,4 +181,18 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
     // being reset to the top of the tree view.
     this.highlightActiveRegion({ expand: 3 });
   }
+
+  // #region On tree view visibility change
+
+  onTreeViewVisibilityChanged(event: vscode.TreeViewVisibilityChangeEvent): void {
+    if (event.visible) {
+      this.isTreeViewVisible = true;
+      this.debouncedAutoHighlightActiveRegion();
+    } else {
+      this.isTreeViewVisible = false;
+      this.clearAutoHighlightActiveRegionTimeoutIfExists();
+    }
+  }
+
+  // #endregion
 }

@@ -21,6 +21,7 @@ export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeIte
   );
 
   private autoHighlightActiveItemTimeout: NodeJS.Timeout | undefined;
+  private isTreeViewVisible = false;
 
   constructor(
     private fullOutlineStore: FullOutlineStore,
@@ -82,8 +83,19 @@ export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeIte
     }
   }
 
+  /**
+   * Auto-highlights (using `treeView.reveal`) the active item in the tree view if:
+   * 1. The tree view is visible
+   * 2. The `shouldAutoHighlightActiveItem` setting is enabled
+   * 3. The active item is from the active editor's current document version
+   */
   private autoHighlightActiveItem(): void {
     this.clearAutoHighlightActiveItemTimeoutIfExists();
+    if (!this.isTreeViewVisible) {
+      // Revealing the active item when the view isn't already visible would expand it if collapsed
+      // and/or change panel if not already open (e.g. if in Search view), which would be annoying
+      return;
+    }
     const shouldAutoHighlightActiveItem = getGlobalFullOutlineViewConfigValue(
       "shouldAutoHighlightActiveItem"
     );
@@ -99,6 +111,7 @@ export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeIte
   }
 
   private highlightActiveItem({ expand = false }: { expand?: boolean | number } = {}): void {
+    this.clearAutoHighlightActiveItemTimeoutIfExists();
     const { activeFullOutlineItem } = this.fullOutlineStore;
     if (!this.treeView || !activeFullOutlineItem) {
       return;
@@ -130,7 +143,12 @@ export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeIte
     this.treeView = treeView;
     treeView.onDidCollapseElement(this.onDidCollapseElement.bind(this));
     treeView.onDidExpandElement(this.onDidExpandElement.bind(this));
+    treeView.onDidChangeVisibility(this.onTreeViewVisibilityChanged.bind(this));
   }
+
+  // #region Tree view events
+
+  // #region On item collapse/expand
 
   onDidCollapseElement(event: vscode.TreeViewExpansionEvent<FullTreeItem>): void {
     const { id: itemId } = event.element;
@@ -163,4 +181,22 @@ export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeIte
     // being reset to the top of the tree view.
     this.highlightActiveItem({ expand: 3 });
   }
+
+  // #endregion
+
+  // #region On tree view visibility change
+
+  onTreeViewVisibilityChanged(event: vscode.TreeViewVisibilityChangeEvent): void {
+    if (event.visible) {
+      this.isTreeViewVisible = true;
+      this.debouncedAutoHighlightActiveItem();
+    } else {
+      this.isTreeViewVisible = false;
+      this.clearAutoHighlightActiveItemTimeoutIfExists();
+    }
+  }
+
+  // #endregion
+
+  // #endregion
 }

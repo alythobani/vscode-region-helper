@@ -108,17 +108,10 @@ To quickly show or hide the **Regions** or **Full Outline** views, you can use t
   - Commands: `Show Full Outline View` / `Hide Full Outline View`
   - Setting: `regionHelper.shouldShowFullOutlineView`
 
-<h3 id="-toggling-auto-highlighting-in-views">🔄 Toggling Auto-Highlighting in Views</h3>
+<h3 id="-toggling-auto-highlighting-in-views">🔄 Toggling Auto-Highlighting/Revealing in Tree Views</h3>
 
-- Sometimes you might want to keep the Regions View or Full Outline View collapsed, but the auto-highlighting of the active region/item will annoyingly re-open the view.
-- To avoid this, you can use the following commands/settings to **toggle this auto-revealing / auto-highlighting behavior**:
-  - **Regions View**:
-    - Commands: `Regions View: Stop Auto-Highlighting Active Region` / `Regions View: Start Auto-Highlighting Active Region`
-    - Setting: `regionHelper.regionsView.shouldAutoHighlightActiveRegion`
-  - **Full Outline View**:
-    - Commands: `Full Outline View: Stop Auto-Highlighting Active Item` / `Full Outline View: Start Auto-Highlighting Active Item`
-    - Setting: `regionHelper.fullOutlineView.shouldAutoHighlightActiveItem`
-  - Each view also has a **title bar action** to toggle this setting:
+- By default, the Regions and Full Outline views will **automatically reveal and highlight** the cursor's active region or symbol as you navigate the editor.
+- If you ever want to **disable this auto-revealing behavior** (e.g. for a more stable scroll position), you can use the `{Stop/Start} Auto-Highlighting Active {Region/Item}` commands, or click the tree view's **title bar action** to toggle it on/off:
 
 ![Toggle Full Outline Auto-Highlighting Title Action](./assets/readme-pics/8-auto-highlight-view-title-action.png)
 
