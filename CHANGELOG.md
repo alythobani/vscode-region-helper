@@ -4,6 +4,10 @@ All notable changes to the "region-helper" extension will be documented in this 
 
 This changelog adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) and is structured for clarity and readability, inspired by [Common Changelog](https://common-changelog.org/) and [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.5.0] - 2025-05-22
+
+- **Improve auto-highlighting of active tree view items**: The Regions and Full Outline views now only auto-highlight their active item when the view is visible, removing the need for the user to toggle auto-highlighting off when wanting to remain in another panel (e.g. Search) or keep a view collapsed
+
 ## [1.4.1] - 2025-05-20
 
 - **Extend block comment region pattern support**
