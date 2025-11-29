@@ -52,7 +52,26 @@ Updated the C# region boundary pattern to support both styles:
 }
 ```
 
-### 2. Visual Basic .NET Support (Enhancement)
+### 2. F# Native Region Support (Enhancement)
+
+F# also supports native `#region`/`#endregion` directives. Updated the pattern to support both styles:
+- Native preprocessor style: `#region Name` / `#endregion`
+- Commented style: `// #region Name` / `// #endregion`
+
+```json
+"fsharp": {
+  "startRegex": [
+    "^\\s*#region(?:\\s+(.*?)\\s*)?$",
+    "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$"
+  ],
+  "endRegex": [
+    "^\\s*#endregion(?:\\s.*)?$",
+    "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
+  ]
+}
+```
+
+### 3. Visual Basic .NET Support (Enhancement)
 
 Added support for VB.NET region syntax:
 - `#Region "Name"` / `#End Region`
@@ -64,21 +83,40 @@ Added support for VB.NET region syntax:
 }
 ```
 
+### 4. Windows Compatibility Fix
+
+Fixed npm scripts to work on Windows by replacing Unix-specific `rm -rf` with cross-platform `npx rimraf`:
+
+**Before:**
+```json
+"compile-tests": "rm -rf dist-tests && webpack --config webpack.test.config.ts",
+"test": "rm -rf .vscode-test/user-data && vscode-test"
+```
+
+**After:**
+```json
+"compile-tests": "npx rimraf dist-tests && webpack --config webpack.test.config.ts",
+"test": "npx rimraf .vscode-test/user-data && vscode-test"
+```
+
 ## Files Changed
 
 | File | Changes |
 |------|---------|
-| `package.json` | Updated C# patterns to array format supporting both styles; Added VB.NET language patterns |
-| `src/test/lib/parseAllRegions.test.ts` | Updated test assertions to handle C# sample with additional native region |
+| `package.json` | Updated C# and F# patterns to array format supporting both styles; Added VB.NET language patterns; Fixed Windows compatibility for npm scripts |
+| `src/test/lib/parseAllRegions.test.ts` | Updated test assertions to handle C# and F# samples with additional native regions |
 | `src/test/samples/validSamples/validSample.cs` | Added native `#region` test case |
+| `src/test/samples/validSamples/validSample.fs` | Added native `#region` test case |
 | `src/test/samples/validSamples/validSample.vb` | New VB.NET valid sample file |
 | `src/test/samples/invalidSamples/invalidSample.vb` | New VB.NET invalid sample file |
 
 ## Testing
 
 - [x] Updated C# test sample to include native `#region` directives
-- [x] Updated test assertions to verify native C# regions are parsed correctly
+- [x] Updated F# test sample to include native `#region` directives
+- [x] Updated test assertions to verify native C# and F# regions are parsed correctly
 - [x] Added VB.NET test sample files (valid and invalid)
+- [x] Fixed npm scripts for Windows compatibility
 - [x] No TypeScript compilation errors
 
 ## Additional Notes
@@ -90,8 +128,6 @@ Based on code review, here are some observations that could be addressed in futu
 1. **TODO in Region.ts (line 6):** Consider refactoring `startLineIdx`, `endLineIdx`, and `endLineCharacterIdx` into a single `vscode.Range` field for cleaner code.
 
 2. **Performance optimization TODOs:** Both `RegionStore.ts` (line 137) and `DocumentSymbolStore.ts` (line 104) have TODOs noting that change event firing could be made more precise.
-
-3. **F# native regions:** F# also supports native `#region`/`#endregion` directives (not commented). The current pattern only supports commented style. This could be a future enhancement.
 
 ## Related Issues
 

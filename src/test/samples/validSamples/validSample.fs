@@ -13,3 +13,10 @@ type MyClass() =
     //        #endregion
 // #endregion
 
+#region NativeRegion
+type NativeClass() =
+    #region InnerNativeRegion
+    member this.NativeMethod() = ()
+    #endregion
+#endregion
+
