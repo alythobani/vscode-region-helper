@@ -13,3 +13,11 @@ class MyClass {
     //    #endregion  
 }
 // #endregion
+
+#region NativeRegion
+class NativeClass {
+    #region InnerNativeRegion
+    void NativeMethod() {}
+    #endregion
+}
+#endregion

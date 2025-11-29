@@ -18,7 +18,11 @@ suite("Parse files with only valid regions", () => {
 
       const { topLevelRegions, invalidMarkers } = parseAllRegions(sampleDocument);
 
-      assert.strictEqual(topLevelRegions.length, 2, "Expected 2 top-level regions");
+      // C# sample has an additional native #region directive test case
+      const isCSharp = sampleFileName.endsWith(".cs");
+      const expectedTopLevelCount = isCSharp ? 3 : 2;
+
+      assert.strictEqual(topLevelRegions.length, expectedTopLevelCount, `Expected ${expectedTopLevelCount} top-level regions`);
       const [firstRegion, secondRegion] = topLevelRegions;
       assertExists(firstRegion);
       assertExists(secondRegion);
@@ -35,6 +39,18 @@ suite("Parse files with only valid regions", () => {
       assert.strictEqual(subregion1.regionIdx, 0);
       assert.strictEqual(subregion2.name, undefined);
       assert.strictEqual(subregion2.regionIdx, 1);
+
+      // Additional assertions for C# native region
+      if (isCSharp) {
+        const thirdRegion = topLevelRegions[2];
+        assertExists(thirdRegion);
+        assert.strictEqual(thirdRegion.name, "NativeRegion");
+        assert.strictEqual(thirdRegion.regionIdx, 2);
+        assert.strictEqual(thirdRegion.children.length, 1, "Expected 1 nested region in NativeRegion");
+        const innerNativeRegion = thirdRegion.children[0];
+        assertExists(innerNativeRegion);
+        assert.strictEqual(innerNativeRegion.name, "InnerNativeRegion");
+      }
 
       assert.strictEqual(invalidMarkers.length, 0, "Expected 0 invalid markers");
     });
