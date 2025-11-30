@@ -122,7 +122,20 @@ export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeIte
 
   // #region Required TreeDataProvider methods
   getTreeItem(element: FullTreeItem): vscode.TreeItem {
+    // Update collapsible state from saved state or default based on children
+    element.collapsibleState = this.getCollapsibleState(element);
     return element;
+  }
+
+  private getCollapsibleState(element: FullTreeItem): vscode.TreeItemCollapsibleState {
+    if (element.children.length === 0) {
+      return vscode.TreeItemCollapsibleState.None;
+    }
+    const savedCollapsibleState = this.collapsibleStateManager.getSavedCollapsibleState({
+      documentId: this.fullOutlineStore.documentId,
+      itemId: element.id,
+    });
+    return savedCollapsibleState ?? vscode.TreeItemCollapsibleState.Expanded;
   }
 
   getParent(element: FullTreeItem): FullTreeItem | undefined {
