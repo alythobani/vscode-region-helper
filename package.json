@@ -16,9 +16,9 @@
     "color": "#00002e",
     "theme": "dark"
   },
-  "icon": "./assets/icon.png",
+  "icon": "assets/icon.png",
   "license": "GPL-3.0-only",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "engines": {
     "vscode": "^1.94.0"
   },
@@ -547,7 +547,7 @@
     "watch": "webpack --config webpack.config.ts --watch",
     "compile-tests": "npx rimraf dist-tests && webpack --config webpack.test.config.ts",
     "watch-tests": "webpack --config webpack.test.config.ts --watch",
-    "package": "vsce package",
+    "package": "npx @vscode/vsce package",
     "pretest": "npm run compile-tests && npm run lint",
     "lint": "eslint src",
     "test": "npx rimraf .vscode-test/user-data && vscode-test"

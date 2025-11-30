@@ -44,10 +44,10 @@ npm install
 
 # 3. Build and package the extension
 npm run compile
-npx vsce package
+npx @vscode/vsce package
 
 # 4. Install the generated .vsix file
-code --install-extension region-helper-1.5.0.vsix
+# See "Install the Extension" section below for multiple options
 ```
 
 ## Step-by-Step Instructions
@@ -77,13 +77,16 @@ npm run test     # Runs the test suite in VS Code
 
 ### 4. Package the Extension
 
-First, ensure you have `vsce` (Visual Studio Code Extension Manager) available:
+Use `@vscode/vsce` (Visual Studio Code Extension Manager) to package the extension:
 
 ```bash
-# Option A: Use npx (no global install needed)
-npx vsce package
+# Option A: Use npx (recommended, no global install needed)
+npx @vscode/vsce package
 
-# Option B: Install globally
+# Option B: Use npm script
+npm run package
+
+# Option C: Install globally (optional)
 npm install -g @vscode/vsce
 vsce package
 ```
@@ -95,8 +98,11 @@ This creates a `.vsix` file (e.g., `region-helper-1.5.0.vsix`) in the project ro
 #### Option A: Via Command Line
 
 ```bash
+# If 'code' (or 'code-insiders') is in your PATH:
 code --install-extension region-helper-1.5.0.vsix
 ```
+
+If `code` is not recognized, use **Option B** or **Option C** below instead (recommended for Windows users).
 
 #### Option B: Via VS Code UI
 
@@ -152,7 +158,14 @@ Or via the VS Code UI:
 
 ### "vsce: command not found"
 
-Use `npx vsce package` instead, or install globally with `npm install -g @vscode/vsce`.
+Use `npx @vscode/vsce package` or `npm run package` instead. Alternatively, install globally with `npm install -g @vscode/vsce`.
+
+### "code: command not found" or "code is not recognized"
+
+The `code` command may not be in your PATH. Use one of these alternatives:
+1. **Recommended:** Use the VS Code UI to install the extension (Options B or C above)
+2. **Add to PATH during install:** Reinstall VS Code and check "Add to PATH" during installation
+3. **Add to PATH manually:** Add VS Code's `bin` folder to your system PATH environment variable (the location varies by installation type and OS)
 
 ### Extension doesn't load
 
