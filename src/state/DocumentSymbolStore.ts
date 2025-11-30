@@ -98,10 +98,16 @@ export class DocumentSymbolStore {
         return;
       }
       sortSymbolsRecursivelyByStart(documentSymbols); // By default, `executeDocumentSymbolProvider` returns symbols ordered by name
+
+      const oldDocumentSymbols = this._documentSymbols;
       this._versionedDocumentId = versionedDocumentId;
       this._documentSymbols = documentSymbols;
       this._flattenedDocumentSymbols = flattenDocumentSymbols(documentSymbols);
-      this._onDidChangeDocumentSymbols.fire(); // TODO - can make this more precise if desired
+
+      // Only fire event if the symbols actually changed
+      if (didDocumentSymbolsChange(oldDocumentSymbols, documentSymbols)) {
+        this._onDidChangeDocumentSymbols.fire();
+      }
     } catch (_error) {
       // console.error("Error fetching document symbols:", error);
     }
@@ -115,38 +121,40 @@ function sortSymbolsRecursivelyByStart(symbols: vscode.DocumentSymbol[]): void {
   }
 }
 
-// function didDocumentSymbolsChange(
-//   oldDocumentSymbols: vscode.DocumentSymbol[] | undefined,
-//   newDocumentSymbols: vscode.DocumentSymbol[] | undefined
-// ): boolean {
-//   if (!oldDocumentSymbols || !newDocumentSymbols) {
-//     return oldDocumentSymbols !== newDocumentSymbols;
-//   }
-//   if (oldDocumentSymbols.length !== newDocumentSymbols.length) {
-//     return true;
-//   }
-//   for (let i = 0; i < oldDocumentSymbols.length; i++) {
-//     const oldDocumentSymbol = oldDocumentSymbols[i];
-//     const newDocumentSymbol = newDocumentSymbols[i];
-//     if (
-//       oldDocumentSymbol &&
-//       newDocumentSymbol &&
-//       !areDocumentSymbolsEqual(oldDocumentSymbol, newDocumentSymbol)
-//     ) {
-//       return true;
-//     }
-//   }
-//   return false;
-// }
+// #region Change detection helpers
 
-// function areDocumentSymbolsEqual(
-//   symbol1: vscode.DocumentSymbol,
-//   symbol2: vscode.DocumentSymbol
-// ): boolean {
-//   return (
-//     symbol1.name === symbol2.name &&
-//     symbol1.kind === symbol2.kind &&
-//     symbol1.range.isEqual(symbol2.range) &&
-//     symbol1.selectionRange.isEqual(symbol2.selectionRange)
-//   );
-// }
+function didDocumentSymbolsChange(
+  oldDocumentSymbols: vscode.DocumentSymbol[],
+  newDocumentSymbols: vscode.DocumentSymbol[]
+): boolean {
+  if (oldDocumentSymbols.length !== newDocumentSymbols.length) {
+    return true;
+  }
+  for (let i = 0; i < oldDocumentSymbols.length; i++) {
+    const oldDocumentSymbol = oldDocumentSymbols[i];
+    const newDocumentSymbol = newDocumentSymbols[i];
+    if (
+      oldDocumentSymbol &&
+      newDocumentSymbol &&
+      !areDocumentSymbolsEqual(oldDocumentSymbol, newDocumentSymbol)
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function areDocumentSymbolsEqual(
+  symbol1: vscode.DocumentSymbol,
+  symbol2: vscode.DocumentSymbol
+): boolean {
+  return (
+    symbol1.name === symbol2.name &&
+    symbol1.kind === symbol2.kind &&
+    symbol1.range.isEqual(symbol2.range) &&
+    symbol1.selectionRange.isEqual(symbol2.selectionRange) &&
+    !didDocumentSymbolsChange(symbol1.children, symbol2.children)
+  );
+}
+
+// #endregion

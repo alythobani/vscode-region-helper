@@ -3,14 +3,14 @@ import { getRegionDisplayName, getRegionRangeText } from "../lib/getRegionDispla
 import { getRegionParents } from "../lib/getRegionParents";
 import { type Region } from "../models/Region";
 import {
-  clearHighlightedRegions,
-  highlightAndScrollRegionIntoView,
+    clearHighlightedRegions,
+    highlightAndScrollRegionIntoView,
 } from "../utils/highlightRegion";
 import { moveCursorToFirstNonWhitespaceCharOfLine } from "../utils/moveCursorToFirstNonWhitespaceOfLine";
 import { scrollCurrentLineIntoView } from "../utils/scrollUtils";
 import {
-  type RegionHelperClosuredCommand,
-  type RegionHelperClosuredParams,
+    type RegionHelperClosuredCommand,
+    type RegionHelperClosuredParams,
 } from "./registerCommand";
 
 type RegionQuickPickItem = vscode.QuickPickItem & { startLineIdx: number; endLineIdx: number };
@@ -51,7 +51,8 @@ function getRegionQuickPickItems(regions: Region[]): RegionQuickPickItem[] {
 }
 
 function makeRegionQuickPickItem(region: Region): RegionQuickPickItem {
-  const { startLineIdx, endLineIdx } = region;
+  const startLineIdx = region.range.start.line;
+  const endLineIdx = region.range.end.line;
   const label = getRegionQuickPickItemLabel(region);
   const description = getRegionRangeText(region);
   return { label, description, startLineIdx, endLineIdx };
@@ -73,7 +74,9 @@ function getActiveRegionQuickPickItem({
   regionQuickPickItems: RegionQuickPickItem[];
 }): RegionQuickPickItem | undefined {
   return activeRegion
-    ? regionQuickPickItems.find((item) => item.startLineIdx === activeRegion.startLineIdx)
+    ? regionQuickPickItems.find(
+        (item) => item.startLineIdx === activeRegion.range.start.line
+      )
     : regionQuickPickItems[0];
 }
 
@@ -161,10 +164,10 @@ function highlightAndScrollItemIntoView({
   activeTextEditor: vscode.TextEditor;
 }): void {
   const { startLineIdx, endLineIdx } = regionQuickPickItem;
+  const range = new vscode.Range(startLineIdx, 0, endLineIdx, 0);
   highlightAndScrollRegionIntoView({
     activeTextEditor,
-    startLineIdx,
-    endLineIdx,
+    range,
     revealType: vscode.TextEditorRevealType.InCenter,
   });
 }

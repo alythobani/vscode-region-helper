@@ -13,7 +13,7 @@ export function moveCursorToRegion({
 }): void {
   moveCursorToFirstNonWhitespaceCharOfLine({
     activeTextEditor,
-    lineIdx: region.startLineIdx,
+    lineIdx: region.range.start.line,
     revealType,
   });
 }

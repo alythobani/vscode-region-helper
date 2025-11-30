@@ -6,7 +6,10 @@ export function getRegionDisplayName(region: Region): string {
 }
 
 export function getRegionRangeText(region: Region): string {
-  return getLinesText(region);
+  return getLinesText({
+    startLineIdx: region.range.start.line,
+    endLineIdx: region.range.end.line,
+  });
 }
 
 export function getLinesText({

@@ -1,4 +1,4 @@
-import type * as vscode from "vscode";
+import * as vscode from "vscode";
 import { type Region } from "../models/Region";
 import { getRegionBoundaryPatternMap, type RegexOrArray } from "./regionBoundaryPatterns";
 
@@ -53,8 +53,12 @@ export function parseAllRegions(document: vscode.TextDocument): RegionParseResul
       continue; // Can still treat following regions in editor as valid; move to the next line
     }
     lastOpenRegion.wasClosed = true;
-    lastOpenRegion.endLineIdx = lineIdx;
-    lastOpenRegion.endLineCharacterIdx = lineText.length;
+    lastOpenRegion.range = new vscode.Range(
+      lastOpenRegion.range.start.line,
+      0,
+      lineIdx,
+      lineText.length
+    );
     const maybeParentRegion = openRegionsStack[openRegionsStack.length - 1];
     if (maybeParentRegion) {
       lastOpenRegion.parent = maybeParentRegion;
@@ -65,7 +69,7 @@ export function parseAllRegions(document: vscode.TextDocument): RegionParseResul
     regionIdx = lastOpenRegion.regionIdx + 1;
   }
   for (const openRegion of openRegionsStack) {
-    invalidMarkers.push({ boundaryType: "start", lineIdx: openRegion.startLineIdx });
+    invalidMarkers.push({ boundaryType: "start", lineIdx: openRegion.range.start.line });
     addClosedChildrenToTopLevelRegions(openRegion, topLevelRegions);
   }
   return { topLevelRegions, invalidMarkers };
@@ -100,12 +104,12 @@ function makeNewOpenRegion({
 }): Region {
   const maybeRegionName = maybeGetRegionNameFromStartMatch(startMatch);
   const id = getUniqueRegionId({ maybeRegionName, regionCountByEffectiveName });
+  // Create a placeholder range with start line; end will be updated when region is closed
+  const placeholderRange = new vscode.Range(startLineIdx, 0, -1, -1);
   return {
     id,
     name: maybeRegionName,
-    startLineIdx,
-    endLineIdx: -1,
-    endLineCharacterIdx: -1,
+    range: placeholderRange,
     regionIdx,
     wasClosed: false,
     children: [],

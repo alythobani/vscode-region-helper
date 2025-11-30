@@ -119,14 +119,15 @@ export class RegionStore {
     const activeDocument = vscode.window.activeTextEditor?.document;
     const activeDocumentId = activeDocument ? getDocumentId(activeDocument) : undefined;
     const versionedDocumentId = activeDocument ? getVersionedDocumentId(activeDocument) : undefined;
-    let shouldFireChangeEvents: boolean;
+
+    const oldFlattenedRegions = this._flattenedRegions;
+    const oldInvalidMarkers = this._invalidMarkers;
+
     if (!activeDocument) {
-      const oldFlattenedRegions = this._flattenedRegions;
       this._topLevelRegions = [];
       this._flattenedRegions = [];
       this._invalidMarkers = [];
       this._allParentIds = new Set<string>();
-      shouldFireChangeEvents = oldFlattenedRegions.length > 0;
     } else {
       const { topLevelRegions, invalidMarkers } = parseAllRegions(activeDocument);
       this._topLevelRegions = topLevelRegions;
@@ -134,12 +135,15 @@ export class RegionStore {
       this._flattenedRegions = flattenedRegions;
       this._allParentIds = allParentIds;
       this._invalidMarkers = invalidMarkers;
-      shouldFireChangeEvents = true; // TODO - can make this more precise if desired
     }
     this._documentId = activeDocumentId;
     this._versionedDocumentId = versionedDocumentId;
-    if (shouldFireChangeEvents) {
+
+    // Only fire events if the data actually changed
+    if (didFlattenedRegionsChange(oldFlattenedRegions, this._flattenedRegions)) {
       this._onDidChangeRegions.fire();
+    }
+    if (didInvalidMarkersChange(oldInvalidMarkers, this._invalidMarkers)) {
       this._onDidChangeInvalidMarkers.fire();
     }
     this.isRefreshingRegions = false;
@@ -181,34 +185,57 @@ export class RegionStore {
   // #endregion
 }
 
-// function didFlattenedRegionsChange(
-//   oldFlattenedRegions: FlattenedRegion[],
-//   newFlattenedRegions: FlattenedRegion[]
-// ): boolean {
-//   if (oldFlattenedRegions.length !== newFlattenedRegions.length) {
-//     return true;
-//   }
-//   for (let i = 0; i < oldFlattenedRegions.length; i++) {
-//     const oldFlattenedRegion = oldFlattenedRegions[i];
-//     const newFlattenedRegion = newFlattenedRegions[i];
-//     if (
-//       oldFlattenedRegion &&
-//       newFlattenedRegion &&
-//       !areFlattenedRegionsEqual(oldFlattenedRegion, newFlattenedRegion)
-//     ) {
-//       return true;
-//     }
-//   }
-//   return false;
-// }
+// #region Change detection helpers
 
-// function areFlattenedRegionsEqual(region1: FlattenedRegion, region2: FlattenedRegion): boolean {
-//   return (
-//     region1.flatRegionIdx === region2.flatRegionIdx &&
-//     region1.name === region2.name &&
-//     region1.startLineIdx === region2.startLineIdx &&
-//     region1.endLineIdx === region2.endLineIdx &&
-//     region1.endLineCharacterIdx === region2.endLineCharacterIdx &&
-//     region1.wasClosed === region2.wasClosed
-//   );
-// }
+function didFlattenedRegionsChange(
+  oldFlattenedRegions: FlattenedRegion[],
+  newFlattenedRegions: FlattenedRegion[]
+): boolean {
+  if (oldFlattenedRegions.length !== newFlattenedRegions.length) {
+    return true;
+  }
+  for (let i = 0; i < oldFlattenedRegions.length; i++) {
+    const oldFlattenedRegion = oldFlattenedRegions[i];
+    const newFlattenedRegion = newFlattenedRegions[i];
+    if (
+      oldFlattenedRegion &&
+      newFlattenedRegion &&
+      !areFlattenedRegionsEqual(oldFlattenedRegion, newFlattenedRegion)
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function areFlattenedRegionsEqual(region1: FlattenedRegion, region2: FlattenedRegion): boolean {
+  return (
+    region1.flatRegionIdx === region2.flatRegionIdx &&
+    region1.name === region2.name &&
+    region1.range.isEqual(region2.range) &&
+    region1.wasClosed === region2.wasClosed
+  );
+}
+
+function didInvalidMarkersChange(
+  oldMarkers: InvalidMarker[],
+  newMarkers: InvalidMarker[]
+): boolean {
+  if (oldMarkers.length !== newMarkers.length) {
+    return true;
+  }
+  for (let i = 0; i < oldMarkers.length; i++) {
+    const oldMarker = oldMarkers[i];
+    const newMarker = newMarkers[i];
+    if (
+      oldMarker &&
+      newMarker &&
+      (oldMarker.boundaryType !== newMarker.boundaryType || oldMarker.lineIdx !== newMarker.lineIdx)
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// #endregion

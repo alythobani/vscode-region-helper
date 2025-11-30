@@ -73,7 +73,7 @@ suite("getPreviousRegion", () => {
     const expectedRegion = sampleRegions[expectedRegionIdx];
     assertExists(expectedRegion);
     assert.strictEqual(previousRegion.name, expectedRegion.name);
-    assert.strictEqual(previousRegion.startLineIdx, expectedRegion.lineIdx);
+    assert.strictEqual(previousRegion.range.start.line, expectedRegion.lineIdx);
   }
 
   function setCursorLine(lineIdx: number): void {

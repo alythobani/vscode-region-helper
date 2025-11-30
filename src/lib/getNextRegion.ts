@@ -8,7 +8,7 @@ export function getNextRegion(
   cursorLineIdx: number
 ): Region | undefined {
   for (const region of flattenedRegions) {
-    if (region.startLineIdx > cursorLineIdx) {
+    if (region.range.start.line > cursorLineIdx) {
       return region;
     }
   }

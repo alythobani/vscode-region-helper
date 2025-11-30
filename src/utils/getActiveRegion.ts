@@ -20,7 +20,7 @@ export function getActiveRegionInEditor(
 
 export function getActiveRegionAtLine(regions: Region[], cursorLine: number): Region | undefined {
   for (const region of regions) {
-    if (cursorLine < region.startLineIdx || cursorLine > region.endLineIdx) {
+    if (cursorLine < region.range.start.line || cursorLine > region.range.end.line) {
       continue;
     }
     return getActiveRegionAtLine(region.children, cursorLine) ?? region;

@@ -1,17 +1,18 @@
 import * as vscode from "vscode";
 
-export function selectLines({
+export function selectRange({
   activeTextEditor,
-  startLineIdx,
-  endLineIdx,
-  endLineCharacterIdx,
+  range,
 }: {
   activeTextEditor: vscode.TextEditor;
-  startLineIdx: number;
-  endLineIdx: number;
-  endLineCharacterIdx: number;
+  range: vscode.Range;
 }): void {
-  const selectionRange = new vscode.Selection(startLineIdx, 0, endLineIdx, endLineCharacterIdx);
+  const selectionRange = new vscode.Selection(
+    range.start.line,
+    range.start.character,
+    range.end.line,
+    range.end.character
+  );
   activeTextEditor.selection = selectionRange;
   activeTextEditor.revealRange(
     selectionRange,

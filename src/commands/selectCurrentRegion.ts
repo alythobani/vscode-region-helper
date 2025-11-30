@@ -1,9 +1,9 @@
 import * as vscode from "vscode";
 import { getActiveRegionInEditor } from "../utils/getActiveRegion";
-import { selectLines } from "../utils/selectionUtils";
+import { selectRange } from "../utils/selectionUtils";
 import {
-  type RegionHelperClosuredCommand,
-  type RegionHelperClosuredParams,
+    type RegionHelperClosuredCommand,
+    type RegionHelperClosuredParams,
 } from "./registerCommand";
 
 export const selectCurrentRegionCommand: RegionHelperClosuredCommand = {
@@ -23,6 +23,5 @@ function selectCurrentRegion({ regionStore }: RegionHelperClosuredParams): void 
   if (!currentActiveRegion) {
     return;
   }
-  const { startLineIdx, endLineIdx, endLineCharacterIdx } = currentActiveRegion;
-  selectLines({ activeTextEditor, startLineIdx, endLineIdx, endLineCharacterIdx });
+  selectRange({ activeTextEditor, range: currentActiveRegion.range });
 }

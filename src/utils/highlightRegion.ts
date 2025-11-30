@@ -7,31 +7,27 @@ const decorationType = vscode.window.createTextEditorDecorationType({
 
 export function highlightAndScrollRegionIntoView({
   activeTextEditor,
-  startLineIdx,
-  endLineIdx,
+  range,
   revealType,
 }: {
   activeTextEditor: vscode.TextEditor;
-  startLineIdx: number;
-  endLineIdx: number;
+  range: vscode.Range;
   revealType: vscode.TextEditorRevealType;
 }): void {
-  highlightRegion({ activeTextEditor, startLineIdx, endLineIdx });
-  scrollLineIntoView({ editor: activeTextEditor, lineIdx: startLineIdx, revealType });
+  highlightRegion({ activeTextEditor, range });
+  scrollLineIntoView({ editor: activeTextEditor, lineIdx: range.start.line, revealType });
 }
 
 export function highlightRegion({
   activeTextEditor,
-  startLineIdx,
-  endLineIdx,
+  range,
 }: {
   activeTextEditor: vscode.TextEditor;
-  startLineIdx: number;
-  endLineIdx: number;
+  range: vscode.Range;
 }): void {
   activeTextEditor.setDecorations(decorationType, [
     {
-      range: new vscode.Range(startLineIdx, 0, endLineIdx + 1, 0),
+      range: new vscode.Range(range.start.line, 0, range.end.line + 1, 0),
     },
   ]);
 }

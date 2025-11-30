@@ -4,8 +4,8 @@ import { type Region } from "../models/Region";
 import { getActiveCursorLineIdx } from "../utils/getActiveCursorLineIdx";
 import { moveCursorToFirstNonWhitespaceCharOfLine } from "../utils/moveCursorToFirstNonWhitespaceOfLine";
 import {
-  type RegionHelperClosuredCommand,
-  type RegionHelperClosuredParams,
+    type RegionHelperClosuredCommand,
+    type RegionHelperClosuredParams,
 } from "./registerCommand";
 
 export const goToRegionBoundaryCommand: RegionHelperClosuredCommand = {
@@ -40,7 +40,8 @@ function goToRegionBoundary({ regionStore }: RegionHelperClosuredParams): void {
 }
 
 function getRegionBoundaryLineForJump(activeRegion: Region, cursorLine: number): number {
-  const { startLineIdx, endLineIdx } = activeRegion;
+  const startLineIdx = activeRegion.range.start.line;
+  const endLineIdx = activeRegion.range.end.line;
   if (cursorLine === startLineIdx) {
     return endLineIdx;
   }

@@ -47,7 +47,7 @@ suite("getNextRegion", () => {
     assert.notStrictEqual(nextRegion, undefined);
     assertExists(nextRegion); // Let TS know that nextRegion is not undefined
     assert.strictEqual(nextRegion.name, expectedRegionName);
-    assert.strictEqual(nextRegion.startLineIdx, expectedLineIdx);
+    assert.strictEqual(nextRegion.range.start.line, expectedLineIdx);
   }
 
   function setCursorLine(lineIdx: number): void {

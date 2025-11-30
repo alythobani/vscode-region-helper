@@ -10,7 +10,7 @@ export function getPreviousRegion(
 ): Region | undefined {
   for (let i = flattenedRegions.length - 1; i >= 0; i--) {
     const region = flattenedRegions[i];
-    if (region && region.startLineIdx < cursorLineIdx) {
+    if (region && region.range.start.line < cursorLineIdx) {
       return region;
     }
   }

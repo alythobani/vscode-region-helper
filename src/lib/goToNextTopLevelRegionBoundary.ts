@@ -19,10 +19,10 @@ export function goToNextTopLevelRegionBoundary({
   revealType: vscode.TextEditorRevealType;
 }): void {
   for (const region of topLevelRegions) {
-    if (region.startLineIdx > cursorLine) {
+    if (region.range.start.line > cursorLine) {
       moveCursorToFirstNonWhitespaceCharOfLine({
         activeTextEditor,
-        lineIdx: region.startLineIdx,
+        lineIdx: region.range.start.line,
         revealType,
       });
       return;
