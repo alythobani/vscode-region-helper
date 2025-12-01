@@ -5,7 +5,9 @@ import { openAllFilesInSampleFolder } from "./utils/openSampleDocument";
 
 const regionBoundaryPatternByLanguageId = getRegionBoundaryPatternMap();
 
-suite("Every config default language has an associated valid sample file", () => {
+suite("Every config default language has an associated valid sample file", function () {
+  this.timeout(30000); // Opening 50+ files can take time
+
   const sampleFileLanguageIds = new Set<string>();
   suiteSetup(async () => {
     const sampleDocuments = await openAllFilesInSampleFolder("validSamples");
@@ -19,7 +21,9 @@ suite("Every config default language has an associated valid sample file", () =>
   }
 });
 
-suite("Every valid sample file has an associated invalid sample file", () => {
+suite("Every valid sample file has an associated invalid sample file", function () {
+  this.timeout(30000); // Opening 50+ files can take time
+
   const invalidSampleFileLanguageIds = new Set<string>();
   suiteSetup(async () => {
     const invalidSampleDocuments = await openAllFilesInSampleFolder("invalidSamples");
