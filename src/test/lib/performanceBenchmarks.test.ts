@@ -10,9 +10,9 @@
 
 import * as assert from "assert";
 import * as vscode from "vscode";
+import { type RegionHelperAPI } from "../../api/regionHelperAPI";
 import { flattenRegionsAndCountParents } from "../../lib/flattenRegions";
 import { parseAllRegions } from "../../lib/parseAllRegions";
-import { RegionStore } from "../../state/RegionStore";
 import { generateLargeTestFile, printEventCountResults, type EventCountResult } from "../utils/benchmarkUtils";
 
 /**
@@ -24,6 +24,17 @@ function wait(ms: number): Promise<void> {
 
 suite("Performance Benchmarks", () => {
   const timeout = 60000; // 60 second timeout for performance tests
+  let regionHelperAPI: RegionHelperAPI;
+
+  // Ensure extension is activated before tests
+  suiteSetup(async () => {
+    const ext = vscode.extensions.getExtension("alythobani.region-helper");
+    if (!ext) {
+      throw new Error("Region Helper extension not found!");
+    }
+    await ext.activate();
+    regionHelperAPI = ext.exports as RegionHelperAPI;
+  });
 
   /**
    * Test region parsing performance with different file sizes.
@@ -104,17 +115,15 @@ const y = 2;
     // Wait for initial parse
     await wait(200);
 
-    const store = RegionStore.getInstance();
-
-    // Count region change events
+    // Count region change events using extension API
     let regionEventCount = 0;
-    const regionDisposable = store.onDidChangeRegions(() => {
+    const regionDisposable = regionHelperAPI.onDidChangeRegions(() => {
       regionEventCount++;
     });
 
-    // Count invalid marker events
+    // Count invalid marker events using extension API
     let invalidMarkerEventCount = 0;
-    const invalidDisposable = store.onDidChangeInvalidMarkers(() => {
+    const invalidDisposable = regionHelperAPI.onDidChangeInvalidMarkers(() => {
       invalidMarkerEventCount++;
     });
 
@@ -188,10 +197,8 @@ const y = 2;
     // Wait for initial parse
     await wait(200);
 
-    const store = RegionStore.getInstance();
-
     let regionEventCount = 0;
-    const regionDisposable = store.onDidChangeRegions(() => {
+    const regionDisposable = regionHelperAPI.onDidChangeRegions(() => {
       regionEventCount++;
     });
 
@@ -237,10 +244,8 @@ const y = 2;
     // Wait for initial parse
     await wait(200);
 
-    const store = RegionStore.getInstance();
-
     let eventCount = 0;
-    const disposable = store.onDidChangeRegions(() => {
+    const disposable = regionHelperAPI.onDidChangeRegions(() => {
       eventCount++;
     });
 

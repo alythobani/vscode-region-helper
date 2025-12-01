@@ -105,7 +105,7 @@ function makeNewOpenRegion({
   const maybeRegionName = maybeGetRegionNameFromStartMatch(startMatch);
   const id = getUniqueRegionId({ maybeRegionName, regionCountByEffectiveName });
   // Create a placeholder range with start line; end will be updated when region is closed
-  const placeholderRange = new vscode.Range(startLineIdx, 0, -1, -1);
+  const placeholderRange = new vscode.Range(startLineIdx, 0, startLineIdx, 0);
   return {
     id,
     name: maybeRegionName,

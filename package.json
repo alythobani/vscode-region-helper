@@ -436,6 +436,11 @@
             "default": true,
             "description": "Show the Regions view."
           },
+          "regionHelper.regionsView.shouldAutoHide": {
+            "type": "boolean",
+            "default": true,
+            "description": "Automatically hide the Regions view when the active document has no regions, and show it when switching to a document with regions."
+          },
           "regionHelper.regionsView.shouldAutoHighlightActiveRegion": {
             "type": "boolean",
             "default": true,
@@ -558,7 +563,7 @@
     "@types/node": "18.x",
     "@types/vscode": "^1.94.0",
     "@types/webpack": "^5.28.5",
-    "@vscode/test-cli": "^0.0.8",
+    "@vscode/test-cli": "^0.0.10",
     "@vscode/test-electron": "^2.3.9",
     "copy-webpack-plugin": "^12.0.2",
     "eslint": "^9.20.1",

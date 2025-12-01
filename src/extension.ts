@@ -9,6 +9,7 @@ import { CollapsibleStateManager } from "./state/CollapsibleStateManager";
 import { DocumentSymbolStore } from "./state/DocumentSymbolStore";
 import { FullOutlineStore } from "./state/FullOutlineStore";
 import { RegionStore } from "./state/RegionStore";
+import { RegionsViewAutoHideManager } from "./state/RegionsViewAutoHideManager";
 import { type FullTreeItem } from "./treeView/fullTreeView/FullTreeItem";
 import { FullTreeViewProvider } from "./treeView/fullTreeView/FullTreeViewProvider";
 import { RegionTreeViewProvider } from "./treeView/regionTreeView/RegionTreeViewProvider";
@@ -44,6 +45,14 @@ export function activate(context: vscode.ExtensionContext): RegionHelperAPI {
   });
   regionTreeViewProvider.setTreeView(regionTreeView);
   subscriptions.push(regionTreeView);
+
+  // Initialize auto-hide manager for the REGIONS view
+  const regionsViewAutoHideManager = new RegionsViewAutoHideManager(
+    regionStore,
+    workspaceState,
+    subscriptions
+  );
+  regionsViewAutoHideManager.setTreeView(regionTreeView);
 
   const fullTreeViewProvider = new FullTreeViewProvider(
     fullOutlineStore,

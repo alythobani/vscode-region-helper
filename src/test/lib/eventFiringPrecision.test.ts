@@ -123,14 +123,16 @@ suite("Event Firing Precision", () => {
 
         counter.reset();
 
-        // Edit inside the Imports region (line 5-6 is inside the region body)
-        // The sampleRegionsDocument.ts has content inside regions we can modify
-        await insertTextAtPosition("// This is a comment inside the region\n", 5, 0);
+        // Edit inside the Imports region by modifying existing content (not adding new lines)
+        // Line 5 has "// import { SomeModule } from "example";"
+        // We'll modify this line without changing line count
+        await replaceTextAtLine(5, "// import { ModifiedModule } from \"example\";");
 
         // Wait for any potential event firing
         await waitForPotentialEvent();
 
         // The event should NOT have fired since region structure is unchanged
+        // (same regions, same line numbers, just different content within)
         assert.strictEqual(
           counter.count,
           0,

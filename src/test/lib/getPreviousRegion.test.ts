@@ -36,6 +36,7 @@ const sampleRegions: RegionNameAndLine[] = [
 suite("getPreviousRegion", () => {
   let regionHelperAPI: RegionHelperAPI;
   let mockCursorLineIdx = 0;
+  let sampleDocument: vscode.TextDocument;
 
   suiteSetup(async () => {
     const regionHelperExtension = vscode.extensions.getExtension("alythobani.region-helper");
@@ -45,7 +46,14 @@ suite("getPreviousRegion", () => {
     await regionHelperExtension.activate();
     regionHelperAPI = regionHelperExtension.exports as RegionHelperAPI;
 
-    await openAndShowSampleDocument("sampleRegionsDocument.ts");
+    sampleDocument = await openSampleDocument("sampleRegionsDocument.ts");
+  });
+
+  setup(async () => {
+    // Ensure the sample document is active before each test
+    await vscode.window.showTextDocument(sampleDocument);
+    // Wait for regions to be parsed
+    await new Promise<void>((resolve) => setTimeout(resolve, 200));
     if (regionHelperAPI.getTopLevelRegions().length === 0) {
       await new Promise<void>((resolve) => {
         const disposable = regionHelperAPI.onDidChangeRegions(() => {

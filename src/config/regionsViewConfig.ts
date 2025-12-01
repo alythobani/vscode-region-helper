@@ -6,6 +6,7 @@ import {
 
 export type RegionsViewConfig = Readonly<{
   isVisible: boolean;
+  shouldAutoHide: boolean;
   shouldAutoHighlightActiveRegion: boolean;
 }>;
 
@@ -13,6 +14,7 @@ type RawRegionsViewConfigKey = keyof RegionsViewConfig;
 
 const defaultRegionsViewConfig = {
   isVisible: true,
+  shouldAutoHide: true,
   shouldAutoHighlightActiveRegion: true,
 } as const satisfies RegionsViewConfig;
 
