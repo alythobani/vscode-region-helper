@@ -19,3 +19,4 @@ assets/readme-gifs/**
 assets/readme-pics/**
 docs/**
 .github/**
+.mypy_cache/**

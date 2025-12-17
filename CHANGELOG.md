@@ -4,6 +4,10 @@ All notable changes to the "region-helper" extension will be documented in this 
 
 This changelog adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) and is structured for clarity and readability, inspired by [Common Changelog](https://common-changelog.org/) and [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.5.2] - 2025-12-17
+
+- Remove `.mypy_cache/` from published package to reduce package size
+
 ## [1.5.1] - 2025-12-17
 
 - **Fix/add default region pattern support for .NET languages**:
