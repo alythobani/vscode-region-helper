@@ -166,14 +166,8 @@
                 "endRegex": "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
               },
               "csharp": {
-                "startRegex": [
-                  "^\\s*#region(?:\\s+(.*?)\\s*)?$",
-                  "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$"
-                ],
-                "endRegex": [
-                  "^\\s*#endregion(?:\\s.*)?$",
-                  "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
-                ]
+                "startRegex": "^\\s*#region(?:\\s+(.*?)\\s*)?$",
+                "endRegex": "^\\s*#endregion(?:\\s.*)?$"
               },
               "css": {
                 "startRegex": "^\\s*\\/\\*+\\s*#region(?:\\s+(.*?)\\s*)?\\*+\\/",
@@ -200,14 +194,8 @@
                 "endRegex": "^\\s*%+\\s*#endregion(?:\\s.*)?$"
               },
               "fsharp": {
-                "startRegex": [
-                  "^\\s*#region(?:\\s+(.*?)\\s*)?$",
-                  "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$"
-                ],
-                "endRegex": [
-                  "^\\s*#endregion(?:\\s.*)?$",
-                  "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
-                ]
+                "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
+                "endRegex": "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
               },
               "go": {
                 "startRegex": "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
@@ -421,7 +409,7 @@
               },
               "vb": {
                 "startRegex": "^\\s*#Region(?:\\s+\"?(.*?)\"?\\s*)?$",
-                "endRegex": "^\\s*#End\\s+Region(?:\\s.*)?$"
+                "endRegex": "^\\s*#End Region(?:\\s.*)?$"
               }
             }
           }

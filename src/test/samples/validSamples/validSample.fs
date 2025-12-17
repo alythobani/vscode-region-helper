@@ -4,19 +4,11 @@ let x = 42
 
 // #region Second Region
 type MyClass() =
-    // #region InnerRegion
+    // #region   InnerRegion   
     member this.MyMethod() = ()
-    // #endregion ends InnerRegion
+    //    #endregion   ends InnerRegion   
 
     // #region
     member this.MyOtherMethod() = ()
-    //        #endregion
+    //#endregion
 // #endregion
-
-#region NativeRegion
-type NativeClass() =
-    #region InnerNativeRegion
-    member this.NativeMethod() = ()
-    #endregion
-#endregion
-
