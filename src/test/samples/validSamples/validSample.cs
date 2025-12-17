@@ -1,15 +1,15 @@
-// #region FirstRegion
+#region FirstRegion
 int x = 42;
-// #endregion
+#endregion
 
-// #region Second Region
+#region Second Region
 class MyClass {
-    //  #region InnerRegion  
+    #region    InnerRegion  
     void MyMethod() {}
-    //#endregion   ends  InnerRegion 
+    #endregion   ends  InnerRegion    
 
-    // #region
+    #region
     void MyMethod2() {}
-    //    #endregion  
+    #endregion  
 }
-// #endregion
+#endregion

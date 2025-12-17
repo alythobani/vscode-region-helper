@@ -1,18 +1,18 @@
-// #region FirstRegion
+#region FirstRegion
 int x = 42;
-// #endregion
+#endregion
 
-// #endregion Invalid end boundary
-// #region Invalid start boundary
+#endregion Invalid end boundary
+#region Invalid start boundary
 
-// #region Second Region
+#region Second Region
 class MyClass {
-    //  #region InnerRegion  
+    #region   InnerRegion    
     void MyMethod() {}
-    //#endregion   ends  InnerRegion 
+    #endregion   ends  InnerRegion   
 
-    // #region
+    #region
     void MyMethod2() {}
-    //    #endregion  
+    #endregion  
 }
-// #endregion
+#endregion
