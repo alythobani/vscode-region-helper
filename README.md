@@ -2,16 +2,16 @@
 
 # Region Helper
 
-[![VSCode Marketplace](https://img.shields.io/visual-studio-marketplace/v/AlyThobani.region-helper?label=VSCode%20Marketplace)](https://marketplace.visualstudio.com/items?itemName=AlyThobani.region-helper)
+[![Current version](https://img.shields.io/visual-studio-marketplace/v/AlyThobani.region-helper)](https://marketplace.visualstudio.com/items?itemName=AlyThobani.region-helper) [![Number of installs](https://img.shields.io/visual-studio-marketplace/i/AlyThobani.region-helper)](https://marketplace.visualstudio.com/items?itemName=AlyThobani.region-helper)
 
 A [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=AlyThobani.region-helper) extension for **navigating, visualizing, and managing code regions**.
 
 <h2 id="-features">⚡️ Features</h2>
 
-- 📁 **Regions View** – Interactive tree for navigating regions.
-- 🏛 **Full Outline View** – Unified interactive tree for regions and language symbols.
+- 📁 **Regions View** – Interactive tree for viewing and navigating regions.
+- 🏛 **Full Outline View** – Like VSCode's builtin Outline view, but incorporates regions.
+- 🐇 **Quick Navigation** – Jump, search, and select regions with commands and keyboard shortcuts.
 - ⚠️ **Diagnostics** – Detects unmatched region boundaries.
-- 🐇 **Quick Navigation** – Jump, search, and select regions with commands.
 
 ![Region Helper Demo](./assets/readme-gifs/0-main-demo.gif)
 
@@ -121,10 +121,11 @@ To quickly show or hide the **Regions** or **Full Outline** views, you can use t
   - **C, C++, C#, Java, Python, JavaScript, JSX, TypeScript, TSX, PHP, Ruby, Swift, Go, Rust, HTML, XML, Markdown, JSON/JSONC, YAML, SQL, and more**.
 - Define your own **custom region patterns**, or adjust the **existing default patterns**, to customize how regions are parsed.
   - Setting: `regionHelper.regionBoundaryPatternByLanguageId`
+    - Note: you may need to restart the extension after changing this setting for it to take effect.
 
 <h2 id="-extension-api">📡 Extension API</h2>
 
-Region Helper provides an API for accessing **code regions** and **full outline symbols** programmatically. You can use it to build **region-aware tools** for VSCode without having to write your own file-parsing logic.
+Region Helper provides an API for accessing **parsed code regions** and **full outline symbols** programmatically. You can use it to build your own VSCode region extension without worrying about writing a region parser from scratch!
 
 **See the full [API documentation](./docs/API.md) for details and examples.**
 

@@ -4,6 +4,10 @@ All notable changes to the "region-helper" extension will be documented in this 
 
 This changelog adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) and is structured for clarity and readability, inspired by [Common Changelog](https://common-changelog.org/) and [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.5.3] - 2025-12-20
+
+- Slight adjustments to README, and also a re-publish attempt since VSCode seemed to silently fail to fully publish v1.5.2
+
 ## [1.5.2] - 2025-12-17
 
 - Remove `.mypy_cache/` from published package to reduce package size
