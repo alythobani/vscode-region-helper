@@ -6,11 +6,24 @@ type DocumentSymbolFetchResult = {
   versionedDocumentId: string;
 };
 
+/**
+ * Checks if a document is still the active document.
+ * Used to avoid returning stale results after retry delays.
+ */
+function isDocumentStillActive(document: vscode.TextDocument): boolean {
+  const activeDocument = vscode.window.activeTextEditor?.document;
+  return activeDocument?.uri.toString() === document.uri.toString();
+}
+
 export async function fetchDocumentSymbolsAfterDelay(
   document: vscode.TextDocument,
   delayMs: number
-): Promise<DocumentSymbolFetchResult> {
+): Promise<DocumentSymbolFetchResult | undefined> {
   await new Promise((resolve) => setTimeout(resolve, delayMs));
+  // Check if the document is still active after the delay
+  if (!isDocumentStillActive(document)) {
+    return undefined;
+  }
   return await fetchDocumentSymbols(document);
 }
 

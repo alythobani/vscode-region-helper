@@ -86,13 +86,18 @@ export class DocumentSymbolStore {
       return;
     }
     try {
-      const { documentSymbols, versionedDocumentId } =
+      const fetchResult =
         attemptIdx === 0
           ? await fetchDocumentSymbols(document)
           : await fetchDocumentSymbolsAfterDelay(
               document,
               DOCUMENT_SYMBOLS_FETCH_REATTEMPT_DELAY_MS
             );
+      // If the document became inactive during a delayed retry, fetchResult will be undefined
+      if (!fetchResult) {
+        return;
+      }
+      const { documentSymbols, versionedDocumentId } = fetchResult;
       if (documentSymbols === undefined) {
         this.debouncedRefreshDocumentSymbols(document, attemptIdx + 1);
         return;

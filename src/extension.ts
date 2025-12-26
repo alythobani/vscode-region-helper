@@ -45,7 +45,7 @@ export function activate(context: vscode.ExtensionContext): RegionHelperAPI {
     treeDataProvider: regionTreeViewProvider,
     showCollapseAll: true,
   });
-  regionTreeViewProvider.setTreeView(regionTreeView);
+  regionTreeViewProvider.setTreeView(regionTreeView, subscriptions);
   subscriptions.push(regionTreeView);
 
   // Initialize auto-hide manager for the REGIONS view
@@ -65,7 +65,7 @@ export function activate(context: vscode.ExtensionContext): RegionHelperAPI {
     treeDataProvider: fullTreeViewProvider,
     showCollapseAll: true,
   });
-  fullTreeViewProvider.setTreeView(fullTreeView);
+  fullTreeViewProvider.setTreeView(fullTreeView, subscriptions);
   subscriptions.push(fullTreeView);
 
   const regionDiagnosticsManager = new RegionDiagnosticsManager(regionStore, subscriptions);

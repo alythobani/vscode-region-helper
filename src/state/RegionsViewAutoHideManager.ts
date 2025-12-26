@@ -30,16 +30,17 @@ export class RegionsViewAutoHideManager {
   private treeView: vscode.TreeView<Region> | undefined;
   private userWantsRegionsView: boolean;
   /**
-   * Flag to track when we're programmatically changing visibility.
-   * When true, visibility change events should NOT update userWantsRegionsView.
-   * This prevents auto-hide/show operations from being misinterpreted as user intent.
+   * Counter to track ongoing programmatic visibility changes.
+   * Incremented when starting a change, decremented when complete.
+   * When > 0, visibility change events should NOT update userWantsRegionsView.
+   * Using a counter (vs. boolean) handles rapid consecutive calls correctly.
    */
-  private isProgrammaticVisibilityChange = false;
+  private programmaticVisibilityChangeCount = 0;
 
   constructor(
     private regionStore: RegionStore,
     private workspaceState: vscode.Memento,
-    subscriptions: vscode.Disposable[]
+    private subscriptions: vscode.Disposable[]
   ) {
     // Initialize user preference from workspace state (default: true - show when relevant)
     this.userWantsRegionsView = this.workspaceState.get<boolean>(USER_WANTS_REGIONS_VIEW_KEY, true);
@@ -53,13 +54,13 @@ export class RegionsViewAutoHideManager {
 
   private registerListeners(subscriptions: vscode.Disposable[]): void {
     // Listen for region changes to auto-show when regions appear
-    this.regionStore.onDidChangeRegions(this.onRegionsChanged.bind(this), this, subscriptions);
+    subscriptions.push(
+      this.regionStore.onDidChangeRegions(this.onRegionsChanged.bind(this), this)
+    );
 
     // Listen for active editor changes to auto-hide/show based on document content
-    vscode.window.onDidChangeActiveTextEditor(
-      this.onActiveEditorChanged.bind(this),
-      this,
-      subscriptions
+    subscriptions.push(
+      vscode.window.onDidChangeActiveTextEditor(this.onActiveEditorChanged.bind(this), this)
     );
   }
 
@@ -69,7 +70,9 @@ export class RegionsViewAutoHideManager {
    */
   setTreeView(treeView: vscode.TreeView<Region>): void {
     this.treeView = treeView;
-    treeView.onDidChangeVisibility(this.onTreeViewVisibilityChanged.bind(this));
+    this.subscriptions.push(
+      treeView.onDidChangeVisibility(this.onTreeViewVisibilityChanged.bind(this))
+    );
 
     // Apply initial visibility state based on current document
     this.updateVisibilityForCurrentDocument();
@@ -85,7 +88,7 @@ export class RegionsViewAutoHideManager {
   private onTreeViewVisibilityChanged(event: vscode.TreeViewVisibilityChangeEvent): void {
     // If this visibility change was triggered by our own showRegionsView/hideRegionsView calls,
     // do NOT interpret it as user intent
-    if (this.isProgrammaticVisibilityChange) {
+    if (this.programmaticVisibilityChangeCount > 0) {
       return;
     }
 
@@ -161,34 +164,46 @@ export class RegionsViewAutoHideManager {
   }
 
   private showRegionsView(): void {
-    this.isProgrammaticVisibilityChange = true;
+    this.programmaticVisibilityChangeCount++;
     Promise.resolve(setGlobalRegionsViewConfigValue("isVisible", true))
       .then(() => {
-        // Reset flag after the config change has been applied
+        // Reset counter after the config change has been applied
         // Use a small delay to ensure the visibility change event has fired
         setTimeout(() => {
-          this.isProgrammaticVisibilityChange = false;
+          this.programmaticVisibilityChangeCount = Math.max(
+            0,
+            this.programmaticVisibilityChangeCount - 1
+          );
         }, 50);
       })
       .catch(() => {
-        // Reset flag on error to avoid getting stuck
-        this.isProgrammaticVisibilityChange = false;
+        // Decrement counter on error to avoid getting stuck
+        this.programmaticVisibilityChangeCount = Math.max(
+          0,
+          this.programmaticVisibilityChangeCount - 1
+        );
       });
   }
 
   private hideRegionsView(): void {
-    this.isProgrammaticVisibilityChange = true;
+    this.programmaticVisibilityChangeCount++;
     Promise.resolve(setGlobalRegionsViewConfigValue("isVisible", false))
       .then(() => {
-        // Reset flag after the config change has been applied
+        // Reset counter after the config change has been applied
         // Use a small delay to ensure the visibility change event has fired
         setTimeout(() => {
-          this.isProgrammaticVisibilityChange = false;
+          this.programmaticVisibilityChangeCount = Math.max(
+            0,
+            this.programmaticVisibilityChangeCount - 1
+          );
         }, 50);
       })
       .catch(() => {
-        // Reset flag on error to avoid getting stuck
-        this.isProgrammaticVisibilityChange = false;
+        // Decrement counter on error to avoid getting stuck
+        this.programmaticVisibilityChangeCount = Math.max(
+          0,
+          this.programmaticVisibilityChangeCount - 1
+        );
       });
   }
 
@@ -221,7 +236,7 @@ export class RegionsViewAutoHideManager {
    * For testing: check if a programmatic visibility change is in progress.
    */
   _isProgrammaticVisibilityChange(): boolean {
-    return this.isProgrammaticVisibilityChange;
+    return this.programmaticVisibilityChangeCount > 0;
   }
 
   /**

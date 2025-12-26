@@ -152,11 +152,13 @@ export class FullTreeViewProvider implements vscode.TreeDataProvider<FullTreeIte
    * To be called after the tree view is created (which requires the provider to be created first,
    * hence why this can't go in the constructor).
    */
-  setTreeView(treeView: vscode.TreeView<FullTreeItem>): void {
+  setTreeView(treeView: vscode.TreeView<FullTreeItem>, subscriptions: vscode.Disposable[]): void {
     this.treeView = treeView;
-    treeView.onDidCollapseElement(this.onDidCollapseElement.bind(this));
-    treeView.onDidExpandElement(this.onDidExpandElement.bind(this));
-    treeView.onDidChangeVisibility(this.onTreeViewVisibilityChanged.bind(this));
+    subscriptions.push(
+      treeView.onDidCollapseElement(this.onDidCollapseElement.bind(this)),
+      treeView.onDidExpandElement(this.onDidExpandElement.bind(this)),
+      treeView.onDidChangeVisibility(this.onTreeViewVisibilityChanged.bind(this))
+    );
   }
 
   // #region Tree view events

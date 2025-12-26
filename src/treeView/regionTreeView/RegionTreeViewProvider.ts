@@ -148,19 +148,21 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
    * To be called after the tree view is created (which requires the provider to be created first,
    * hence why this can't go in the constructor).
    */
-  setTreeView(treeView: vscode.TreeView<Region>): void {
+  setTreeView(treeView: vscode.TreeView<Region>, subscriptions: vscode.Disposable[]): void {
     this.treeView = treeView;
-    treeView.onDidCollapseElement((event) => {
-      const { id: itemId } = event.element;
-      const { documentId, allParentIds } = this.regionStore;
-      this.collapsibleStateManager.onCollapseTreeItem({ itemId, documentId, allParentIds });
-    });
-    treeView.onDidExpandElement((event) => {
-      const { id: itemId } = event.element;
-      const { documentId, allParentIds } = this.regionStore;
-      this.collapsibleStateManager.onExpandTreeItem({ itemId, documentId, allParentIds });
-    });
-    treeView.onDidChangeVisibility(this.onTreeViewVisibilityChanged.bind(this));
+    subscriptions.push(
+      treeView.onDidCollapseElement((event) => {
+        const { id: itemId } = event.element;
+        const { documentId, allParentIds } = this.regionStore;
+        this.collapsibleStateManager.onCollapseTreeItem({ itemId, documentId, allParentIds });
+      }),
+      treeView.onDidExpandElement((event) => {
+        const { id: itemId } = event.element;
+        const { documentId, allParentIds } = this.regionStore;
+        this.collapsibleStateManager.onExpandTreeItem({ itemId, documentId, allParentIds });
+      }),
+      treeView.onDidChangeVisibility(this.onTreeViewVisibilityChanged.bind(this))
+    );
   }
 
   expandAllTreeItems(): void {
