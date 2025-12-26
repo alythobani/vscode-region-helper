@@ -48,16 +48,24 @@ export class CollapsibleStateManager {
     await this.saveToWorkspaceState();
   }, SAVE_TO_WORKSPACE_STATE_DEBOUNCE_DELAY_MS);
 
-  constructor(private workspaceState: vscode.Memento, private storageKey: string) {
+  constructor(
+    private workspaceState: vscode.Memento,
+    private storageKey: string,
+    subscriptions?: vscode.Disposable[]
+  ) {
     this.loadFromWorkspaceState();
-    vscode.workspace.onDidRenameFiles((event) => {
+    const renameDisposable = vscode.workspace.onDidRenameFiles((event) => {
       const { files } = event;
       for (const fileRenaming of files) this.onFileRename(fileRenaming);
     });
-    vscode.workspace.onDidDeleteFiles((event) => {
+    const deleteDisposable = vscode.workspace.onDidDeleteFiles((event) => {
       const { files } = event;
       for (const deletedUri of files) this.onFileDelete(deletedUri);
     });
+    // Add disposables to subscriptions if provided, to ensure proper cleanup
+    if (subscriptions) {
+      subscriptions.push(renameDisposable, deleteDisposable);
+    }
   }
 
   private onFileRename({ oldUri, newUri }: { oldUri: vscode.Uri; newUri: vscode.Uri }): void {

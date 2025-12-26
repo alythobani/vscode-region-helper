@@ -29,6 +29,12 @@ const USER_WANTS_REGIONS_VIEW_KEY = "regionHelper.userWantsRegionsView";
 export class RegionsViewAutoHideManager {
   private treeView: vscode.TreeView<Region> | undefined;
   private userWantsRegionsView: boolean;
+  /**
+   * Flag to track when we're programmatically changing visibility.
+   * When true, visibility change events should NOT update userWantsRegionsView.
+   * This prevents auto-hide/show operations from being misinterpreted as user intent.
+   */
+  private isProgrammaticVisibilityChange = false;
 
   constructor(
     private regionStore: RegionStore,
@@ -72,8 +78,17 @@ export class RegionsViewAutoHideManager {
   /**
    * Called when the tree view's visibility changes (user manually expands/collapses).
    * Updates user preference based on their action.
+   * 
+   * IMPORTANT: Only updates preference when the change was NOT initiated by our code.
+   * This prevents auto-hide/show operations from being misinterpreted as user intent.
    */
   private onTreeViewVisibilityChanged(event: vscode.TreeViewVisibilityChangeEvent): void {
+    // If this visibility change was triggered by our own showRegionsView/hideRegionsView calls,
+    // do NOT interpret it as user intent
+    if (this.isProgrammaticVisibilityChange) {
+      return;
+    }
+
     const hasRegions = this.regionStore.topLevelRegions.length > 0;
 
     if (event.visible) {
@@ -146,11 +161,35 @@ export class RegionsViewAutoHideManager {
   }
 
   private showRegionsView(): void {
-    setGlobalRegionsViewConfigValue("isVisible", true);
+    this.isProgrammaticVisibilityChange = true;
+    Promise.resolve(setGlobalRegionsViewConfigValue("isVisible", true))
+      .then(() => {
+        // Reset flag after the config change has been applied
+        // Use a small delay to ensure the visibility change event has fired
+        setTimeout(() => {
+          this.isProgrammaticVisibilityChange = false;
+        }, 50);
+      })
+      .catch(() => {
+        // Reset flag on error to avoid getting stuck
+        this.isProgrammaticVisibilityChange = false;
+      });
   }
 
   private hideRegionsView(): void {
-    setGlobalRegionsViewConfigValue("isVisible", false);
+    this.isProgrammaticVisibilityChange = true;
+    Promise.resolve(setGlobalRegionsViewConfigValue("isVisible", false))
+      .then(() => {
+        // Reset flag after the config change has been applied
+        // Use a small delay to ensure the visibility change event has fired
+        setTimeout(() => {
+          this.isProgrammaticVisibilityChange = false;
+        }, 50);
+      })
+      .catch(() => {
+        // Reset flag on error to avoid getting stuck
+        this.isProgrammaticVisibilityChange = false;
+      });
   }
 
   // #region Public API for testing
@@ -164,10 +203,25 @@ export class RegionsViewAutoHideManager {
   }
 
   /**
+   * Resets the user's preference to the default (wants to see the view).
+   * This can be used to recover from a corrupted state or as a "reset" command.
+   */
+  resetUserPreference(): void {
+    this.setUserWantsRegionsView(true);
+  }
+
+  /**
    * For testing: directly set user preference without triggering side effects.
    */
   _setUserWantsRegionsViewForTesting(value: boolean): void {
     this.userWantsRegionsView = value;
+  }
+
+  /**
+   * For testing: check if a programmatic visibility change is in progress.
+   */
+  _isProgrammaticVisibilityChange(): boolean {
+    return this.isProgrammaticVisibilityChange;
   }
 
   /**

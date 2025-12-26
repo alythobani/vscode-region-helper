@@ -18,11 +18,13 @@ export function activate(context: vscode.ExtensionContext): RegionHelperAPI {
   const { subscriptions, workspaceState } = context;
   const regionCollapsibleStateManager = new CollapsibleStateManager(
     workspaceState,
-    "regionsViewCollapsibleStateStoreByDocumentId"
+    "regionsViewCollapsibleStateStoreByDocumentId",
+    subscriptions
   );
   const fullOutlineCollapsibleStateManager = new CollapsibleStateManager(
     workspaceState,
-    "fullOutlineViewCollapsibleStateStoreByDocumentId"
+    "fullOutlineViewCollapsibleStateStoreByDocumentId",
+    subscriptions
   );
 
   const regionStore = RegionStore.initialize(subscriptions);
