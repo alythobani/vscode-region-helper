@@ -166,14 +166,8 @@
                 "endRegex": "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
               },
               "csharp": {
-                "startRegex": [
-                  "^\\s*#region(?:\\s+(.*?)\\s*)?$",
-                  "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$"
-                ],
-                "endRegex": [
-                  "^\\s*#endregion(?:\\s.*)?$",
-                  "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$"
-                ]
+                "startRegex": "^\\s*#region(?:\\s+(.*?)\\s*)?$",
+                "endRegex": "^\\s*#endregion(?:\\s.*)?$"
               },
               "css": {
                 "startRegex": "^\\s*\\/\\*+\\s*#region(?:\\s+(.*?)\\s*)?\\*+\\/",
@@ -421,7 +415,7 @@
               },
               "vb": {
                 "startRegex": "^\\s*#Region(?:\\s+\"?(.*?)\"?\\s*)?$",
-                "endRegex": "^\\s*#End\\s+Region(?:\\s.*)?$"
+                "endRegex": "^\\s*#End Region(?:\\s.*)?$"
               }
             }
           }
@@ -550,12 +544,12 @@
     "vscode:prepublish": "npm run compile && npm run lint",
     "compile": "webpack --config webpack.config.ts",
     "watch": "webpack --config webpack.config.ts --watch",
-    "compile-tests": "rimraf dist-tests && webpack --config webpack.test.config.ts",
+    "compile-tests": "npx rimraf dist-tests && webpack --config webpack.test.config.ts",
     "watch-tests": "webpack --config webpack.test.config.ts --watch",
     "package": "npx @vscode/vsce package",
     "pretest": "npm run compile-tests && npm run lint",
     "lint": "eslint src",
-    "test": "rimraf .vscode-test/user-data && vscode-test"
+    "test": "npx rimraf .vscode-test/user-data && vscode-test"
   },
   "devDependencies": {
     "@eslint/js": "^9.20.0",
