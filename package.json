@@ -63,6 +63,10 @@
         "when": "!config.regionHelper.regionsView.isVisible"
       },
       {
+        "command": "regionHelper.regionsView.resetAutoHidePreference",
+        "title": "Region Helper: Reset Regions View Auto-Hide Preference"
+      },
+      {
         "command": "regionHelper.fullOutlineView.hide",
         "title": "Region Helper: Hide Full Outline View",
         "when": "config.regionHelper.fullOutlineView.isVisible"

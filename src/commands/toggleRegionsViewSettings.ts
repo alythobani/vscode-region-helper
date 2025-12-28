@@ -6,6 +6,9 @@ import {
 } from "../config/regionsViewConfig";
 import { type RegionHelperNonClosuredCommand } from "./registerCommand";
 
+/** Key used by RegionsViewAutoHideManager to persist user preference */
+const USER_WANTS_REGIONS_VIEW_KEY = "regionHelper.userWantsRegionsView";
+
 // #region Exported commands
 
 const hideRegionsViewCommand: RegionHelperNonClosuredCommand = {
@@ -67,6 +70,28 @@ function stopAutoHighlightingActiveRegion(): void {
 
 function startAutoHighlightingActiveRegion(): void {
   setGlobalRegionsViewConfigValue("shouldAutoHighlightActiveRegion", true);
+}
+
+// #endregion
+
+// #region Reset command - exposed for extension.ts to use
+
+/**
+ * Resets the auto-hide user preference in workspace state.
+ * This is called by the extension when registering the reset command.
+ */
+export function createResetAutoHidePreferenceCommand(
+  workspaceState: vscode.Memento
+): () => Promise<void> {
+  return async (): Promise<void> => {
+    // Reset the user preference to true (wants to see the view)
+    await workspaceState.update(USER_WANTS_REGIONS_VIEW_KEY, true);
+    // Also show the view immediately
+    await setGlobalRegionsViewConfigValue("isVisible", true);
+    vscode.window.showInformationMessage(
+      "Region Helper: Auto-hide preference has been reset. The Regions view will now auto-show when you open files with regions."
+    );
+  };
 }
 
 // #endregion

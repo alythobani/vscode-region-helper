@@ -29,10 +29,10 @@ suite("Regions View Auto-Hide", () => {
   // #region Helper Functions
 
   /**
-   * Waits for debounce delays + auto-hide delay + buffer.
-   * Uses the utility delay function for consistency.
+   * Waits for auto-hide processing to complete.
+   * Must be longer than EDITOR_CHANGE_VISIBILITY_DELAY_MS (250ms) + config update time + buffer.
    */
-  async function waitForAutoHideProcessing(ms = 400): Promise<void> {
+  async function waitForAutoHideProcessing(ms = 500): Promise<void> {
     await delay(ms);
   }
 
@@ -421,6 +421,136 @@ suite("Regions View Auto-Hide", () => {
         isRegionsViewVisible(),
         true,
         "View should auto-show when region is created"
+      );
+    });
+  });
+
+  // #endregion
+
+  // #region Reset Command Tests
+
+  suite("Reset Auto-Hide Preference Command", () => {
+    let originalAutoHide: boolean;
+    let originalVisible: boolean;
+
+    setup(async () => {
+      // Save original settings
+      originalAutoHide = isAutoHideEnabled();
+      originalVisible = isRegionsViewVisible();
+
+      // Enable auto-hide for tests
+      await setAutoHideEnabled(true);
+    });
+
+    teardown(async () => {
+      // Restore original settings
+      await setAutoHideEnabled(originalAutoHide);
+      await setRegionsViewVisible(originalVisible);
+
+      // Close any open editors
+      await vscode.commands.executeCommand("workbench.action.closeAllEditors");
+    });
+
+    test("reset command should restore auto-show behavior", async function () {
+      this.timeout(10000);
+      
+      // Open a document with regions
+      const docWithRegions = await openSampleDocument("sampleRegionsDocument.ts");
+      await vscode.window.showTextDocument(docWithRegions);
+      await waitForAutoHideProcessing();
+
+      // Verify regions exist
+      assert.ok(
+        regionHelperAPI.getTopLevelRegions().length > 0,
+        "Document should have regions"
+      );
+
+      // Hide the view manually (simulates user explicitly hiding it)
+      await setRegionsViewVisible(false);
+      await waitForAutoHideProcessing(200);
+
+      // Switch to empty doc and back - view should NOT auto-show (user preference is false)
+      const docWithoutRegions = await openSampleDocument("emptyDocument.ts");
+      await vscode.window.showTextDocument(docWithoutRegions);
+      await waitForAutoHideProcessing();
+
+      // Now run the reset command
+      await vscode.commands.executeCommand("regionHelper.regionsView.resetAutoHidePreference");
+      await waitForAutoHideProcessing(200);
+
+      // View should now be visible (reset command shows it)
+      assert.strictEqual(
+        isRegionsViewVisible(),
+        true,
+        "View should be visible after reset command"
+      );
+
+      // Switch to empty doc
+      await vscode.window.showTextDocument(docWithoutRegions);
+      await waitForAutoHideProcessing();
+
+      // Now switch back to doc with regions
+      await vscode.window.showTextDocument(docWithRegions);
+      await waitForAutoHideProcessing();
+
+      // View should auto-show now (user preference was reset to true)
+      assert.strictEqual(
+        isRegionsViewVisible(),
+        true,
+        "View should auto-show after preference was reset"
+      );
+    });
+  });
+
+  // #endregion
+
+  // #region Initialization Tests
+
+  suite("Initialization Timing", () => {
+    let originalAutoHide: boolean;
+    let originalVisible: boolean;
+
+    setup(async () => {
+      // Save original settings
+      originalAutoHide = isAutoHideEnabled();
+      originalVisible = isRegionsViewVisible();
+
+      // Enable auto-hide for tests
+      await setAutoHideEnabled(true);
+      await setRegionsViewVisible(true);
+      await waitForAutoHideProcessing(100);
+    });
+
+    teardown(async () => {
+      // Restore original settings
+      await setAutoHideEnabled(originalAutoHide);
+      await setRegionsViewVisible(originalVisible);
+
+      // Close any open editors
+      await vscode.commands.executeCommand("workbench.action.closeAllEditors");
+    });
+
+    test("should show view when opening file with regions after restart", async function () {
+      // This simulates the scenario where VS Code starts with a file that has regions
+      // The extension needs to wait for RegionStore to parse before deciding visibility
+      this.timeout(10000);
+
+      // Open a document with regions
+      const docWithRegions = await openSampleDocument("sampleRegionsDocument.ts");
+      await vscode.window.showTextDocument(docWithRegions);
+      
+      // Wait for full initialization (RegionStore debounce + auto-hide manager delay)
+      await waitForAutoHideProcessing(600);
+
+      // Verify regions exist
+      const regions = regionHelperAPI.getTopLevelRegions();
+      assert.ok(regions.length > 0, "Document should have regions");
+
+      // View should be visible
+      assert.strictEqual(
+        isRegionsViewVisible(),
+        true,
+        "View should be visible when file with regions is opened"
       );
     });
   });

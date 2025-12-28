@@ -13,6 +13,12 @@ import { type RegionStore } from "./RegionStore";
 const USER_WANTS_REGIONS_VIEW_KEY = "regionHelper.userWantsRegionsView";
 
 /**
+ * Delay before checking visibility after editor change.
+ * Must be longer than RegionStore's debounce (100ms) + some buffer for parsing.
+ */
+const EDITOR_CHANGE_VISIBILITY_DELAY_MS = 250;
+
+/**
  * Manages smart auto-hide behavior for the REGIONS tree view.
  *
  * This follows the "contextual visibility" UI pattern where:
@@ -36,6 +42,18 @@ export class RegionsViewAutoHideManager {
    * Using a counter (vs. boolean) handles rapid consecutive calls correctly.
    */
   private programmaticVisibilityChangeCount = 0;
+
+  /**
+   * Whether the tree view has been set and initial visibility has been applied.
+   * Before this is true, we should not respond to region change events.
+   */
+  private isInitialized = false;
+
+  /**
+   * Timeout handle for pending visibility updates on editor change.
+   * Used to cancel previous pending updates when editor changes rapidly.
+   */
+  private pendingEditorChangeTimeout: NodeJS.Timeout | undefined;
 
   constructor(
     private regionStore: RegionStore,
@@ -74,8 +92,12 @@ export class RegionsViewAutoHideManager {
       treeView.onDidChangeVisibility(this.onTreeViewVisibilityChanged.bind(this))
     );
 
-    // Apply initial visibility state based on current document
-    this.updateVisibilityForCurrentDocument();
+    // Wait for RegionStore to finish its initial parse before applying visibility.
+    // RegionStore's debounce is 100ms, so we wait a bit longer to be safe.
+    setTimeout(() => {
+      this.isInitialized = true;
+      this.updateVisibilityForCurrentDocument();
+    }, EDITOR_CHANGE_VISIBILITY_DELAY_MS);
   }
 
   /**
@@ -92,6 +114,14 @@ export class RegionsViewAutoHideManager {
       return;
     }
 
+    // If not yet initialized, don't interpret visibility changes as user intent
+    if (!this.isInitialized) {
+      return;
+    }
+
+    // Re-read from workspace state in case it was changed externally (e.g., by reset command)
+    this.syncUserPreferenceFromWorkspaceState();
+
     const hasRegions = this.regionStore.topLevelRegions.length > 0;
 
     if (event.visible) {
@@ -105,13 +135,29 @@ export class RegionsViewAutoHideManager {
   }
 
   /**
+   * Sync in-memory preference with workspace state.
+   * This is needed because external commands can update the workspace state.
+   */
+  private syncUserPreferenceFromWorkspaceState(): void {
+    this.userWantsRegionsView = this.workspaceState.get<boolean>(USER_WANTS_REGIONS_VIEW_KEY, true);
+  }
+
+  /**
    * Called when regions change in the current document.
    * Auto-shows the view if regions appear and user wants to see it.
    */
   private onRegionsChanged(): void {
+    // Don't process region changes until we're fully initialized
+    if (!this.isInitialized) {
+      return;
+    }
+
     if (!this.isAutoHideEnabled()) {
       return;
     }
+
+    // Re-read from workspace state in case it was changed externally
+    this.syncUserPreferenceFromWorkspaceState();
 
     const hasRegions = this.regionStore.topLevelRegions.length > 0;
     const isCurrentlyVisible = this.isRegionsViewVisible();
@@ -130,8 +176,22 @@ export class RegionsViewAutoHideManager {
    * Updates view visibility based on whether the new document has regions.
    */
   private onActiveEditorChanged(): void {
-    // Small delay to let RegionStore update first
-    setTimeout(() => this.updateVisibilityForCurrentDocument(), 150);
+    // Don't process editor changes until we're fully initialized
+    if (!this.isInitialized) {
+      return;
+    }
+
+    // Cancel any pending update from a previous editor change
+    if (this.pendingEditorChangeTimeout) {
+      clearTimeout(this.pendingEditorChangeTimeout);
+      this.pendingEditorChangeTimeout = undefined;
+    }
+
+    // Wait for RegionStore to update (debounce 100ms + parsing time)
+    this.pendingEditorChangeTimeout = setTimeout(() => {
+      this.pendingEditorChangeTimeout = undefined;
+      this.updateVisibilityForCurrentDocument();
+    }, EDITOR_CHANGE_VISIBILITY_DELAY_MS);
   }
 
   /**
@@ -141,6 +201,9 @@ export class RegionsViewAutoHideManager {
     if (!this.isAutoHideEnabled()) {
       return;
     }
+
+    // Re-read from workspace state in case it was changed externally
+    this.syncUserPreferenceFromWorkspaceState();
 
     const hasRegions = this.regionStore.topLevelRegions.length > 0;
     const isCurrentlyVisible = this.isRegionsViewVisible();
@@ -240,6 +303,20 @@ export class RegionsViewAutoHideManager {
   }
 
   /**
+   * For testing: check if the manager is initialized.
+   */
+  _isInitialized(): boolean {
+    return this.isInitialized;
+  }
+
+  /**
+   * For testing: force immediate initialization.
+   */
+  _forceInitialize(): void {
+    this.isInitialized = true;
+  }
+
+  /**
    * For testing: simulate visibility change event.
    */
   _simulateVisibilityChange(visible: boolean): void {
@@ -258,6 +335,13 @@ export class RegionsViewAutoHideManager {
    */
   _triggerActiveEditorChanged(): void {
     this.onActiveEditorChanged();
+  }
+
+  /**
+   * For testing: trigger immediate visibility update for current document.
+   */
+  _updateVisibilityNow(): void {
+    this.updateVisibilityForCurrentDocument();
   }
 
   // #endregion

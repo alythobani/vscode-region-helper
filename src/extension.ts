@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { type RegionHelperAPI } from "./api/regionHelperAPI";
 import { registerAllCommands } from "./commands/registerCommand";
+import { createResetAutoHidePreferenceCommand } from "./commands/toggleRegionsViewSettings";
 import { RegionDiagnosticsManager } from "./diagnostics/RegionDiagnosticsManager";
 import { type FlattenedRegion } from "./lib/flattenRegions";
 import { type InvalidMarker } from "./lib/parseAllRegions";
@@ -72,6 +73,13 @@ export function activate(context: vscode.ExtensionContext): RegionHelperAPI {
   subscriptions.push(regionDiagnosticsManager.diagnostics);
 
   registerAllCommands(subscriptions, { regionStore, regionTreeViewProvider, fullTreeViewProvider });
+
+  // Register the reset auto-hide preference command
+  const resetAutoHideCommand = vscode.commands.registerCommand(
+    "regionHelper.regionsView.resetAutoHidePreference",
+    createResetAutoHidePreferenceCommand(workspaceState)
+  );
+  subscriptions.push(resetAutoHideCommand);
 
   return {
     // #region Region Store API
