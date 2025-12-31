@@ -95,6 +95,11 @@ export class FullOutlineStore {
   }
 
   private registerListeners(subscriptions: vscode.Disposable[]): void {
+    vscode.window.onDidChangeActiveTextEditor(
+      this.debouncedRefreshFullOutline,
+      this,
+      subscriptions
+    );
     vscode.workspace.onDidChangeTextDocument(this.onDocumentChange.bind(this), this, subscriptions);
     this.regionStore.onDidChangeRegions(this.debouncedRefreshFullOutline, this, subscriptions);
     this.documentSymbolStore.onDidChangeDocumentSymbols(
