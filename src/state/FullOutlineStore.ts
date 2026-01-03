@@ -142,6 +142,12 @@ export class FullOutlineStore {
     const flattenedSymbolItems = getFlattenedSymbolFullTreeItems(
       this.documentSymbolStore.flattenedDocumentSymbols
     );
+    // Sort both flattened lists by start position before merging.
+    // This is necessary because the flattening produces depth-first order,
+    // but the merge algorithm in generateFullOutlineTreeItems expects
+    // items to be sorted by start position for correct interleaving.
+    sortFullTreeItemsByStart(flattenedRegionItems);
+    sortFullTreeItemsByStart(flattenedSymbolItems);
     const { topLevelItems, allParentIds } = generateFullOutlineTreeItems({
       flattenedRegionItems,
       flattenedSymbolItems,
@@ -194,3 +200,16 @@ export class FullOutlineStore {
   }
   // #endregion
 }
+
+// #region Helper functions
+
+/**
+ * Sorts an array of FullTreeItems in place by their start position.
+ * This ensures that the merge algorithm in generateFullOutlineTreeItems
+ * correctly interleaves items from different sources (regions and symbols).
+ */
+function sortFullTreeItemsByStart(items: FullTreeItem[]): void {
+  items.sort((a, b) => a.range.start.compareTo(b.range.start));
+}
+
+// #endregion
