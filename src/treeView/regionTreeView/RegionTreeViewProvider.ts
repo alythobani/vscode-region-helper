@@ -132,7 +132,11 @@ export class RegionTreeViewProvider implements vscode.TreeDataProvider<Region> {
 
   getParent(element: Region): vscode.ProviderResult<Region> {
     const { parent } = element;
-    if (!parent || parent.wasClosed) {
+    // Return undefined if no parent (top-level region)
+    // Note: We return the parent even if parent.wasClosed is false (unclosed region),
+    // as the hierarchical relationship is still valid for tree structure purposes.
+    // The wasClosed property only affects whether the region itself is fully parsed.
+    if (!parent) {
       return undefined;
     }
     return parent;
