@@ -56,6 +56,7 @@ export function activate(context: vscode.ExtensionContext): RegionHelperAPI {
     subscriptions
   );
   regionsViewAutoHideManager.setTreeView(regionTreeView);
+  subscriptions.push(regionsViewAutoHideManager);
 
   const fullTreeViewProvider = new FullTreeViewProvider(
     fullOutlineStore,

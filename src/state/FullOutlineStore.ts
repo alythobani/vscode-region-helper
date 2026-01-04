@@ -6,7 +6,7 @@ import {
   getFlattenedRegionFullTreeItems,
   getFlattenedSymbolFullTreeItems,
 } from "../treeView/fullTreeView/getFlattenedFullTreeItems";
-import { debounce } from "../utils/debounce";
+import { type DebouncedFunction, debounce } from "../utils/debounce";
 import { type CollapsibleStateManager } from "./CollapsibleStateManager";
 import { type DocumentSymbolStore } from "./DocumentSymbolStore";
 import { type RegionStore } from "./RegionStore";
@@ -14,7 +14,7 @@ import { type RegionStore } from "./RegionStore";
 const REFRESH_FULL_OUTLINE_DEBOUNCE_DELAY_MS = 100;
 const REFRESH_ACTIVE_ITEM_DEBOUNCE_DELAY_MS = 100;
 
-export class FullOutlineStore {
+export class FullOutlineStore implements vscode.Disposable {
   // #region Singleton initialization
   private static _instance: FullOutlineStore | undefined = undefined;
 
@@ -33,6 +33,7 @@ export class FullOutlineStore {
       collapsibleStateManager,
       subscriptions
     );
+    subscriptions.push(this._instance);
     return this._instance;
   }
 
@@ -41,6 +42,11 @@ export class FullOutlineStore {
       throw new Error("FullOutlineStore is not initialized! Call `initialize()` first.");
     }
     return this._instance;
+  }
+
+  /** For testing only: resets the singleton instance. */
+  static _resetInstance(): void {
+    this._instance = undefined;
   }
   // #endregion
 
@@ -76,7 +82,7 @@ export class FullOutlineStore {
 
   // #endregion
 
-  private debouncedRefreshFullOutline = debounce(
+  private debouncedRefreshFullOutline: DebouncedFunction<() => void> = debounce(
     this.refreshFullOutline.bind(this),
     REFRESH_FULL_OUTLINE_DEBOUNCE_DELAY_MS
   );
@@ -92,6 +98,13 @@ export class FullOutlineStore {
   ) {
     this.registerListeners(subscriptions);
     this.debouncedRefreshFullOutline();
+  }
+
+  dispose(): void {
+    this.debouncedRefreshFullOutline.cancel();
+    this.clearRefreshActiveItemTimeoutIfExists();
+    this._onDidChangeFullOutlineItems.dispose();
+    this._onDidChangeActiveFullOutlineItem.dispose();
   }
 
   private registerListeners(subscriptions: vscode.Disposable[]): void {

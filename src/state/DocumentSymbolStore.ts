@@ -1,14 +1,53 @@
 import * as vscode from "vscode";
 import { fetchDocumentSymbols, fetchDocumentSymbolsAfterDelay } from "../lib/fetchDocumentSymbols";
 import { flattenDocumentSymbols } from "../lib/flattenDocumentSymbols";
-import { debounce } from "../utils/debounce";
+import { type DebouncedFunction, debounce } from "../utils/debounce";
 
 const REFRESH_SYMBOLS_DEBOUNCE_DELAY_MS = 100;
 
-const MAX_NUM_DOCUMENT_SYMBOLS_FETCH_ATTEMPTS = 5;
-const DOCUMENT_SYMBOLS_FETCH_REATTEMPT_DELAY_MS = 300;
+/**
+ * Maximum number of retry attempts for fetching document symbols.
+ * Using 10 attempts with stepped delays allows for a total max wait of ~30 seconds.
+ */
+const MAX_NUM_DOCUMENT_SYMBOLS_FETCH_ATTEMPTS = 10;
 
-export class DocumentSymbolStore {
+/**
+ * Stepped backoff delays for document symbol fetch retries.
+ * User preference: stepped (linear) rather than exponential.
+ * Reasoning: Exponential grows too quickly and is less predictable for debugging.
+ *
+ * Pattern:
+ * - First 3 retries: 300ms (quick retries for fast language servers)
+ * - Next 3 retries: 1000ms (medium pace for moderate startup)
+ * - Next 2 retries: 3000ms (slower pace for heavy projects)
+ * - Final 2 retries: 5000ms (patience for very slow language servers)
+ *
+ * Total max wait: ~30 seconds (if all retries are used)
+ * - 3 × 300ms = 900ms
+ * - 3 × 1000ms = 3000ms
+ * - 2 × 3000ms = 6000ms
+ * - 2 × 5000ms = 10000ms
+ * Total: ~20 seconds for delays + parsing time ≈ 30 seconds
+ */
+function getRetryDelayMs(attemptIdx: number): number {
+  // attemptIdx is 0-based, but on first attempt (0) we don't wait
+  // So attemptIdx 1 is the first retry
+  if (attemptIdx <= 3) {
+    // First 3 retries: quick (300ms)
+    return 300;
+  } else if (attemptIdx <= 6) {
+    // Next 3 retries: medium (1000ms)
+    return 1000;
+  } else if (attemptIdx <= 8) {
+    // Next 2 retries: slower (3000ms)
+    return 3000;
+  } else {
+    // Final retries: patience (5000ms)
+    return 5000;
+  }
+}
+
+export class DocumentSymbolStore implements vscode.Disposable {
   private static _instance: DocumentSymbolStore | undefined = undefined;
 
   static initialize(subscriptions: vscode.Disposable[]): DocumentSymbolStore {
@@ -16,6 +55,7 @@ export class DocumentSymbolStore {
       throw new Error("DocumentSymbolStore is already initialized! Only one instance is allowed.");
     }
     this._instance = new DocumentSymbolStore(subscriptions);
+    subscriptions.push(this._instance);
     return this._instance;
   }
 
@@ -24,6 +64,11 @@ export class DocumentSymbolStore {
       throw new Error("DocumentSymbolStore is not initialized! Call `initialize()` first.");
     }
     return this._instance;
+  }
+
+  /** For testing only: resets the singleton instance. */
+  static _resetInstance(): void {
+    this._instance = undefined;
   }
 
   private _documentSymbols: vscode.DocumentSymbol[] = [];
@@ -42,16 +87,20 @@ export class DocumentSymbolStore {
     return this._versionedDocumentId;
   }
 
-  private debouncedRefreshDocumentSymbols = debounce(
-    this.refreshDocumentSymbols.bind(this),
-    REFRESH_SYMBOLS_DEBOUNCE_DELAY_MS
-  );
+  private debouncedRefreshDocumentSymbols: DebouncedFunction<
+    (document: vscode.TextDocument | undefined) => void
+  > = debounce(this.refreshDocumentSymbols.bind(this), REFRESH_SYMBOLS_DEBOUNCE_DELAY_MS);
 
   private constructor(subscriptions: vscode.Disposable[]) {
     this.registerListeners(subscriptions);
     if (vscode.window.activeTextEditor?.document) {
       this.debouncedRefreshDocumentSymbols(vscode.window.activeTextEditor.document);
     }
+  }
+
+  dispose(): void {
+    this.debouncedRefreshDocumentSymbols.cancel();
+    this._onDidChangeDocumentSymbols.dispose();
   }
 
   private registerListeners(subscriptions: vscode.Disposable[]): void {
@@ -82,24 +131,22 @@ export class DocumentSymbolStore {
       return;
     }
     if (attemptIdx >= MAX_NUM_DOCUMENT_SYMBOLS_FETCH_ATTEMPTS) {
-      // console.warn(`Failed to fetch document symbols after ${attemptIdx} attempts. Giving up.`);
       return;
     }
     try {
+      const retryDelayMs = getRetryDelayMs(attemptIdx);
       const fetchResult =
         attemptIdx === 0
           ? await fetchDocumentSymbols(document)
-          : await fetchDocumentSymbolsAfterDelay(
-              document,
-              DOCUMENT_SYMBOLS_FETCH_REATTEMPT_DELAY_MS
-            );
+          : await fetchDocumentSymbolsAfterDelay(document, retryDelayMs);
       // If the document became inactive during a delayed retry, fetchResult will be undefined
       if (!fetchResult) {
         return;
       }
       const { documentSymbols, versionedDocumentId } = fetchResult;
       if (documentSymbols === undefined) {
-        this.debouncedRefreshDocumentSymbols(document, attemptIdx + 1);
+        // Language server not ready yet - schedule next retry with stepped backoff
+        void this.refreshDocumentSymbols(document, attemptIdx + 1);
         return;
       }
       sortSymbolsRecursivelyByStart(documentSymbols); // By default, `executeDocumentSymbolProvider` returns symbols ordered by name
@@ -113,8 +160,8 @@ export class DocumentSymbolStore {
       if (didDocumentSymbolsChange(oldDocumentSymbols, documentSymbols)) {
         this._onDidChangeDocumentSymbols.fire();
       }
-    } catch (_error) {
-      // console.error("Error fetching document symbols:", error);
+    } catch {
+      // Language server may not be ready or may have failed
     }
   }
 }

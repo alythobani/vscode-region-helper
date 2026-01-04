@@ -3,13 +3,13 @@ import { type FlattenedRegion, flattenRegionsAndCountParents } from "../lib/flat
 import { getDocumentId, getVersionedDocumentId } from "../lib/getVersionedDocumentId";
 import { type InvalidMarker, parseAllRegions } from "../lib/parseAllRegions";
 import { type Region } from "../models/Region";
-import { debounce } from "../utils/debounce";
+import { type DebouncedFunction, debounce } from "../utils/debounce";
 import { getActiveRegion } from "../utils/getActiveRegion";
 
 const REFRESH_REGIONS_DEBOUNCE_DELAY_MS = 100;
 const REFRESH_ACTIVE_REGION_DEBOUNCE_DELAY_MS = 100;
 
-export class RegionStore {
+export class RegionStore implements vscode.Disposable {
   // #region Singleton initialization
   private static _instance: RegionStore | undefined = undefined;
 
@@ -18,6 +18,7 @@ export class RegionStore {
       throw new Error("RegionStore is already initialized! Only one instance is allowed.");
     }
     this._instance = new RegionStore(subscriptions);
+    subscriptions.push(this._instance);
     return this._instance;
   }
 
@@ -26,6 +27,11 @@ export class RegionStore {
       throw new Error("RegionStore is not initialized! Call `initialize()` first.");
     }
     return this._instance;
+  }
+
+  /** For testing only: resets the singleton instance. */
+  static _resetInstance(): void {
+    this._instance = undefined;
   }
   // #endregion
 
@@ -71,7 +77,7 @@ export class RegionStore {
   }
   // #endregion
 
-  private debouncedRefreshRegionsAndActiveRegion = debounce(
+  private debouncedRefreshRegionsAndActiveRegion: DebouncedFunction<() => void> = debounce(
     this.refreshRegionsAndActiveRegion.bind(this),
     REFRESH_REGIONS_DEBOUNCE_DELAY_MS
   );
@@ -82,6 +88,14 @@ export class RegionStore {
   private constructor(subscriptions: vscode.Disposable[]) {
     this.registerListeners(subscriptions);
     this.debouncedRefreshRegionsAndActiveRegion();
+  }
+
+  dispose(): void {
+    this.debouncedRefreshRegionsAndActiveRegion.cancel();
+    this.clearRefreshActiveRegionTimeoutIfExists();
+    this._onDidChangeRegions.dispose();
+    this._onDidChangeActiveRegion.dispose();
+    this._onDidChangeInvalidMarkers.dispose();
   }
 
   private registerListeners(subscriptions: vscode.Disposable[]): void {

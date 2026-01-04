@@ -553,7 +553,7 @@
     "package": "npx @vscode/vsce package",
     "pretest": "npm run compile-tests && npm run lint",
     "lint": "eslint src",
-    "test": "npx rimraf .vscode-test/user-data && vscode-test"
+    "test": "npx rimraf .vscode-test/user-data .vscode-test/extensions && vscode-test"
   },
   "devDependencies": {
     "@eslint/js": "^9.20.0",
