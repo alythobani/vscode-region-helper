@@ -10,6 +10,7 @@ export class RegionTreeItem extends vscode.TreeItem {
   ) {
     const displayName = getRegionDisplayName(region);
     super(displayName, initialCollapsibleState);
+    this.id = region.id;
     this.tooltip = `${displayName}: ${getRegionRangeText(region)}`;
     this.command = {
       command: goToRegionTreeItemCommand.id,
