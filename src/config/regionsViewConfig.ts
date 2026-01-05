@@ -14,7 +14,7 @@ export type RegionsViewShowMode = "always" | "whenRegionsExist" | "never";
 type RawRegionsViewConfigKey = keyof RegionsViewConfig;
 
 const defaultRegionsViewConfig = {
-  show: "always",
+  show: "whenRegionsExist",
   shouldAutoHighlightActiveRegion: true,
 } as const satisfies RegionsViewConfig;
 

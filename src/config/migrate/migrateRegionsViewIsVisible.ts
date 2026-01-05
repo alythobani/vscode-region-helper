@@ -9,8 +9,8 @@ import type { RegionsViewShowMode } from "../regionsViewConfig";
  * The `regionsView.isVisible` setting was a boolean. The `regionsView.show` setting is now an enum
  * with the values `"always"`, `"whenRegionsExist"`, and `"never"`.
  *
- * Maps `true` to `"always"` and `false` to `"never"` for each possible scope (Global, Workspace,
- * Workspace Folder).
+ * Maps `true` to `"whenRegionsExist"` (since this is just an upgraded version of `isVisible: true`)
+ * and `false` to `"never"` for each possible scope (Global, Workspace, Workspace Folder).
  */
 export async function migrateRegionsViewIsVisibleToShowConfig(): Promise<void> {
   const config = getRegionHelperConfig();
@@ -23,19 +23,19 @@ export async function migrateRegionsViewIsVisibleToShowConfig(): Promise<void> {
     config,
     configurationTarget: vscode.ConfigurationTarget.Global,
     isVisible: isVisibleInspect.globalValue,
-    show: showInspect?.globalValue,
+    currentShow: showInspect?.globalValue,
   });
   await migrateScope({
     config,
     configurationTarget: vscode.ConfigurationTarget.Workspace,
     isVisible: isVisibleInspect.workspaceValue,
-    show: showInspect?.workspaceValue,
+    currentShow: showInspect?.workspaceValue,
   });
   await migrateScope({
     config,
     configurationTarget: vscode.ConfigurationTarget.WorkspaceFolder,
     isVisible: isVisibleInspect.workspaceFolderValue,
-    show: showInspect?.workspaceFolderValue,
+    currentShow: showInspect?.workspaceFolderValue,
   });
 }
 
@@ -43,17 +43,17 @@ async function migrateScope({
   config,
   configurationTarget,
   isVisible,
-  show,
+  currentShow,
 }: {
   config: vscode.WorkspaceConfiguration;
   configurationTarget: vscode.ConfigurationTarget;
   isVisible: boolean | undefined;
-  show: RegionsViewShowMode | undefined;
+  currentShow: RegionsViewShowMode | undefined;
 }): Promise<void> {
-  if (isVisible === undefined || show !== undefined) {
+  if (isVisible === undefined || currentShow !== undefined) {
     return;
   }
-  const nextShow: RegionsViewShowMode = isVisible ? "always" : "never";
+  const nextShow: RegionsViewShowMode = isVisible ? "whenRegionsExist" : "never";
   await config.update("regionsView.show", nextShow, configurationTarget);
   await config.update("regionsView.isVisible", undefined, configurationTarget);
 }
