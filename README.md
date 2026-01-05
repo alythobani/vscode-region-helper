@@ -28,7 +28,7 @@ A [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=AlyTh
    6. [⏭ Go to Next / Previous Region](#-go-to-next--previous-region)
    7. [🎯 Select Current Region](#-select-current-region)
 4. [⚙️ Settings](#-settings)
-   1. [🙈 Show/Hide Views](#-showhide-views)
+   1. [🙈 Tree View Visibility](#-tree-view-visibility)
    2. [🔄 Toggling Auto-Highlighting in Views](#-toggling-auto-highlighting-in-views)
    3. [🔧 Custom Region Patterns](#-custom-region-patterns)
 5. [📡 Extension API](#-extension-api)
@@ -41,7 +41,8 @@ A [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=AlyTh
 <h3 id="regions-view">📂 Regions View</h3>
 
 - Displays a **structured tree view** of all regions in the current file.
-- **Automatically reveals and highlights** the cursor’s active region (this can be toggled on/off with commands/settings).
+- **Automatically reveals and highlights** the cursor’s active region.
+- **Smart visibility**: Only shows the view when there are regions in the current file ([more info](#-tree-view-visibility)).
 - Click a region to **instantly navigate** to it.
 
 ![Regions View Demo](./assets/readme-gifs/1-regions-view.gif)
@@ -97,16 +98,13 @@ A [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=AlyTh
 
 <h2 id="-settings">⚙️ Settings</h2>
 
-<h3 id="-showhide-views">🙈 Show/Hide Views</h3>
+<h3 id="-tree-view-visibility">🙈 Tree View Visibility</h3>
 
-To quickly show or hide the **Regions** or **Full Outline** views, you can use the following commands and associated settings:
+The Full Outline view has a simple `regionHelper.fullOutlineView.isVisible` setting, which can be set to `true` or `false` to control its visibility.
 
-- **Show/Hide Region View**
-  - Commands: `Show Regions View` / `Hide Regions View`
-  - Setting: `regionHelper.shouldShowRegionsView`
-- **Show/Hide Full Outline View**
-  - Commands: `Show Full Outline View` / `Hide Full Outline View`
-  - Setting: `regionHelper.shouldShowFullOutlineView`
+The Regions view has a more fun "smart visibility" setting, `regionHelper.regionsView.show`. If set to `"whenRegionsExist"`, the view will appear only when the current file has **at least one region**. This keeps your sidebar nice and clean when the Regions view is not relevant, while automatically giving you access when it is.
+
+For convenience, both the `regionHelper.fullOutlineView.isVisible` and `regionHelper.regionsView.show` settings have associated commands to control their visibility modes on demand.
 
 <h3 id="-toggling-auto-highlighting-in-views">🔄 Toggling Auto-Highlighting/Revealing in Tree Views</h3>
 
