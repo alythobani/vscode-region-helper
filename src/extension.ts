@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { type RegionHelperAPI } from "./api/regionHelperAPI";
 import { registerAllCommands } from "./commands/registerCommand";
+import { migrateRegionsViewIsVisibleToShowConfig } from "./config/migrate/migrateRegionsViewIsVisible";
 import { RegionDiagnosticsManager } from "./diagnostics/RegionDiagnosticsManager";
 import { type FlattenedRegion } from "./lib/flattenRegions";
 import { type InvalidMarker } from "./lib/parseAllRegions";
@@ -14,6 +15,7 @@ import { FullTreeViewProvider } from "./treeView/fullTreeView/FullTreeViewProvid
 import { RegionTreeViewProvider } from "./treeView/regionTreeView/RegionTreeViewProvider";
 
 export function activate(context: vscode.ExtensionContext): RegionHelperAPI {
+  void migrateRegionsViewIsVisibleToShowConfig();
   const { subscriptions, workspaceState } = context;
   const regionCollapsibleStateManager = new CollapsibleStateManager(
     workspaceState,

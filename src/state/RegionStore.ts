@@ -138,6 +138,11 @@ export class RegionStore {
     }
     this._documentId = activeDocumentId;
     this._versionedDocumentId = versionedDocumentId;
+    void vscode.commands.executeCommand(
+      "setContext",
+      "regionHelper.activeDocumentHasRegions",
+      this._topLevelRegions.length > 0
+    );
     if (shouldFireChangeEvents) {
       this._onDidChangeRegions.fire();
       this._onDidChangeInvalidMarkers.fire();
