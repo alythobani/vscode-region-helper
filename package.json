@@ -55,45 +55,45 @@
       {
         "command": "regionHelper.regionsView.hide",
         "title": "Region Helper: Hide Regions View",
-        "when": "config.regionHelper.regionsView.isVisible"
+        "enablement": "config.regionHelper.regionsView.isVisible"
       },
       {
         "command": "regionHelper.regionsView.show",
         "title": "Region Helper: Show Regions View",
-        "when": "!config.regionHelper.regionsView.isVisible"
+        "enablement": "!config.regionHelper.regionsView.isVisible"
       },
       {
         "command": "regionHelper.fullOutlineView.hide",
         "title": "Region Helper: Hide Full Outline View",
-        "when": "config.regionHelper.fullOutlineView.isVisible"
+        "enablement": "config.regionHelper.fullOutlineView.isVisible"
       },
       {
         "command": "regionHelper.fullOutlineView.show",
         "title": "Region Helper: Show Full Outline View",
-        "when": "!config.regionHelper.fullOutlineView.isVisible"
+        "enablement": "!config.regionHelper.fullOutlineView.isVisible"
       },
       {
         "command": "regionHelper.regionsView.stopAutoHighlightingActiveRegion",
         "title": "Region Helper: Regions View: Stop Auto-Highlighting Active Region",
-        "when": "config.regionHelper.regionsView.shouldAutoHighlightActiveRegion",
+        "enablement": "config.regionHelper.regionsView.shouldAutoHighlightActiveRegion",
         "icon": "$(sync)"
       },
       {
         "command": "regionHelper.regionsView.startAutoHighlightingActiveRegion",
         "title": "Region Helper: Regions View: Start Auto-Highlighting Active Region",
-        "when": "!config.regionHelper.regionsView.shouldAutoHighlightActiveRegion",
+        "enablement": "!config.regionHelper.regionsView.shouldAutoHighlightActiveRegion",
         "icon": "$(sync-ignored)"
       },
       {
         "command": "regionHelper.fullOutlineView.stopAutoHighlightingActiveItem",
         "title": "Region Helper: Full Outline View: Stop Auto-Highlighting Active Item",
-        "when": "config.regionHelper.fullOutlineView.shouldAutoHighlightActiveItem",
+        "enablement": "config.regionHelper.fullOutlineView.shouldAutoHighlightActiveItem",
         "icon": "$(sync)"
       },
       {
         "command": "regionHelper.fullOutlineView.startAutoHighlightingActiveItem",
         "title": "Region Helper: Full Outline View: Start Auto-Highlighting Active Item",
-        "when": "!config.regionHelper.fullOutlineView.shouldAutoHighlightActiveItem",
+        "enablement": "!config.regionHelper.fullOutlineView.shouldAutoHighlightActiveItem",
         "icon": "$(sync-ignored)"
       },
       {
