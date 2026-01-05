@@ -426,7 +426,7 @@
         "properties": {
           "regionHelper.regionsView.show": {
             "type": "string",
-            "default": "always",
+            "default": "whenRegionsExist",
             "description": "When to show the Regions view.",
             "enum": [
               "always",
