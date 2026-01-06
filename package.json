@@ -53,14 +53,19 @@
         "title": "Region Helper: Go to Previous Region"
       },
       {
-        "command": "regionHelper.regionsView.hide",
-        "title": "Region Helper: Hide Regions View",
-        "enablement": "config.regionHelper.regionsView.isVisible"
+        "command": "regionHelper.regionsView.showNever",
+        "title": "Region Helper: Regions View: Show: Never",
+        "enablement": "config.regionHelper.regionsView.show != 'never'"
       },
       {
-        "command": "regionHelper.regionsView.show",
-        "title": "Region Helper: Show Regions View",
-        "enablement": "!config.regionHelper.regionsView.isVisible"
+        "command": "regionHelper.regionsView.showAlways",
+        "title": "Region Helper: Regions View: Show: Always",
+        "enablement": "config.regionHelper.regionsView.show != 'always'"
+      },
+      {
+        "command": "regionHelper.regionsView.showWhenRegionsExist",
+        "title": "Region Helper: Regions View: Show: When Regions Exist",
+        "enablement": "config.regionHelper.regionsView.show != 'whenRegionsExist'"
       },
       {
         "command": "regionHelper.fullOutlineView.hide",
@@ -419,10 +424,30 @@
         "title": "Regions View",
         "order": 1,
         "properties": {
-          "regionHelper.regionsView.isVisible": {
-            "type": "boolean",
-            "default": true,
-            "description": "Show the Regions view."
+          "regionHelper.regionsView.show": {
+            "type": "string",
+            "default": "whenRegionsExist",
+            "description": "When to show the Regions view.",
+            "enum": [
+              "always",
+              "whenRegionsExist",
+              "never"
+            ],
+            "enumItemLabels": [
+              "Always",
+              "When regions exist",
+              "Never"
+            ],
+            "enumDescriptions": [
+              "Always show the Regions view.",
+              "Show the Regions view only when there is at least one region.",
+              "Never show the Regions view."
+            ],
+            "markdownEnumDescriptions": [
+              "**Always show** the Regions view.",
+              "Show the Regions view only **when there is at least one region**.",
+              "**Never show** the Regions view."
+            ]
           },
           "regionHelper.regionsView.shouldAutoHighlightActiveRegion": {
             "type": "boolean",
@@ -438,7 +463,7 @@
           "regionHelper.fullOutlineView.isVisible": {
             "type": "boolean",
             "default": true,
-            "description": "Show the Full Outline view."
+            "description": "Whether to show the Full Outline view."
           },
           "regionHelper.fullOutlineView.shouldAutoHighlightActiveItem": {
             "type": "boolean",
@@ -516,7 +541,7 @@
           "id": "regionHelperRegionsView",
           "name": "Regions",
           "contextualTitle": "Regions",
-          "when": "config.regionHelper.regionsView.isVisible",
+          "when": "config.regionHelper.regionsView.show == 'always' || (config.regionHelper.regionsView.show == 'whenRegionsExist' && regionHelper.activeDocumentHasRegions)",
           "icon": "./assets/regions-view-icon.svg"
         },
         {

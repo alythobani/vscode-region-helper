@@ -2,21 +2,27 @@ import * as vscode from "vscode";
 import {
   getGlobalRegionsViewConfigValue,
   setGlobalRegionsViewConfigValue,
-  setRegionsViewVisibility,
+  type RegionsViewShowMode,
 } from "../config/regionsViewConfig";
 import { type RegionHelperNonClosuredCommand } from "./registerCommand";
 
 // #region Exported commands
 
-const hideRegionsViewCommand: RegionHelperNonClosuredCommand = {
-  id: "regionHelper.regionsView.hide",
-  callback: hideRegionsView,
+const neverShowRegionsViewCommand: RegionHelperNonClosuredCommand = {
+  id: "regionHelper.regionsView.showNever",
+  callback: neverShowRegionsView,
   needsRegionHelperParams: false,
 };
 
-const showRegionsViewCommand: RegionHelperNonClosuredCommand = {
-  id: "regionHelper.regionsView.show",
-  callback: showRegionsView,
+const alwaysShowRegionsViewCommand: RegionHelperNonClosuredCommand = {
+  id: "regionHelper.regionsView.showAlways",
+  callback: alwaysShowRegionsView,
+  needsRegionHelperParams: false,
+};
+
+const showRegionsViewWhenRegionsExistCommand: RegionHelperNonClosuredCommand = {
+  id: "regionHelper.regionsView.showWhenRegionsExist",
+  callback: showRegionsViewWhenRegionsExist,
   needsRegionHelperParams: false,
 };
 
@@ -33,8 +39,9 @@ const startAutoHighlightingActiveRegionCommand: RegionHelperNonClosuredCommand =
 };
 
 export const allRegionsViewConfigCommands: RegionHelperNonClosuredCommand[] = [
-  hideRegionsViewCommand,
-  showRegionsViewCommand,
+  neverShowRegionsViewCommand,
+  alwaysShowRegionsViewCommand,
+  showRegionsViewWhenRegionsExistCommand,
   stopAutoHighlightingActiveRegionCommand,
   startAutoHighlightingActiveRegionCommand,
 ];
@@ -43,22 +50,41 @@ export const allRegionsViewConfigCommands: RegionHelperNonClosuredCommand[] = [
 
 // #region Command implementations
 
-function hideRegionsView(): void {
-  const isAlreadyVisible = getGlobalRegionsViewConfigValue("isVisible");
-  if (!isAlreadyVisible) {
-    vscode.window.showInformationMessage("Region Helper: Regions view is already hidden.");
+function neverShowRegionsView(): void {
+  const show = getGlobalRegionsViewConfigValue("show");
+  if (show === "never") {
+    vscode.window.showInformationMessage(
+      "Region Helper: Regions view is already set to never show."
+    );
     return;
   }
-  setRegionsViewVisibility(false);
+  setRegionsViewShow("never");
 }
 
-function showRegionsView(): void {
-  const isAlreadyVisible = getGlobalRegionsViewConfigValue("isVisible");
-  if (isAlreadyVisible) {
-    vscode.window.showInformationMessage("Region Helper: Regions view is already visible.");
+function alwaysShowRegionsView(): void {
+  const show = getGlobalRegionsViewConfigValue("show");
+  if (show === "always") {
+    vscode.window.showInformationMessage(
+      "Region Helper: Regions view is already set to always show."
+    );
     return;
   }
-  setRegionsViewVisibility(true);
+  setRegionsViewShow("always");
+}
+
+function showRegionsViewWhenRegionsExist(): void {
+  const show = getGlobalRegionsViewConfigValue("show");
+  if (show === "whenRegionsExist") {
+    vscode.window.showInformationMessage(
+      "Region Helper: Regions view is already set to show only when regions exist."
+    );
+    return;
+  }
+  setRegionsViewShow("whenRegionsExist");
+}
+
+function setRegionsViewShow(show: RegionsViewShowMode): void {
+  setGlobalRegionsViewConfigValue("show", show);
 }
 
 function stopAutoHighlightingActiveRegion(): void {
