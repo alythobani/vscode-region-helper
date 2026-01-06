@@ -4,6 +4,12 @@ All notable changes to the "region-helper" extension will be documented in this 
 
 This changelog adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) and is structured for clarity and readability, inspired by [Common Changelog](https://common-changelog.org/) and [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.6.0] - 2026-01-05
+
+- **Add "smart visibility" mode for Regions View**: A new `regionHelper.regionsView.show` setting lets the Regions view appear only when the active document has regions
+- **Fix conditional visibility of commands**: Certain commands now appear in the Command Palette only when relevant
+- **Docs**: Add `CONTRIBUTING.md` with more detailed contribution guidelines
+
 ## [1.5.3] - 2025-12-20
 
 - Slight adjustments to README, and also a re-publish attempt since VSCode seemed to silently fail to fully publish v1.5.2
