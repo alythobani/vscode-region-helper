@@ -30,9 +30,9 @@ A clear and concise description of the issue.
 
 A clear description of what should happen instead.
 
-### Screenshots or recordings (optional, but helpful)
+### Screenshots or recordings
 
-If applicable, add screenshots or GIFs.
+These are especially helpful! Please add if at all possible.
 
 ### Error logs (if any)
 
