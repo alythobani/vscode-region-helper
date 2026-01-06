@@ -142,11 +142,12 @@ Region Helper provides an API for accessing **parsed code regions** and **full o
 
 <h2 id="-contributing--feedback">❤️ Contributing & Feedback</h2>
 
-I may have limited availability, but **bug reports, suggestions, and contributions** are always welcome! Feel free to:
+I may have limited availability, but **bug reports, suggestions, and feedback** are always welcome! Feel free to:
 
-- **[File an issue](https://github.com/alythobani/vscode-region-helper/issues/new/choose)** for bugs or feature requests.
-- **[Browse issues open to PRs](https://github.com/alythobani/vscode-region-helper/issues?q=state%3Aopen%20label%3A%22accepting%20PRs%22)** and submit one if you'd like to help.
-- **[Leave a review](https://marketplace.visualstudio.com/items?itemName=alythobani.region-helper&ssr=false#review-details)** to share your thoughts or overall feedback.
+- **[File an issue](https://github.com/alythobani/vscode-region-helper/issues/new/choose)** for bugs or feature requests (**please use the issue templates**! I may not be able to respond otherwise)
+- **[Leave a review](https://marketplace.visualstudio.com/items?itemName=alythobani.region-helper&ssr=false#review-details)** to share your thoughts or overall feedback
+
+If you'd like to contribute code, please carefully read the **[contributing guidelines](./CONTRIBUTING.md)** first.
 
 ---
 
