@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { type RegionHelperNonClosuredCommand } from "../../commands/registerCommand";
-import { focusEditor } from "../../utils/focusEditor";
+import { focusActiveEditorGroup } from "../../utils/focusEditor";
 import { moveCursorToFirstNonWhitespaceCharOfLine } from "../../utils/moveCursorToFirstNonWhitespaceOfLine";
 
 export const goToRegionTreeItemCommand: RegionHelperNonClosuredCommand = {
@@ -19,5 +19,5 @@ function goToRegionTreeItem(startLineIdx: number): void {
     lineIdx: startLineIdx,
     revealType: vscode.TextEditorRevealType.InCenterIfOutsideViewport,
   });
-  focusEditor(activeTextEditor);
+  void focusActiveEditorGroup();
 }

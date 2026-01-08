@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { type RegionHelperNonClosuredCommand } from "../../commands/registerCommand";
 import { throwNever } from "../../utils/errorUtils";
-import { focusEditor } from "../../utils/focusEditor";
+import { focusActiveEditorGroup } from "../../utils/focusEditor";
 import { moveCursorToFirstNonWhitespaceCharOfLine } from "../../utils/moveCursorToFirstNonWhitespaceOfLine";
 import { moveCursorToPosition } from "../../utils/moveCursorToPosition";
 import { type FullTreeItemType } from "./FullTreeItem";
@@ -31,7 +31,7 @@ function goToFullTreeItem(startLineIdx: number, startCharacter: number | undefin
       revealType: vscode.TextEditorRevealType.InCenterIfOutsideViewport,
     });
   }
-  focusEditor(activeTextEditor);
+  void focusActiveEditorGroup();
 }
 
 export function makeGoToFullTreeItemCommand(
