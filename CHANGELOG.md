@@ -4,6 +4,10 @@ All notable changes to the "region-helper" extension will be documented in this 
 
 This changelog adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) and is structured for clarity and readability, inspired by [Common Changelog](https://common-changelog.org/) and [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.6.1] - 2026-01-08
+
+- **Fix clicking a tree item from a Jupyter notebook**: Previously, clicking a Regions or Full Outline tree item from a Jupyter notebook would open the cell contents in a new read-only editor with the cursor placed at the top of the cell. Navigating to a Jupyter notebook cell's region/symbol by clicking its tree item now works as expected.
+
 ## [1.6.0] - 2026-01-05
 
 - **Add "smart visibility" mode for Regions View**: A new `regionHelper.regionsView.show` setting lets the Regions view appear only when the active document has regions
