@@ -4,6 +4,10 @@ All notable changes to the "region-helper" extension will be documented in this 
 
 This changelog adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) and is structured for clarity and readability, inspired by [Common Changelog](https://common-changelog.org/) and [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.6.2] - 2026-01-12
+
+- **Add default region pattern support for PHP block comment syntax**: The default region boundary patterns configuration for `php` now includes `/* #region */` and `/* #endregion */` block comment syntax.
+
 ## [1.6.1] - 2026-01-08
 
 - **Fix clicking a tree item from a Jupyter notebook**: Previously, clicking a Regions or Full Outline tree item from a Jupyter notebook would open the cell contents in a new read-only editor with the cursor placed at the top of the cell. Navigating to a Jupyter notebook cell's region/symbol by clicking its tree item now works as expected.

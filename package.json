@@ -18,7 +18,7 @@
   },
   "icon": "./assets/icon.png",
   "license": "GPL-3.0-only",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "engines": {
     "vscode": "^1.94.0"
   },
@@ -310,10 +310,12 @@
               },
               "php": {
                 "startRegex": [
+                  "^\\s*\\/\\*+\\s*#region(?:\\s+(.*?)\\s*)?\\*+\\/",
                   "^\\s*\\/\\/\\s*#region(?:\\s+(.*?)\\s*)?$",
                   "^\\s*#\\s*region(?:\\s+(.*?)\\s*)?$"
                 ],
                 "endRegex": [
+                  "^\\s*\\/\\*+\\s*#endregion(?:\\s.*)?\\*+\\/",
                   "^\\s*\\/\\/\\s*#endregion(?:\\s.*)?$",
                   "^\\s*#\\s*endregion(?:\\s.*)?"
                 ]
