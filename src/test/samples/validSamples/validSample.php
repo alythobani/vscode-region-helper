@@ -5,9 +5,9 @@ $x = 42;
 
 #region Second Region
 class MyClass {
-    #region   InnerRegion
+    /* #region   InnerRegion */
     public function myMethod() {}
-    #  endregion    ends InnerRegion
+    /* #endregion    ends InnerRegion */
 
     // #region
     public function myMethod2() {}
