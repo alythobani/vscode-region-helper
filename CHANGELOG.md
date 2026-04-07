@@ -4,6 +4,10 @@ All notable changes to the "region-helper" extension will be documented in this 
 
 This changelog adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) and is structured for clarity and readability, inspired by [Common Changelog](https://common-changelog.org/) and [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.6.3] - 2026-04-06
+
+- **Fix uncolored Full Outline symbol icons**: Due to an [internal VSCode bug](https://github.com/microsoft/vscode/issues/299479), Full Outline symbol icons were not being colored. This release adds a workaround to bring back the colors.
+
 ## [1.6.2] - 2026-01-12
 
 - **Add default region pattern support for PHP block comment syntax**: The default region boundary patterns configuration for `php` now includes `/* #region */` and `/* #endregion */` block comment syntax.
