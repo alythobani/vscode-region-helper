@@ -47,6 +47,57 @@ const validSymbolThemeIconIds = new Set([
   "symbol-variable",
 ]);
 
+/**
+ * Mapping from theme icon ID to theme color ID. Shouldn't be necessary, but is necessary due to a
+ * VSCode bug still open as of 2026-04-06: https://github.com/microsoft/vscode/issues/299479
+ *
+ * Ideally the above bug gets fixed and we can remove this manual mapping.
+ *
+ * Symbol icon color ID reference:
+ * https://code.visualstudio.com/api/references/theme-color#symbol-icons-colors
+ */
+const iconColorIdBySymbolThemeIconId: Record<string, string | undefined> = {
+  "symbol-array": "symbolIcon.arrayForeground",
+  "symbol-boolean": "symbolIcon.booleanForeground",
+  "symbol-class": "symbolIcon.classForeground",
+  "symbol-color": "symbolIcon.colorForeground",
+  "symbol-constant": "symbolIcon.constantForeground",
+  "symbol-constructor": "symbolIcon.constructorForeground",
+  "symbol-enum": "symbolIcon.enumeratorForeground",
+  "symbol-enum-member": "symbolIcon.enumeratorMemberForeground",
+  "symbol-event": "symbolIcon.eventForeground",
+  "symbol-field": "symbolIcon.fieldForeground",
+  "symbol-file": "symbolIcon.fileForeground",
+  "symbol-folder": "symbolIcon.folderForeground",
+  "symbol-function": "symbolIcon.functionForeground",
+  "symbol-interface": "symbolIcon.interfaceForeground",
+  "symbol-key": "symbolIcon.keyForeground",
+  "symbol-keyword": "symbolIcon.keywordForeground",
+  "symbol-method": "symbolIcon.methodForeground",
+  "symbol-misc": undefined, // No matching theme color
+  "symbol-module": "symbolIcon.moduleForeground",
+  "symbol-namespace": "symbolIcon.namespaceForeground",
+  "symbol-null": "symbolIcon.nullForeground",
+  "symbol-number": "symbolIcon.numberForeground",
+  "symbol-numeric": undefined, // No matching theme color
+  "symbol-object": "symbolIcon.objectForeground",
+  "symbol-operator": "symbolIcon.operatorForeground",
+  "symbol-package": "symbolIcon.packageForeground",
+  "symbol-parameter": undefined,
+  "symbol-property": "symbolIcon.propertyForeground",
+  "symbol-reference": "symbolIcon.referenceForeground",
+  "symbol-ruler": undefined, // No matching theme color
+  "symbol-snippet": "symbolIcon.snippetForeground",
+  "symbol-string": "symbolIcon.stringForeground",
+  "symbol-struct": "symbolIcon.structForeground",
+  "symbol-structure": undefined, // No matching theme color
+  "symbol-text": "symbolIcon.textForeground",
+  "symbol-type-parameter": "symbolIcon.typeParameterForeground",
+  "symbol-unit": "symbolIcon.unitForeground",
+  "symbol-value": undefined, // No matching theme color
+  "symbol-variable": "symbolIcon.variableForeground",
+};
+
 export function getSymbolThemeIcon(symbolThemeIconId: string): vscode.ThemeIcon | undefined {
   if (!validSymbolThemeIconIds.has(symbolThemeIconId)) {
     // console.warn(
@@ -54,7 +105,11 @@ export function getSymbolThemeIcon(symbolThemeIconId: string): vscode.ThemeIcon 
     // );
     return undefined;
   }
-  return new vscode.ThemeIcon(symbolThemeIconId);
+  const iconColorId = iconColorIdBySymbolThemeIconId[symbolThemeIconId];
+  return new vscode.ThemeIcon(
+    symbolThemeIconId,
+    iconColorId !== undefined ? new vscode.ThemeColor(iconColorId) : undefined
+  );
 }
 
 /**
